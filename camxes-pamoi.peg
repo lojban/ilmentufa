@@ -1,0 +1,1441 @@
+; This is a Parsing Expression Grammar for Lojban.
+; See http://www.pdos.lcs.mit.edu/~baford/packrat/
+; 
+; All rules have the form:
+; 
+; 	name <- peg-expression
+; 
+; which means that the grammatical construct "name" is parsed using
+; "peg-expression".  
+; 
+; 1)  Names in lower case are grammatical constructs.
+; 2)  Names in UPPER CASE are selma'o (lexeme) names, and are terminals.
+; 3)  Concatenation is expressed by juxtaposition with no operator symbol.
+; 4)  / represents *ORDERED* alternation (choice).  If the first
+;     option succeeds, the others will never be checked.
+; 5)  ? indicates that the element to the left is optional.
+; 6)  * represents optional repetition of the construct to the left.
+; 7)  + represents one-or-more repetition of the construct to the left.
+; 8)  () serves to indicate the grouping of the other operators.
+;
+; Longest match wins.
+
+; --- GRAMMAR ---
+
+PUBLIC text <- intro-null NAI-clause* text-part-2 (!text-1 joik-jek)? text-1? faho-clause EOF?
+
+intro-null <- spaces? su-clause* intro-si-clause
+text-part-2 <- (CMENE-clause+ / indicators?) free*
+
+;; SPACE intro-sa-clause <- SA-clause+ / any-word-SA-handling !(ZEI-clause SA-clause) intro-sa-clause
+SPACE intro-si-clause <- si-clause? SI-clause*
+SPACE faho-clause <- (FAhO-clause dot-star)?
+
+; Please note that the "text-1" item in the text-1 production does
+; *not* match the BNF. This is due to a bug in the BNF.  The change
+; here was made to match grammar.300
+text-1 <- I-clause (jek / joik)? (stag? BO-clause)? free* text-1? / NIhO-clause+ free* su-clause* paragraphs? / paragraphs
+
+paragraphs <- paragraph (NIhO-clause+ free* su-clause* paragraphs)?
+
+paragraph <- (statement / fragment) (I-clause !jek !joik !joik-jek free* (statement / fragment)?)*
+
+statement <- statement-1 / prenex statement
+
+statement-1 <- statement-2 (I-clause joik-jek statement-2?)*
+
+statement-2 <- statement-3 (I-clause (jek / joik)? stag? BO-clause free* statement-2)? / statement-3 (I-clause (jek / joik)? stag? BO-clause free*)?
+
+statement-3 <- sentence / tag? TUhE-clause free* text-1 TUhU-clause? free*
+
+fragment <- prenex / terms VAU-clause? free* / ek free* / gihek free* / quantifier / NA-clause !JA-clause free* / relative-clauses / links / linkargs
+
+prenex <- terms ZOhU-clause free*
+
+;; sentence <- (terms CU-clause? free*)? bridi-tail / bridi-tail
+
+sentence <- (terms bridi-tail-sa* CU-clause? free*)? bridi-tail-sa* bridi-tail
+
+SPACE sentence-sa <- sentence-start (!sentence-start (sa-word / SA-clause !sentence-start ) )* SA-clause &text-1
+
+sentence-start <- I-pre / NIhO-pre
+
+subsentence <- sentence / prenex subsentence
+
+bridi-tail <- bridi-tail-1 (gihek stag? KE-clause free* bridi-tail KEhE-clause? free* tail-terms)?
+
+SPACE bridi-tail-sa <- bridi-tail-start (term / !bridi-tail-start (sa-word / SA-clause !bridi-tail-start ) )* SA-clause &bridi-tail
+
+bridi-tail-start <- ME-clause / NUhA-clause / NU-clause / NA-clause !KU-clause / NAhE-clause !BO-clause / selbri / tag bridi-tail-start / KE-clause bridi-tail-start / bridi-tail
+
+bridi-tail-1 <- bridi-tail-2 (gihek !(stag? BO-clause) !(stag? KE-clause) free* bridi-tail-2 tail-terms)*
+
+bridi-tail-2 <- bridi-tail-3 (gihek stag? BO-clause free* bridi-tail-2 tail-terms)?
+
+bridi-tail-3 <- selbri tail-terms / gek-sentence
+
+gek-sentence <- gek subsentence gik subsentence tail-terms / tag? KE-clause free* gek-sentence KEhE-clause? free* / NA-clause free* gek-sentence
+
+tail-terms <- terms? VAU-clause? free*
+
+terms <- terms-1+
+
+;; terms-1 <- terms-2 (PEhE-clause free* joik-jek terms-2)*
+
+;; terms-2 <- term (CEhE-clause free* term)*
+
+terms-1 <- terms-2 (pehe-sa* PEhE-clause free* joik-jek terms-2)*
+
+terms-2 <- term (cehe-sa* CEhE-clause free* term)*
+
+SPACE pehe-sa <- PEhE-clause (!PEhE-clause (sa-word / SA-clause !PEhE-clause))* SA-clause
+
+SPACE cehe-sa <- CEhE-clause (!CEhE-clause (sa-word / SA-clause !CEhE-clause))* SA-clause
+
+;;term <- sumti / ( !gek (tag / FA-clause free*) (sumti / KU-clause? free*) ) / termset / NA-clause KU-clause free*
+
+term <- term-sa* term-1
+
+term-1 <- sumti / ( !gek (tag / FA-clause free*) (sumti / KU-clause? free*) ) / termset / NA-clause KU-clause free*
+
+SPACE term-sa <- term-start (!term-start (sa-word / SA-clause !term-start ) )* SA-clause &term-1
+
+term-start <- term-1 / LA-clause / LE-clause / LI-clause / LU-clause / LAhE-clause / quantifier term-start / gek sumti gik / FA-clause / tag term-start
+
+termset <- gek-termset / NUhI-clause free* gek terms NUhU-clause? free* gik terms NUhU-clause? free* / NUhI-clause free* terms NUhU-clause? free*
+
+gek-termset <- gek terms-gik-terms
+
+terms-gik-terms <- term (gik / terms-gik-terms) term
+
+sumti <- sumti-1 (VUhO-clause free* relative-clauses)?
+
+sumti-1 <- sumti-2 (joik-ek stag? KE-clause free* sumti KEhE-clause? free*)?
+
+sumti-2 <- sumti-3 (joik-ek sumti-3)*
+
+sumti-3 <- sumti-4 (joik-ek stag? BO-clause free* sumti-3)?
+
+sumti-4 <- sumti-5 / gek sumti gik sumti-4
+
+sumti-5 <- quantifier? sumti-6 relative-clauses? / quantifier selbri KU-clause? free* relative-clauses?
+
+sumti-6 <- ZO-clause free* / ZOI-clause free* / LOhU-clause free* / lerfu-string !MOI-clause BOI-clause? free* / LU-clause text LIhU-clause? free* / (LAhE-clause free* / NAhE-clause BO-clause free*) relative-clauses? sumti LUhU-clause? free* / KOhA-clause free* / LA-clause free* relative-clauses? CMENE-clause+ free* / (LA-clause / LE-clause) free* sumti-tail KU-clause? free* / li-clause
+
+li-clause <- LI-clause free* mex LOhO-clause? free*
+
+sumti-tail <- (sumti-6 relative-clauses?)? sumti-tail-1 / relative-clauses sumti-tail-1
+
+sumti-tail-1 <- selbri relative-clauses? / quantifier selbri relative-clauses? / quantifier sumti
+
+relative-clauses <- relative-clause (ZIhE-clause free* relative-clause)*
+
+;; relative-clause <- GOI-clause free* term GEhU-clause? free* / NOI-clause free* subsentence KUhO-clause? free*
+
+relative-clause <- relative-clause-sa* relative-clause-1
+
+SPACE relative-clause-sa <- relative-clause-start (!relative-clause-start (sa-word / SA-clause !relative-clause-start ) )* SA-clause &relative-clause-1
+
+relative-clause-1 <- GOI-clause free* term GEhU-clause? free* / NOI-clause free* subsentence KUhO-clause? free*
+
+relative-clause-start <- GOI-clause / NOI-clause
+
+selbri <- tag? selbri-1
+
+selbri-1 <- selbri-2 / NA-clause free* selbri
+
+selbri-2 <- selbri-3 (CO-clause free* selbri-2)?
+
+selbri-3 <- selbri-4+
+
+selbri-4 <- selbri-5 (joik-jek selbri-5 / joik stag? KE-clause free* selbri-3 KEhE-clause? free*)*
+
+selbri-5 <- selbri-6 ((jek / joik) stag? BO-clause free* selbri-5)?
+
+selbri-6 <- tanru-unit (BO-clause free* selbri-6)? / NAhE-clause? free* guhek selbri gik selbri-6
+
+tanru-unit <- tanru-unit-1 (CEI-clause free* tanru-unit-1)*
+
+tanru-unit-1 <- tanru-unit-2 linkargs?
+
+; ** zei is part of BRIVLA-clause
+tanru-unit-2 <- BRIVLA-clause free* / GOhA-clause RAhO-clause? free* / KE-clause free* selbri-3 KEhE-clause? free* / ME-clause free* (sumti / lerfu-string) MEhU-clause? free* MOI-clause? free* / (number / lerfu-string) MOI-clause free* / NUhA-clause free* mex-operator / SE-clause free* tanru-unit-2 / JAI-clause free* tag? tanru-unit-2 / NAhE-clause free* tanru-unit-2 / NU-clause NAI-clause? free* (joik-jek NU-clause NAI-clause? free*)* subsentence KEI-clause? free*
+
+;; linkargs <- BE-clause free* term links? BEhO-clause? free*
+
+linkargs <- linkargs-sa* linkargs-1
+
+linkargs-1 <- BE-clause free* term links? BEhO-clause? free*
+
+SPACE linkargs-sa <- linkargs-start (!linkargs-start (sa-word / SA-clause !linkargs-start ) )* SA-clause &linkargs-1
+
+linkargs-start <- BE-clause
+
+;; links <- BEI-clause free* term links?
+
+links <- links-sa* links-1
+
+links-1 <- BEI-clause free* term links?
+
+SPACE links-sa <- links-start (!links-start (sa-word / SA-clause !links-start ) )* SA-clause &links-1
+
+links-start <- BEI-clause
+
+quantifier <- number !MOI-clause BOI-clause? free* / VEI-clause free* mex VEhO-clause? free*
+
+;;mex <- mex-1 (operator mex-1)* / rp-clause
+
+mex <- mex-sa* mex-0
+
+mex-0 <- mex-1 (operator mex-1)* / rp-clause
+
+SPACE mex-sa <- mex-start (!mex-start (sa-word / SA-clause !mex-start) )* SA-clause &mex-0
+
+mex-start <- FUhA-clause / PEhO-clause / operand-start
+
+rp-clause <- FUhA-clause free* rp-expression
+
+mex-1 <- mex-2 (BIhE-clause free* operator mex-1)?
+
+mex-2 <- operand / mex-forethought
+
+; This is just to make for clearer parse trees
+mex-forethought <- PEhO-clause? free* operator fore-operands KUhE-clause? free*
+fore-operands <- mex-2+ 
+
+;li fu'a reboi ci pi'i voboi mu pi'i su'i reboi ci vu'u su'i du li rexa
+;rp-expression <- rp-operand rp-operand operator
+;rp-operand <- operand / rp-expression
+; AKA (almost; this one allows a single operand; above does not.
+;rp-expression <- rp-expression rp-expression operator / operand
+
+; Right recursive version.
+rp-expression <- operand rp-expression-tail
+rp-expression-tail <- rp-expression operator rp-expression-tail / ()
+
+;; operator <- operator-1 (joik-jek operator-1 / joik stag? KE-clause free* operator KEhE-clause? free*)*
+
+operator <- operator-sa* operator-0
+
+operator-0 <- operator-1 (joik-jek operator-1 / joik stag? KE-clause free* operator KEhE-clause? free*)*
+
+SPACE operator-sa <- operator-start (!operator-start (sa-word / SA-clause !operator-start) )* SA-clause &operator-0
+
+operator-start <- guhek / KE-clause / SE-clause? NAhE-clause / SE-clause? MAhO-clause / SE-clause? VUhU-clause
+
+operator-1 <- operator-2 / guhek operator-1 gik operator-2 / operator-2 (jek / joik) stag? BO-clause free* operator-1
+
+operator-2 <- mex-operator / KE-clause free* operator KEhE-clause? free*
+
+mex-operator <- SE-clause free* mex-operator / NAhE-clause free* mex-operator / MAhO-clause free* mex TEhU-clause? free* / NAhU-clause free* selbri TEhU-clause? free* / VUhU-clause free*
+
+;; operand <- operand-1 (joik-ek stag? KE-clause free* operand KEhE-clause? free*)?
+
+operand <- operand-sa* operand-0
+
+operand-0 <- operand-1 (joik-ek stag? KE-clause free* operand KEhE-clause? free*)?
+
+SPACE operand-sa <- operand-start (!operand-start (sa-word / SA-clause !operand-start) )* SA-clause &operand-0
+
+operand-start <- quantifier / lerfu-word / NIhE-clause / MOhE-clause / JOhI-clause / gek / LAhE-clause / NAhE-clause
+
+operand-1 <- operand-2 (joik-ek operand-2)*
+
+operand-2 <- operand-3 (joik-ek stag? BO-clause free* operand-2)?
+
+operand-3 <- quantifier / lerfu-string !MOI-clause BOI-clause? free* / NIhE-clause free* selbri TEhU-clause? free* / MOhE-clause free* sumti TEhU-clause? free* / JOhI-clause free* mex-2+ TEhU-clause? free* / gek operand gik operand-3 / (LAhE-clause free* / NAhE-clause BO-clause free*) operand LUhU-clause? free*
+
+number <- PA-clause (PA-clause / lerfu-word)*
+
+lerfu-string <- lerfu-word (PA-clause / lerfu-word)*
+
+; ** BU clauses are part of BY-clause
+lerfu-word <- BY-clause / LAU-clause lerfu-word / TEI-clause lerfu-string FOI-clause
+
+ek <- NA-clause? SE-clause? A-clause NAI-clause?
+
+;; gihek <- NA-clause? SE-clause? GIhA-clause NAI-clause?
+gihek <- gihek-sa* gihek-1
+
+gihek-1 <- NA-clause? SE-clause? GIhA-clause NAI-clause?
+
+SPACE gihek-sa <- gihek-1 (!gihek-1 (sa-word / SA-clause !gihek-1 ) )* SA-clause &gihek
+
+jek <- NA-clause? SE-clause? JA-clause NAI-clause?
+
+joik <- SE-clause? JOI-clause NAI-clause? / interval / GAhO-clause interval GAhO-clause
+
+interval <- SE-clause? BIhI-clause NAI-clause?
+
+;; joik-ek <- joik free* / ek free*
+joik-ek <- joik-ek-sa* joik-ek-1
+
+joik-ek-1 <- (joik free* / ek free*)
+
+SPACE joik-ek-sa <- joik-ek-1 (!joik-ek-1 (sa-word / SA-clause !joik-ek-1 ) )* SA-clause &joik-ek
+
+joik-jek <- joik free* / jek free*
+
+gek <- SE-clause? GA-clause NAI-clause? free* / joik GI-clause free* / stag gik
+
+guhek <- SE-clause? GUhA-clause NAI-clause? free*
+
+gik <- GI-clause NAI-clause? free*
+
+tag <- tense-modal (joik-jek tense-modal)*
+
+;stag <- simple-tense-modal ((jek / joik) simple-tense-modal)*
+stag <- simple-tense-modal ((jek / joik) simple-tense-modal)* / tense-modal (joik-jek tense-modal)*
+
+tense-modal <- simple-tense-modal free* / FIhO-clause free* selbri FEhU-clause? free*
+
+simple-tense-modal <- NAhE-clause? SE-clause? BAI-clause NAI-clause? KI-clause? / NAhE-clause? ( ((time space? / space time?) CAhA-clause) / (time space? / space time?) / CAhA-clause ) KI-clause? / KI-clause / CUhE-clause
+
+time <- ZI-clause time-offset* (ZEhA-clause (PU-clause NAI-clause?)?)? interval-property* / ZI-clause? time-offset+ (ZEhA-clause (PU-clause NAI-clause?)?)? interval-property* / ZI-clause? time-offset* ZEhA-clause (PU-clause NAI-clause?)? interval-property* / ZI-clause? time-offset* (ZEhA-clause (PU-clause NAI-clause?)?)? interval-property+
+
+time-offset <- PU-clause NAI-clause? ZI-clause?
+
+space <- VA-clause space-offset* space-interval? (MOhI-clause space-offset)? / VA-clause? space-offset+ space-interval? (MOhI-clause space-offset)? / VA-clause? space-offset* space-interval (MOhI-clause space-offset)? / VA-clause? space-offset* space-interval? MOhI-clause space-offset
+
+space-offset <- FAhA-clause NAI-clause? VA-clause?
+
+space-interval <- (VEhA-clause / VIhA-clause / VEhA-clause VIhA-clause) (FAhA-clause NAI-clause?)? space-int-props / (VEhA-clause / VIhA-clause / VEhA-clause VIhA-clause) (FAhA-clause NAI-clause?)? / space-int-props
+
+space-int-props <- (FEhE-clause interval-property)+
+
+interval-property <- number ROI-clause NAI-clause? / TAhE-clause NAI-clause? / ZAhO-clause NAI-clause?
+
+free <- SEI-clause free* (terms CU-clause? free*)? selbri SEhU-clause? / SOI-clause free* sumti sumti? SEhU-clause? / vocative relative-clauses? selbri relative-clauses? DOhU-clause? / vocative relative-clauses? CMENE-clause+ free* relative-clauses? DOhU-clause? / vocative sumti? DOhU-clause? / (number / lerfu-string) MAI-clause / TO-clause text TOI-clause? / xi-clause
+
+xi-clause <- XI-clause free* (number / lerfu-string) BOI-clause? / XI-clause free* VEI-clause free* mex VEhO-clause?
+
+vocative <- ( COI-clause NAI-clause? )* DOI-clause / ( COI-clause NAI-clause? )+
+
+indicators <- FUhE-clause? indicator+
+
+indicator <-  ((UI-clause / CAI-clause) NAI-clause? / DAhO-clause / FUhO-clause) !BU-clause
+
+
+; ****************
+; Magic Words
+; ****************
+
+zei-clause <- pre-clause zei-clause-no-pre
+zei-clause-no-pre <- pre-zei-bu (zei-tail? bu-tail)* zei-tail post-clause
+
+bu-clause <- pre-clause bu-clause-no-pre
+bu-clause-no-pre <- pre-zei-bu (bu-tail? zei-tail)* bu-tail post-clause
+
+zei-tail <- (ZEI-clause any-word)+
+bu-tail <- BU-clause+
+
+pre-zei-bu <- (!BU-clause !ZEI-clause !SI-clause !SA-clause !SU-clause !FAhO-clause any-word-SA-handling) si-clause?
+; LOhU-pre / ZO-pre / ZOI-pre / !ZEI-clause !BU-clause !FAhO-clause !SI-clause !SA-clause !SU-clause any-word-SA-handling si-clause?
+
+; -- General Morphology Issues
+;
+; 1.  Spaces (including '.y') and UI are eaten *after* a word.
+;
+; 3.  BAhE is eaten *before* a word.
+
+; Handling of what can go after a word
+post-clause <- spaces? si-clause? !ZEI-clause !BU-clause indicators*
+
+pre-clause <- BAhE-clause?
+
+any-word-SA-handling <- BRIVLA-pre / known-cmavo-SA / !known-cmavo-pre CMAVO-pre / CMENE-pre
+
+known-cmavo-SA <- A-pre / BAI-pre / BAhE-pre / BE-pre / BEI-pre / BEhO-pre / BIhE-pre / BIhI-pre / BO-pre / BOI-pre / BU-pre / BY-pre / CAI-pre / CAhA-pre / CEI-pre / CEhE-pre / CO-pre / COI-pre / CU-pre / CUhE-pre / DAhO-pre / DOI-pre / DOhU-pre / FA-pre / FAhA-pre / FEhE-pre / FEhU-pre / FIhO-pre / FOI-pre / FUhA-pre / FUhE-pre / FUhO-pre / GA-pre / GAhO-pre / GEhU-pre / GI-pre / GIhA-pre / GOI-pre / GOhA-pre / GUhA-pre / I-pre / JA-pre / JAI-pre / JOI-pre / JOhI-pre / KE-pre / KEI-pre / KEhE-pre / KI-pre / KOhA-pre / KU-pre / KUhE-pre / KUhO-pre / LA-pre / LAU-pre / LAhE-pre / LE-pre / LEhU-pre / LI-pre / LIhU-pre / LOhO-pre / LOhU-pre / LU-pre / LUhU-pre / MAI-pre / MAhO-pre / ME-pre / MEhU-pre / MOI-pre / MOhE-pre / MOhI-pre / NA-pre / NAI-pre / NAhE-pre / NAhU-pre / NIhE-pre / NIhO-pre / NOI-pre / NU-pre / NUhA-pre / NUhI-pre / NUhU-pre / PA-pre / PEhE-pre / PEhO-pre / PU-pre / RAhO-pre / ROI-pre / SA-pre / SE-pre / SEI-pre / SEhU-pre / SI-clause / SOI-pre / SU-pre / TAhE-pre / TEI-pre / TEhU-pre / TO-pre / TOI-pre / TUhE-pre / TUhU-pre / UI-pre / VA-pre / VAU-pre / VEI-pre / VEhA-pre / VEhO-pre / VIhA-pre / VUhO-pre / VUhU-pre / XI-pre / ZAhO-pre / ZEI-pre / ZEhA-pre / ZI-pre / ZIhE-pre / ZO-pre / ZOI-pre / ZOhU-pre
+
+; Handling of spaces and things like spaces.
+; --- SPACE ---
+; Do *NOT* delete the line above!
+
+; SU clauses
+su-clause <- (erasable-clause / su-word)* SU-clause
+
+; Handling of SI and interactions with zo and lo'u...le'u
+
+si-clause <- ((erasable-clause / si-word / SA-clause) si-clause? SI-clause)+
+
+erasable-clause <- bu-clause-no-pre !ZEI-clause !BU-clause / zei-clause-no-pre !ZEI-clause !BU-clause
+
+sa-word <- pre-zei-bu
+
+si-word <- pre-zei-bu
+
+su-word <- !NIhO-clause !LU-clause !TUhE-clause !TO-clause !SU-clause !FAhO-clause any-word-SA-handling
+
+; --- SELMAHO ---
+; Do *NOT* delete the line above!
+
+BRIVLA-clause <- BRIVLA-pre BRIVLA-post / zei-clause
+BRIVLA-pre <- pre-clause BRIVLA spaces?
+BRIVLA-post <- post-clause
+
+CMENE-clause <- CMENE-pre CMENE-post
+CMENE-pre <- pre-clause CMENE spaces?
+CMENE-post <- post-clause
+
+; FIXME: isn't used anywhere; should it be?
+;; CMAVO-clause <- CMAVO-pre CMAVO-post
+;; CMAVO-post <- post-clause
+CMAVO-pre <- pre-clause CMAVO spaces?
+
+;         eks; basic afterthought logical connectives 
+A-clause <- A-pre A-post
+A-pre <- pre-clause A spaces?
+A-post <- post-clause
+
+
+;         modal operators 
+BAI-clause <- BAI-pre BAI-post
+BAI-pre <- pre-clause BAI spaces?
+BAI-post <- post-clause
+
+;         next word intensifier 
+BAhE-clause <- (BAhE-pre BAhE-post)+
+BAhE-pre <- BAhE spaces?
+BAhE-post <- si-clause? !ZEI-clause !BU-clause
+
+;         sumti link to attach sumti to a selbri 
+BE-clause <- BE-pre BE-post
+BE-pre <- pre-clause BE spaces?
+BE-post <- post-clause
+
+;         multiple sumti separator between BE, BEI 
+BEI-clause <- BEI-pre BEI-post
+BEI-pre <- pre-clause BEI spaces?
+BEI-post <- post-clause
+
+;         terminates BEBEI specified descriptors 
+BEhO-clause <- BEhO-pre BEhO-post
+BEhO-pre <- pre-clause BEhO spaces?
+BEhO-post <- post-clause
+
+;         prefix for high-priority MEX operator 
+BIhE-clause <- BIhE-pre BIhE-post
+BIhE-pre <- pre-clause BIhE spaces?
+BIhE-post <- post-clause
+
+;         interval component of JOI 
+BIhI-clause <- BIhI-pre BIhI-post
+BIhI-pre <- pre-clause BIhI spaces?
+BIhI-post <- post-clause
+
+;         joins two units with shortest scope 
+BO-clause <- BO-pre BO-post
+BO-pre <- pre-clause BO spaces?
+BO-post <- post-clause
+
+;         number or lerfu-string terminator 
+BOI-clause <- BOI-pre BOI-post
+BOI-pre <- pre-clause BOI spaces?
+BOI-post <- post-clause
+
+;         turns any word into a BY lerfu word 
+BU-clause <- BU-pre BU-post
+BU-pre <- pre-clause BU spaces?
+BU-post <- spaces?
+
+;         individual lerfu words 
+BY-clause <- BY-pre BY-post / bu-clause
+BY-pre <- pre-clause BY spaces?
+BY-post <- post-clause
+
+
+;         specifies actualitypotentiality of tense 
+CAhA-clause <- CAhA-pre CAhA-post
+CAhA-pre <- pre-clause CAhA spaces?
+CAhA-post <- post-clause
+
+;         afterthought intensity marker 
+CAI-clause <- CAI-pre CAI-post
+CAI-pre <- pre-clause CAI spaces?
+CAI-post <- post-clause
+
+;         pro-bridi assignment operator 
+CEI-clause <- CEI-pre CEI-post
+CEI-pre <- pre-clause CEI spaces?
+CEI-post <- post-clause
+
+;         afterthought term list connective 
+CEhE-clause <- CEhE-pre CEhE-post
+CEhE-pre <- pre-clause CEhE spaces?
+CEhE-post <- post-clause
+
+;         names; require consonant end, then pause no
+
+;                                    LA or DOI selma'o embedded, pause before if
+
+;                                    vowel initial and preceded by a vowel 
+
+;         tanru inversion  
+CO-clause <- CO-pre CO-post
+CO-pre <- pre-clause CO spaces?
+CO-post <- post-clause
+COI-clause <- COI-pre COI-post
+COI-pre <- pre-clause COI spaces?
+COI-post <- post-clause
+
+;         vocative marker permitted inside names; must
+
+;                                    always be followed by pause or DOI 
+
+;         separator between head sumti and selbri 
+CU-clause <- CU-pre CU-post
+CU-pre <- pre-clause CU spaces?
+CU-post <- post-clause
+
+;         tensemodal question 
+CUhE-clause <- CUhE-pre CUhE-post
+CUhE-pre <- pre-clause CUhE spaces?
+CUhE-post <- post-clause
+
+
+;         cancel anaphoracataphora assignments 
+DAhO-clause <- DAhO-pre DAhO-post
+DAhO-pre <- pre-clause DAhO spaces?
+DAhO-post <- post-clause
+
+;         vocative marker 
+DOI-clause <- DOI-pre DOI-post
+DOI-pre <- pre-clause DOI spaces?
+DOI-post <- post-clause
+
+;         terminator for DOI-marked vocatives 
+DOhU-clause <- DOhU-pre DOhU-post
+DOhU-pre <- pre-clause DOhU spaces?
+DOhU-post <- post-clause
+
+
+;         modifier head generic case tag 
+FA-clause <- FA-pre FA-post
+FA-pre <- pre-clause FA spaces?
+FA-post <- post-clause
+
+;         superdirections in space 
+FAhA-clause <- FAhA-pre FAhA-post
+FAhA-pre <- pre-clause FAhA spaces?
+FAhA-post <- post-clause
+
+
+;         normally elided 'done pause' to indicate end
+;                                    of utterance string 
+
+FAhO-clause <- pre-clause FAhO spaces?
+
+;         space interval mod flag 
+FEhE-clause <- FEhE-pre FEhE-post
+FEhE-pre <- pre-clause FEhE spaces?
+FEhE-post <- post-clause
+
+;         ends bridi to modal conversion 
+FEhU-clause <- FEhU-pre FEhU-post
+FEhU-pre <- pre-clause FEhU spaces?
+FEhU-post <- post-clause
+
+;         marks bridi to modal conversion 
+FIhO-clause <- FIhO-pre FIhO-post
+FIhO-pre <- pre-clause FIhO spaces?
+FIhO-post <- post-clause
+
+;         end compound lerfu 
+FOI-clause <- FOI-pre FOI-post
+FOI-pre <- pre-clause FOI spaces?
+FOI-post <- post-clause
+
+;         reverse Polish flag 
+FUhA-clause <- FUhA-pre FUhA-post
+FUhA-pre <- pre-clause FUhA spaces?
+FUhA-post <- post-clause
+
+;         open long scope for indicator 
+FUhE-clause <- FUhE-pre FUhE-post
+FUhE-pre <- pre-clause FUhE spaces?
+FUhE-post <- !BU-clause spaces? !ZEI-clause !BU-clause
+
+;         close long scope for indicator 
+FUhO-clause <- FUhO-pre FUhO-post
+FUhO-pre <- pre-clause FUhO spaces?
+FUhO-post <- post-clause
+
+
+;         geks; forethought logical connectives 
+GA-clause <- GA-pre GA-post
+GA-pre <- pre-clause GA spaces?
+GA-post <- post-clause
+
+;         openclosed interval markers for BIhI 
+GAhO-clause <- GAhO-pre GAhO-post
+GAhO-pre <- pre-clause GAhO spaces?
+GAhO-post <- post-clause
+
+;         marker ending GOI relative clauses 
+GEhU-clause <- GEhU-pre GEhU-post
+GEhU-pre <- pre-clause GEhU spaces?
+GEhU-post <- post-clause
+
+;         forethought medial marker 
+GI-clause <- GI-pre GI-post
+GI-pre <- pre-clause GI spaces?
+GI-post <- post-clause
+
+;         logical connectives for bridi-tails 
+GIhA-clause <- GIhA-pre GIhA-post
+GIhA-pre <- pre-clause GIhA spaces?
+GIhA-post <- post-clause
+
+;         attaches a sumti modifier to a sumti 
+GOI-clause <- GOI-pre GOI-post
+GOI-pre <- pre-clause GOI spaces?
+GOI-post <- post-clause
+
+;         pro-bridi 
+GOhA-clause <- GOhA-pre GOhA-post
+GOhA-pre <- pre-clause GOhA spaces?
+GOhA-post <- post-clause
+
+;         GEK for tanru units, corresponds to JEKs 
+GUhA-clause <- GUhA-pre GUhA-post
+GUhA-pre <- pre-clause GUhA spaces?
+GUhA-post <- post-clause
+
+
+;         sentence link 
+I-clause <- sentence-sa* I-pre I-post
+I-pre <- pre-clause I spaces?
+I-post <- post-clause
+
+
+;         jeks; logical connectives within tanru 
+JA-clause <- JA-pre JA-post
+JA-pre <- pre-clause JA spaces?
+JA-post <- post-clause
+
+;         modal conversion flag 
+JAI-clause <- JAI-pre JAI-post
+JAI-pre <- pre-clause JAI spaces?
+JAI-post <- post-clause
+
+;         flags an array operand 
+JOhI-clause <- JOhI-pre JOhI-post
+JOhI-pre <- pre-clause JOhI spaces?
+JOhI-post <- post-clause
+
+;         non-logical connectives 
+JOI-clause <- JOI-pre JOI-post
+JOI-pre <- pre-clause JOI spaces?
+JOI-post <- post-clause
+
+
+;         left long scope marker 
+KE-clause <- KE-pre KE-post
+KE-pre <- pre-clause KE spaces?
+KE-post <- post-clause
+
+;         right terminator for KE groups 
+KEhE-clause <- KEhE-pre KEhE-post
+KEhE-pre <- pre-clause KEhE spaces?
+KEhE-post <- post-clause
+
+;         right terminator, NU abstractions 
+KEI-clause <- KEI-pre KEI-post
+KEI-pre <- pre-clause KEI spaces?
+KEI-post <- post-clause
+
+;         multiple utterance scope for tenses 
+KI-clause <- KI-pre KI-post
+KI-pre <- pre-clause KI spaces?
+KI-post <- post-clause
+
+;         sumti anaphora 
+KOhA-clause <- KOhA-pre KOhA-post
+KOhA-pre <- pre-clause KOhA spaces?
+KOhA-post <- post-clause
+
+;         right terminator for descriptions, etc. 
+KU-clause <- KU-pre KU-post
+KU-pre <- pre-clause KU spaces?
+KU-post <- post-clause
+
+;         MEX forethought delimiter 
+KUhE-clause <- KUhE-pre KUhE-post
+KUhE-pre <- pre-clause KUhE spaces?
+KUhE-post <- post-clause
+
+;         right terminator, NOI relative clauses 
+KUhO-clause <- KUhO-pre KUhO-post
+KUhO-pre <- pre-clause KUhO spaces?
+KUhO-post <- post-clause
+
+
+;         name descriptors 
+LA-clause <- LA-pre LA-post
+LA-pre <- pre-clause LA spaces?
+LA-post <- post-clause
+
+;         lerfu prefixes 
+LAU-clause <- LAU-pre LAU-post
+LAU-pre <- pre-clause LAU spaces?
+LAU-post <- post-clause
+
+;         sumti qualifiers 
+LAhE-clause <- LAhE-pre LAhE-post
+LAhE-pre <- pre-clause LAhE spaces?
+LAhE-post <- post-clause
+
+;         sumti descriptors 
+LE-clause <- LE-pre LE-post
+LE-pre <- pre-clause LE spaces?
+LE-post <- post-clause
+
+
+;         possibly ungrammatical text right quote 
+LEhU-clause <- LEhU-pre LEhU-post
+LEhU-pre <- pre-clause LEhU spaces?
+LEhU-post <- spaces?
+
+;         convert number to sumti 
+LI-clause <- LI-pre LI-post
+LI-pre <- pre-clause LI spaces?
+LI-post <- post-clause
+
+;         grammatical text right quote 
+LIhU-clause <- LIhU-pre LIhU-post
+LIhU-pre <- pre-clause LIhU spaces?
+LIhU-post <- post-clause
+
+;         elidable terminator for LI 
+LOhO-clause <- LOhO-pre LOhO-post
+LOhO-pre <- pre-clause LOhO spaces?
+LOhO-post <- post-clause
+
+;         possibly ungrammatical text left quote 
+LOhU-clause <- LOhU-pre LOhU-post
+LOhU-pre <- pre-clause LOhU spaces? (!LEhU any-word)* LEhU-clause spaces?
+LOhU-post <- post-clause
+
+;         grammatical text left quote 
+LU-clause <- LU-pre LU-post
+LU-pre <- pre-clause LU spaces?
+LU-post <- post-clause
+
+;         LAhE close delimiter 
+LUhU-clause <- LUhU-pre LUhU-post
+LUhU-pre <- pre-clause LUhU spaces?
+LUhU-post <- post-clause
+
+
+;         change MEX expressions to MEX operators 
+MAhO-clause <- MAhO-pre MAhO-post
+MAhO-pre <- pre-clause MAhO spaces?
+MAhO-post <- post-clause
+
+;         change numbers to utterance ordinals 
+MAI-clause <- MAI-pre MAI-post
+MAI-pre <- pre-clause MAI spaces?
+MAI-post <- post-clause
+
+;         converts a sumti into a tanru_unit 
+ME-clause <- ME-pre ME-post
+ME-pre <- pre-clause ME spaces?
+ME-post <- post-clause
+
+;         terminator for ME 
+MEhU-clause <- MEhU-pre MEhU-post
+MEhU-pre <- pre-clause MEhU spaces?
+MEhU-post <- post-clause
+
+;         change sumti to operand, inverse of LI 
+MOhE-clause <- MOhE-pre MOhE-post
+MOhE-pre <- pre-clause MOhE spaces?
+MOhE-post <- post-clause
+
+;         motion tense marker 
+MOhI-clause <- MOhI-pre MOhI-post
+MOhI-pre <- pre-clause MOhI spaces?
+MOhI-post <- post-clause
+
+;         change number to selbri 
+MOI-clause <- MOI-pre MOI-post
+MOI-pre <- pre-clause MOI spaces?
+MOI-post <- post-clause
+
+
+;         bridi negation  
+NA-clause <- NA-pre NA-post
+NA-pre <- pre-clause NA spaces?
+NA-post <- post-clause
+
+;         attached to words to negate them 
+NAI-clause <- NAI-pre NAI-post
+NAI-pre <- pre-clause NAI spaces?
+NAI-post <- post-clause
+
+;         scalar negation  
+NAhE-clause <- NAhE-pre NAhE-post
+NAhE-pre <- pre-clause NAhE spaces?
+NAhE-post <- post-clause
+
+;         change a selbri into an operator 
+NAhU-clause <- NAhU-pre NAhU-post
+NAhU-pre <- pre-clause NAhU spaces?
+NAhU-post <- post-clause
+
+;         change selbri to operand; inverse of MOI 
+NIhE-clause <- NIhE-pre NIhE-post
+NIhE-pre <- pre-clause NIhE spaces?
+NIhE-post <- post-clause
+
+;         new paragraph; change of subject 
+NIhO-clause <- sentence-sa* NIhO-pre NIhO-post
+NIhO-pre <- pre-clause NIhO spaces?
+NIhO-post <- su-clause* post-clause
+
+;         attaches a subordinate clause to a sumti 
+NOI-clause <- NOI-pre NOI-post
+NOI-pre <- pre-clause NOI spaces?
+NOI-post <- post-clause
+
+;         abstraction  
+NU-clause <- NU-pre NU-post
+NU-pre <- pre-clause NU spaces?
+NU-post <- post-clause
+
+;         change operator to selbri; inverse of MOhE 
+NUhA-clause <- NUhA-pre NUhA-post
+NUhA-pre <- pre-clause NUhA spaces?
+NUhA-post <- post-clause
+
+;         marks the start of a termset 
+NUhI-clause <- NUhI-pre NUhI-post
+NUhI-pre <- pre-clause NUhI spaces?
+NUhI-post <- post-clause
+
+;         marks the middle and end of a termset 
+NUhU-clause <- NUhU-pre NUhU-post
+NUhU-pre <- pre-clause NUhU spaces?
+NUhU-post <- post-clause
+
+
+;         numbers and numeric punctuation 
+PA-clause <- PA-pre PA-post
+PA-pre <- pre-clause PA spaces?
+PA-post <- post-clause
+
+;         afterthought termset connective prefix 
+PEhE-clause <- PEhE-pre PEhE-post
+PEhE-pre <- pre-clause PEhE spaces?
+PEhE-post <- post-clause
+
+;         forethought (Polish) flag 
+PEhO-clause <- PEhO-pre PEhO-post
+PEhO-pre <- pre-clause PEhO spaces?
+PEhO-post <- post-clause
+
+;         directions in time 
+PU-clause <- PU-pre PU-post
+PU-pre <- pre-clause PU spaces?
+PU-post <- post-clause
+
+
+;         flag for modified interpretation of GOhI 
+RAhO-clause <- RAhO-pre RAhO-post
+RAhO-pre <- pre-clause RAhO spaces?
+RAhO-post <- post-clause
+
+;         converts number to extensional tense 
+ROI-clause <- ROI-pre ROI-post
+ROI-pre <- pre-clause ROI spaces?
+ROI-post <- post-clause
+
+SA-clause <- SA-pre SA-post
+SA-pre <- pre-clause SA spaces?
+SA-post <- spaces?
+
+;         metalinguistic eraser to the beginning of
+
+;                                    the current utterance 
+
+;         conversions 
+SE-clause <- SE-pre SE-post
+SE-pre <- pre-clause SE spaces?
+SE-post <- post-clause
+
+;         metalinguistic bridi insert marker 
+SEI-clause <- SEI-pre SEI-post
+SEI-pre <- pre-clause SEI spaces?
+SEI-post <- post-clause
+
+;         metalinguistic bridi end marker 
+SEhU-clause <- SEhU-pre SEhU-post
+SEhU-pre <- pre-clause SEhU spaces?
+SEhU-post <- post-clause
+
+;         metalinguistic single word eraser 
+SI-clause <- spaces? SI spaces?
+
+;         reciprocal sumti marker 
+SOI-clause <- SOI-pre SOI-post
+SOI-pre <- pre-clause SOI spaces?
+SOI-post <- post-clause
+
+;         metalinguistic eraser of the entire text 
+SU-clause <- SU-pre SU-post
+SU-pre <- pre-clause SU spaces?
+SU-post <- post-clause
+
+
+;         tense interval properties 
+TAhE-clause <- TAhE-pre TAhE-post
+TAhE-pre <- pre-clause TAhE spaces?
+TAhE-post <- post-clause
+
+;         closing gap for MEX constructs 
+TEhU-clause <- TEhU-pre TEhU-post
+TEhU-pre <- pre-clause TEhU spaces?
+TEhU-post <- post-clause
+
+;         start compound lerfu 
+TEI-clause <- TEI-pre TEI-post
+TEI-pre <- pre-clause TEI spaces?
+TEI-post <- post-clause
+
+;         left discursive parenthesis 
+TO-clause <- TO-pre TO-post
+TO-pre <- pre-clause TO spaces?
+TO-post <- post-clause
+
+;         right discursive parenthesis 
+TOI-clause <- TOI-pre TOI-post
+TOI-pre <- pre-clause TOI spaces?
+TOI-post <- post-clause
+
+;         multiple utterance scope mark 
+TUhE-clause <- TUhE-pre TUhE-post
+TUhE-pre <- pre-clause TUhE spaces?
+TUhE-post <- su-clause* post-clause
+
+;         multiple utterance end scope mark 
+TUhU-clause <- TUhU-pre TUhU-post
+TUhU-pre <- pre-clause TUhU spaces?
+TUhU-post <- post-clause
+
+
+;         attitudinals, observationals, discursives 
+UI-clause <- UI-pre UI-post
+UI-pre <- pre-clause UI spaces?
+UI-post <- post-clause
+
+
+;         distance in space-time 
+VA-clause <- VA-pre VA-post
+VA-pre <- pre-clause VA spaces?
+VA-post <- post-clause
+
+;         end simple bridi or bridi-tail 
+VAU-clause <- VAU-pre VAU-post
+VAU-pre <- pre-clause VAU spaces?
+VAU-post <- post-clause
+
+;         left MEX bracket 
+VEI-clause <- VEI-pre VEI-post
+VEI-pre <- pre-clause VEI spaces?
+VEI-post <- post-clause
+
+;         right MEX bracket 
+VEhO-clause <- VEhO-pre VEhO-post
+VEhO-pre <- pre-clause VEhO spaces?
+VEhO-post <- post-clause
+
+;         MEX operator 
+VUhU-clause <- VUhU-pre VUhU-post
+VUhU-pre <- pre-clause VUhU spaces?
+VUhU-post <- post-clause
+
+;         space-time interval size 
+VEhA-clause <- VEhA-pre VEhA-post
+VEhA-pre <- pre-clause VEhA spaces?
+VEhA-post <- post-clause
+
+;         space-time dimensionality marker 
+VIhA-clause <- VIhA-pre VIhA-post
+VIhA-pre <- pre-clause VIhA spaces?
+VIhA-post <- post-clause
+VUhO-clause <- VUhO-pre VUhO-post
+VUhO-pre <- pre-clause VUhO spaces?
+VUhO-post <- post-clause
+
+; glue between logically connected sumti and relative clauses 
+
+
+;         subscripting operator 
+XI-clause <- XI-pre XI-post
+XI-pre <- pre-clause XI spaces?
+XI-post <- post-clause
+
+
+;         hesitation 
+; Very very special case.  Handled in the morphology section.
+; SPACE Y-clause <- spaces? Y spaces?
+
+
+;         event properties - inchoative, etc. 
+ZAhO-clause <- ZAhO-pre ZAhO-post
+ZAhO-pre <- pre-clause ZAhO spaces?
+ZAhO-post <- post-clause
+
+;         time interval size tense 
+ZEhA-clause <- ZEhA-pre ZEhA-post
+ZEhA-pre <- pre-clause ZEhA spaces?
+ZEhA-post <- post-clause
+
+;         lujvo glue 
+ZEI-clause <- ZEI-pre ZEI-post
+ZEI-pre <- pre-clause ZEI spaces?
+ZEI-post <- spaces?
+
+;         time distance tense 
+ZI-clause <- ZI-pre ZI-post
+ZI-pre <- pre-clause ZI spaces?
+ZI-post <- post-clause
+
+;         conjoins relative clauses 
+ZIhE-clause <- ZIhE-pre ZIhE-post
+ZIhE-pre <- pre-clause ZIhE spaces?
+ZIhE-post <- post-clause
+
+;         single word metalinguistic quote marker 
+ZO-clause <- ZO-pre ZO-post
+ZO-pre <- pre-clause ZO spaces? any-word spaces?
+ZO-post <- post-clause
+
+;         delimited quote marker 
+ZOI-clause <- ZOI-pre ZOI-post
+ZOI-pre <- pre-clause ZOI spaces? zoi-open zoi-word* zoi-close spaces?
+ZOI-post <- post-clause
+
+;         prenex terminator (not elidable) 
+ZOhU-clause <- ZOhU-pre ZOhU-post
+ZOhU-pre <- pre-clause ZOhU spaces?
+ZOhU-post <- post-clause
+
+
+;************************
+; MORPHOLOGY INTERFACE
+; This section handles the interface with the morphology. If you are not
+; interested in this particular implementation of the morphology, you can
+; ignore everything below this point and consider the above as the full
+; formal grammar with terminals BRIVLA, CMENE, CMAVO, any-word,
+; A, BAI, ..., ZOhU, zoi-open, zoi-word, zoi-close, spaces, dot-star and EOF.
+;************************
+
+; inner-word (the stuff inside BRIVLA=( ... ), for example) is an
+; evenly nested, arbitrary length sequence of foo=( ... ) tags with
+; stuff inside them.  Gotta snarf it all.
+NORATS inner-word <- space-char (!equals-char !space-char .)+ equals-char open-paren inner-word close-paren inner-word? / inner-word2
+NORATS inner-word2 <- !close-paren-char . inner-word2 / !close-paren-char . &space-char
+NORATS space-char <- ' '
+NORATS equals-char <- '='
+NORATS close-paren-char <- ')'
+NORATS open-paren <- "( "
+NORATS close-paren <- " ) "
+
+;         any single lexable Lojban words 
+any-word <- any-word-pre inner-word close-paren spaces?
+
+SPACE spaces <- (spaces-pre inner-word close-paren)*
+NORATS spaces-pre <- " spaces=( " / " initialSpaces=( "
+
+NORATS dot-star <- .*
+NORATS EOF <- !.
+
+zoi-open <- any-word-pre inner-word &{ myAssign( new String(innerWordSEP2.toString()) ) } close-paren
+
+zoi-word <- spaces? zoi-printable-pre inner-word &{ ! myCompare( startString, innerWordSEP3 ) } close-paren
+
+zoi-close <- spaces? any-word-pre inner-word &{ myCompare( startString, innerWordSEP3 ) } close-paren spaces?
+
+zoi-printable-pre <- any-word-pre / non-Lojban-word-pre
+
+any-word-pre <- CMAVO-word-pre / CMENE-word-pre / BRIVLA-word-pre
+
+known-cmavo-pre <- A-word-pre / BAI-word-pre / BAhE-word-pre / BE-word-pre / BEI-word-pre / BEhO-word-pre / BIhE-word-pre / BIhI-word-pre / BO-word-pre / BOI-word-pre / BU-word-pre / BY-word-pre / CAI-word-pre / CAhA-word-pre / CEI-word-pre / CEhE-word-pre / CO-word-pre / COI-word-pre / CU-word-pre / CUhE-word-pre / DAhO-word-pre / DOI-word-pre / DOhU-word-pre / FA-word-pre / FAhA-word-pre / FAhO-word-pre / FEhE-word-pre / FEhU-word-pre / FIhO-word-pre / FOI-word-pre / FUhA-word-pre / FUhE-word-pre / FUhO-word-pre / GA-word-pre / GAhO-word-pre / GEhU-word-pre / GI-word-pre / GIhA-word-pre / GOI-word-pre / GOhA-word-pre / GUhA-word-pre / I-word-pre / JA-word-pre / JAI-word-pre / JOI-word-pre / JOhI-word-pre / KE-word-pre / KEI-word-pre / KEhE-word-pre / KI-word-pre / KOhA-word-pre / KU-word-pre / KUhE-word-pre / KUhO-word-pre / LA-word-pre / LAU-word-pre / LAhE-word-pre / LE-word-pre / LEhU-word-pre / LI-word-pre / LIhU-word-pre / LOhO-word-pre / LOhU-word-pre / LU-word-pre / LUhU-word-pre / MAI-word-pre / MAhO-word-pre / ME-word-pre / MEhU-word-pre / MOI-word-pre / MOhE-word-pre / MOhI-word-pre / NA-word-pre / NAI-word-pre / NAhE-word-pre / NAhU-word-pre / NIhE-word-pre / NIhO-word-pre / NOI-word-pre / NU-word-pre / NUhA-word-pre / NUhI-word-pre / NUhU-word-pre / PA-word-pre / PEhE-word-pre / PEhO-word-pre / PU-word-pre / RAhO-word-pre / ROI-word-pre / SA-word-pre / SE-word-pre / SEI-word-pre / SEhU-word-pre / SI-word-pre / SOI-word-pre / SU-word-pre / TAhE-word-pre / TEI-word-pre / TEhU-word-pre / TO-word-pre / TOI-word-pre / TUhE-word-pre / TUhU-word-pre / UI-word-pre / VA-word-pre / VAU-word-pre / VEI-word-pre / VEhA-word-pre / VEhO-word-pre / VIhA-word-pre / VUhO-word-pre / VUhU-word-pre / XI-word-pre / ZAhO-word-pre / ZEI-word-pre / ZEhA-word-pre / ZI-word-pre / ZIhE-word-pre / ZO-word-pre / ZOI-word-pre / ZOhU-word-pre
+
+NORATS non-Lojban-word-pre <- " nonLojbanWord=( "
+
+NORATS CMAVO-word-pre <- " CMAVO=( " 
+NORATS CMAVO <- CMAVO-word-pre inner-word close-paren
+
+NORATS BRIVLA-word-pre <- " BRIVLA=( " 
+NORATS BRIVLA <- BRIVLA-word-pre inner-word close-paren
+
+NORATS CMENE-word-pre <- " CMENE=( " 
+NORATS CMENE <- CMENE-word-pre inner-word close-paren
+
+NORATS A <- A-word-pre inner-word close-paren close-paren
+NORATS A-word-pre <- " CMAVO=(  A=( "
+
+NORATS BAI <- BAI-word-pre inner-word close-paren close-paren
+NORATS BAI-word-pre <- " CMAVO=(  BAI=( "
+
+NORATS BAhE <- BAhE-word-pre inner-word close-paren close-paren
+NORATS BAhE-word-pre <- " CMAVO=(  BAhE=( "
+
+NORATS BE <- BE-word-pre inner-word close-paren close-paren
+NORATS BE-word-pre <- " CMAVO=(  BE=( "
+
+NORATS BEI <- BEI-word-pre inner-word close-paren close-paren
+NORATS BEI-word-pre <- " CMAVO=(  BEI=( "
+
+NORATS BEhO <- BEhO-word-pre inner-word close-paren close-paren
+NORATS BEhO-word-pre <- " CMAVO=(  BEhO=( "
+
+NORATS BIhE <- BIhE-word-pre inner-word close-paren close-paren
+NORATS BIhE-word-pre <- " CMAVO=(  BIhE=( "
+
+NORATS BIhI <- BIhI-word-pre inner-word close-paren close-paren
+NORATS BIhI-word-pre <- " CMAVO=(  BIhI=( "
+
+NORATS BO <- BO-word-pre inner-word close-paren close-paren
+NORATS BO-word-pre <- " CMAVO=(  BO=( "
+
+NORATS BOI <- BOI-word-pre inner-word close-paren close-paren
+NORATS BOI-word-pre <- " CMAVO=(  BOI=( "
+
+NORATS BU <- BU-word-pre inner-word close-paren close-paren
+NORATS BU-word-pre <- " CMAVO=(  BU=( "
+
+NORATS BY <- BY-word-pre inner-word close-paren close-paren
+NORATS BY-word-pre <- " CMAVO=(  BY=( "
+
+NORATS CAhA <- CAhA-word-pre inner-word close-paren close-paren
+NORATS CAhA-word-pre <- " CMAVO=(  CAhA=( "
+
+NORATS CAI <- CAI-word-pre inner-word close-paren close-paren
+NORATS CAI-word-pre <- " CMAVO=(  CAI=( "
+
+NORATS CEI <- CEI-word-pre inner-word close-paren close-paren
+NORATS CEI-word-pre <- " CMAVO=(  CEI=( "
+
+NORATS CEhE <- CEhE-word-pre inner-word close-paren close-paren
+NORATS CEhE-word-pre <- " CMAVO=(  CEhE=( "
+
+NORATS CO <- CO-word-pre inner-word close-paren close-paren
+NORATS CO-word-pre <- " CMAVO=(  CO=( "
+
+NORATS COI <- COI-word-pre inner-word close-paren close-paren
+NORATS COI-word-pre <- " CMAVO=(  COI=( "
+
+NORATS CU <- CU-word-pre inner-word close-paren close-paren
+NORATS CU-word-pre <- " CMAVO=(  CU=( "
+
+NORATS CUhE <- CUhE-word-pre inner-word close-paren close-paren
+NORATS CUhE-word-pre <- " CMAVO=(  CUhE=( "
+
+NORATS DAhO <- DAhO-word-pre inner-word close-paren close-paren
+NORATS DAhO-word-pre <- " CMAVO=(  DAhO=( "
+
+NORATS DOI <- DOI-word-pre inner-word close-paren close-paren
+NORATS DOI-word-pre <- " CMAVO=(  DOI=( "
+
+NORATS DOhU <- DOhU-word-pre inner-word close-paren close-paren
+NORATS DOhU-word-pre <- " CMAVO=(  DOhU=( "
+
+NORATS FA <- FA-word-pre inner-word close-paren close-paren
+NORATS FA-word-pre <- " CMAVO=(  FA=( "
+
+NORATS FAhA <- FAhA-word-pre inner-word close-paren close-paren
+NORATS FAhA-word-pre <- " CMAVO=(  FAhA=( "
+
+NORATS FAhO <- FAhO-word-pre inner-word close-paren close-paren
+NORATS FAhO-word-pre <- " CMAVO=(  FAhO=( "
+
+NORATS FEhE <- FEhE-word-pre inner-word close-paren close-paren
+NORATS FEhE-word-pre <- " CMAVO=(  FEhE=( "
+
+NORATS FEhU <- FEhU-word-pre inner-word close-paren close-paren
+NORATS FEhU-word-pre <- " CMAVO=(  FEhU=( "
+
+NORATS FIhO <- FIhO-word-pre inner-word close-paren close-paren
+NORATS FIhO-word-pre <- " CMAVO=(  FIhO=( "
+
+NORATS FOI <- FOI-word-pre inner-word close-paren close-paren
+NORATS FOI-word-pre <- " CMAVO=(  FOI=( "
+
+NORATS FUhA <- FUhA-word-pre inner-word close-paren close-paren
+NORATS FUhA-word-pre <- " CMAVO=(  FUhA=( "
+
+NORATS FUhE <- FUhE-word-pre inner-word close-paren close-paren
+NORATS FUhE-word-pre <- " CMAVO=(  FUhE=( "
+
+NORATS FUhO <- FUhO-word-pre inner-word close-paren close-paren
+NORATS FUhO-word-pre <- " CMAVO=(  FUhO=( "
+
+NORATS GA <- GA-word-pre inner-word close-paren close-paren
+NORATS GA-word-pre <- " CMAVO=(  GA=( "
+
+NORATS GAhO <- GAhO-word-pre inner-word close-paren close-paren
+NORATS GAhO-word-pre <- " CMAVO=(  GAhO=( "
+
+NORATS GEhU <- GEhU-word-pre inner-word close-paren close-paren
+NORATS GEhU-word-pre <- " CMAVO=(  GEhU=( "
+
+NORATS GI <- GI-word-pre inner-word close-paren close-paren
+NORATS GI-word-pre <- " CMAVO=(  GI=( "
+
+NORATS GIhA <- GIhA-word-pre inner-word close-paren close-paren
+NORATS GIhA-word-pre <- " CMAVO=(  GIhA=( "
+
+NORATS GOI <- GOI-word-pre inner-word close-paren close-paren
+NORATS GOI-word-pre <- " CMAVO=(  GOI=( "
+
+NORATS GOhA <- GOhA-word-pre inner-word close-paren close-paren
+NORATS GOhA-word-pre <- " CMAVO=(  GOhA=( "
+
+NORATS GUhA <- GUhA-word-pre inner-word close-paren close-paren
+NORATS GUhA-word-pre <- " CMAVO=(  GUhA=( "
+
+NORATS I <- I-word-pre inner-word close-paren close-paren
+NORATS I-word-pre <- " CMAVO=(  I=( "
+
+NORATS JA <- JA-word-pre inner-word close-paren close-paren
+NORATS JA-word-pre <- " CMAVO=(  JA=( "
+
+NORATS JAI <- JAI-word-pre inner-word close-paren close-paren
+NORATS JAI-word-pre <- " CMAVO=(  JAI=( "
+
+NORATS JOhI <- JOhI-word-pre inner-word close-paren close-paren
+NORATS JOhI-word-pre <- " CMAVO=(  JOhI=( "
+
+NORATS JOI <- JOI-word-pre inner-word close-paren close-paren
+NORATS JOI-word-pre <- " CMAVO=(  JOI=( "
+
+NORATS KE <- KE-word-pre inner-word close-paren close-paren
+NORATS KE-word-pre <- " CMAVO=(  KE=( "
+
+NORATS KEhE <- KEhE-word-pre inner-word close-paren close-paren
+NORATS KEhE-word-pre <- " CMAVO=(  KEhE=( "
+
+NORATS KEI <- KEI-word-pre inner-word close-paren close-paren
+NORATS KEI-word-pre <- " CMAVO=(  KEI=( "
+
+NORATS KI <- KI-word-pre inner-word close-paren close-paren
+NORATS KI-word-pre <- " CMAVO=(  KI=( "
+
+NORATS KOhA <- KOhA-word-pre inner-word close-paren close-paren
+NORATS KOhA-word-pre <- " CMAVO=(  KOhA=( "
+
+NORATS KU <- KU-word-pre inner-word close-paren close-paren
+NORATS KU-word-pre <- " CMAVO=(  KU=( "
+
+NORATS KUhE <- KUhE-word-pre inner-word close-paren close-paren
+NORATS KUhE-word-pre <- " CMAVO=(  KUhE=( "
+
+NORATS KUhO <- KUhO-word-pre inner-word close-paren close-paren
+NORATS KUhO-word-pre <- " CMAVO=(  KUhO=( "
+
+NORATS LA <- LA-word-pre inner-word close-paren close-paren
+NORATS LA-word-pre <- " CMAVO=(  LA=( "
+
+NORATS LAU <- LAU-word-pre inner-word close-paren close-paren
+NORATS LAU-word-pre <- " CMAVO=(  LAU=( "
+
+NORATS LAhE <- LAhE-word-pre inner-word close-paren close-paren
+NORATS LAhE-word-pre <- " CMAVO=(  LAhE=( "
+
+NORATS LE <- LE-word-pre inner-word close-paren close-paren
+NORATS LE-word-pre <- " CMAVO=(  LE=( "
+
+NORATS LEhU <- LEhU-word-pre inner-word close-paren close-paren
+NORATS LEhU-word-pre <- " CMAVO=(  LEhU=( "
+
+NORATS LI <- LI-word-pre inner-word close-paren close-paren
+NORATS LI-word-pre <- " CMAVO=(  LI=( "
+
+NORATS LIhU <- LIhU-word-pre inner-word close-paren close-paren
+NORATS LIhU-word-pre <- " CMAVO=(  LIhU=( "
+
+NORATS LOhO <- LOhO-word-pre inner-word close-paren close-paren
+NORATS LOhO-word-pre <- " CMAVO=(  LOhO=( "
+
+NORATS LOhU <- LOhU-word-pre inner-word close-paren close-paren
+NORATS LOhU-word-pre <- " CMAVO=(  LOhU=( "
+
+NORATS LU <- LU-word-pre inner-word close-paren close-paren
+NORATS LU-word-pre <- " CMAVO=(  LU=( "
+
+NORATS LUhU <- LUhU-word-pre inner-word close-paren close-paren
+NORATS LUhU-word-pre <- " CMAVO=(  LUhU=( "
+
+NORATS MAhO <- MAhO-word-pre inner-word close-paren close-paren
+NORATS MAhO-word-pre <- " CMAVO=(  MAhO=( "
+
+NORATS MAI <- MAI-word-pre inner-word close-paren close-paren
+NORATS MAI-word-pre <- " CMAVO=(  MAI=( "
+
+NORATS ME <- ME-word-pre inner-word close-paren close-paren
+NORATS ME-word-pre <- " CMAVO=(  ME=( "
+
+NORATS MEhU <- MEhU-word-pre inner-word close-paren close-paren
+NORATS MEhU-word-pre <- " CMAVO=(  MEhU=( "
+
+NORATS MOhE <- MOhE-word-pre inner-word close-paren close-paren
+NORATS MOhE-word-pre <- " CMAVO=(  MOhE=( "
+
+NORATS MOhI <- MOhI-word-pre inner-word close-paren close-paren
+NORATS MOhI-word-pre <- " CMAVO=(  MOhI=( "
+
+NORATS MOI <- MOI-word-pre inner-word close-paren close-paren
+NORATS MOI-word-pre <- " CMAVO=(  MOI=( "
+
+NORATS NA <- NA-word-pre inner-word close-paren close-paren
+NORATS NA-word-pre <- " CMAVO=(  NA=( "
+
+NORATS NAI <- NAI-word-pre inner-word close-paren close-paren
+NORATS NAI-word-pre <- " CMAVO=(  NAI=( "
+
+NORATS NAhE <- NAhE-word-pre inner-word close-paren close-paren
+NORATS NAhE-word-pre <- " CMAVO=(  NAhE=( "
+
+NORATS NAhU <- NAhU-word-pre inner-word close-paren close-paren
+NORATS NAhU-word-pre <- " CMAVO=(  NAhU=( "
+
+NORATS NIhE <- NIhE-word-pre inner-word close-paren close-paren
+NORATS NIhE-word-pre <- " CMAVO=(  NIhE=( "
+
+NORATS NIhO <- NIhO-word-pre inner-word close-paren close-paren
+NORATS NIhO-word-pre <- " CMAVO=(  NIhO=( "
+
+NORATS NOI <- NOI-word-pre inner-word close-paren close-paren
+NORATS NOI-word-pre <- " CMAVO=(  NOI=( "
+
+NORATS NU <- NU-word-pre inner-word close-paren close-paren
+NORATS NU-word-pre <- " CMAVO=(  NU=( "
+
+NORATS NUhA <- NUhA-word-pre inner-word close-paren close-paren
+NORATS NUhA-word-pre <- " CMAVO=(  NUhA=( "
+
+NORATS NUhI <- NUhI-word-pre inner-word close-paren close-paren
+NORATS NUhI-word-pre <- " CMAVO=(  NUhI=( "
+
+NORATS NUhU <- NUhU-word-pre inner-word close-paren close-paren
+NORATS NUhU-word-pre <- " CMAVO=(  NUhU=( "
+
+NORATS PA <- PA-word-pre inner-word close-paren close-paren
+NORATS PA-word-pre <- " CMAVO=(  PA=( "
+
+NORATS PEhE <- PEhE-word-pre inner-word close-paren close-paren
+NORATS PEhE-word-pre <- " CMAVO=(  PEhE=( "
+
+NORATS PEhO <- PEhO-word-pre inner-word close-paren close-paren
+NORATS PEhO-word-pre <- " CMAVO=(  PEhO=( "
+
+NORATS PU <- PU-word-pre inner-word close-paren close-paren
+NORATS PU-word-pre <- " CMAVO=(  PU=( "
+
+NORATS RAhO <- RAhO-word-pre inner-word close-paren close-paren
+NORATS RAhO-word-pre <- " CMAVO=(  RAhO=( "
+
+NORATS ROI <- ROI-word-pre inner-word close-paren close-paren
+NORATS ROI-word-pre <- " CMAVO=(  ROI=( "
+
+NORATS SA <- SA-word-pre inner-word close-paren close-paren
+NORATS SA-word-pre <- " CMAVO=(  SA=( "
+
+NORATS SE <- SE-word-pre inner-word close-paren close-paren
+NORATS SE-word-pre <- " CMAVO=(  SE=( "
+
+NORATS SEI <- SEI-word-pre inner-word close-paren close-paren
+NORATS SEI-word-pre <- " CMAVO=(  SEI=( "
+
+NORATS SEhU <- SEhU-word-pre inner-word close-paren close-paren
+NORATS SEhU-word-pre <- " CMAVO=(  SEhU=( "
+
+NORATS SI <- SI-word-pre inner-word close-paren close-paren
+NORATS SI-word-pre <- " CMAVO=(  SI=( "
+
+NORATS SOI <- SOI-word-pre inner-word close-paren close-paren
+NORATS SOI-word-pre <- " CMAVO=(  SOI=( "
+
+NORATS SU <- SU-word-pre inner-word close-paren close-paren
+NORATS SU-word-pre <- " CMAVO=(  SU=( "
+
+NORATS TAhE <- TAhE-word-pre inner-word close-paren close-paren
+NORATS TAhE-word-pre <- " CMAVO=(  TAhE=( "
+
+NORATS TEhU <- TEhU-word-pre inner-word close-paren close-paren
+NORATS TEhU-word-pre <- " CMAVO=(  TEhU=( "
+
+NORATS TEI <- TEI-word-pre inner-word close-paren close-paren
+NORATS TEI-word-pre <- " CMAVO=(  TEI=( "
+
+NORATS TO <- TO-word-pre inner-word close-paren close-paren
+NORATS TO-word-pre <- " CMAVO=(  TO=( "
+
+NORATS TOI <- TOI-word-pre inner-word close-paren close-paren
+NORATS TOI-word-pre <- " CMAVO=(  TOI=( "
+
+NORATS TUhE <- TUhE-word-pre inner-word close-paren close-paren
+NORATS TUhE-word-pre <- " CMAVO=(  TUhE=( "
+
+NORATS TUhU <- TUhU-word-pre inner-word close-paren close-paren
+NORATS TUhU-word-pre <- " CMAVO=(  TUhU=( "
+
+NORATS UI <- UI-word-pre inner-word close-paren close-paren
+NORATS UI-word-pre <- " CMAVO=(  UI=( "
+
+NORATS VA <- VA-word-pre inner-word close-paren close-paren
+NORATS VA-word-pre <- " CMAVO=(  VA=( "
+
+NORATS VAU <- VAU-word-pre inner-word close-paren close-paren
+NORATS VAU-word-pre <- " CMAVO=(  VAU=( "
+
+NORATS VEI <- VEI-word-pre inner-word close-paren close-paren
+NORATS VEI-word-pre <- " CMAVO=(  VEI=( "
+
+NORATS VEhO <- VEhO-word-pre inner-word close-paren close-paren
+NORATS VEhO-word-pre <- " CMAVO=(  VEhO=( "
+
+NORATS VUhU <- VUhU-word-pre inner-word close-paren close-paren
+NORATS VUhU-word-pre <- " CMAVO=(  VUhU=( "
+
+NORATS VEhA <- VEhA-word-pre inner-word close-paren close-paren
+NORATS VEhA-word-pre <- " CMAVO=(  VEhA=( "
+
+NORATS VIhA <- VIhA-word-pre inner-word close-paren close-paren
+NORATS VIhA-word-pre <- " CMAVO=(  VIhA=( "
+
+NORATS VUhO <- VUhO-word-pre inner-word close-paren close-paren
+NORATS VUhO-word-pre <- " CMAVO=(  VUhO=( "
+
+NORATS XI <- XI-word-pre inner-word close-paren close-paren
+NORATS XI-word-pre <- " CMAVO=(  XI=( "
+
+; NORATS Y <- Y-word-pre inner-word close-paren close-paren
+; NORATS Y-word-pre <- " CMAVO=(  Y=( "
+
+NORATS ZAhO <- ZAhO-word-pre inner-word close-paren close-paren
+NORATS ZAhO-word-pre <- " CMAVO=(  ZAhO=( "
+
+NORATS ZEhA <- ZEhA-word-pre inner-word close-paren close-paren
+NORATS ZEhA-word-pre <- " CMAVO=(  ZEhA=( "
+
+NORATS ZEI <- ZEI-word-pre inner-word close-paren close-paren
+NORATS ZEI-word-pre <- " CMAVO=(  ZEI=( "
+
+NORATS ZI <- ZI-word-pre inner-word close-paren close-paren
+NORATS ZI-word-pre <- " CMAVO=(  ZI=( "
+
+NORATS ZIhE <- ZIhE-word-pre inner-word close-paren close-paren
+NORATS ZIhE-word-pre <- " CMAVO=(  ZIhE=( "
+
+NORATS ZO <- ZO-word-pre inner-word close-paren close-paren
+NORATS ZO-word-pre <- " CMAVO=(  ZO=( "
+
+NORATS ZOI <- ZOI-word-pre inner-word close-paren close-paren
+NORATS ZOI-word-pre <- " CMAVO=(  ZOI=( "
+
+NORATS ZOhU <- ZOhU-word-pre inner-word close-paren close-paren
+NORATS ZOhU-word-pre <- " CMAVO=(  ZOhU=( "

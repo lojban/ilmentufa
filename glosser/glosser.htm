@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><script type="text/javascript">window["_gaUserPrefs"] = { ioo : function() { return true; } }</script><head><meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+  <title>Lojban parser</title>
+  <link type="text/css" href="layout.css" rel="stylesheet">
+  <link href="bootstrap.css" rel="stylesheet">
+  <script src="jquery.js"></script><style type="text/css"></style>
+  <script src="interface.js"></script>
+  <script src="tree.js"></script>
+  <script src="gismudata.js"></script>
+  <script src="../camxes-exp.js"></script>
+  <script src="transcriber.js"></script>
+  <script src="translationselbridata.js"></script>
+  <script src="bootstrap.js"></script>
+ </head>
+ <body>
+  <div class="container">
+   <div class="row">
+    <div class="span12">
+     <h3>Lojban parser <small>(text structure analyser). Uses <a href="http://mw.lojban.org/index.php?title=La_Bangu:_ilmentufa">camxes.js engine adapted by Ilmen</a>, frontend by  la .uilym.</small></h3>
+    </div>
+   </div>
+   <div class="row">
+    <div class="span12">
+     <form onsubmit="parse(); return false;">
+      <fieldset>
+       <!--legend>Type any Lojban text in the following textarea and press "Parse".</legend-->
+       <textarea id="lojban-text-area" rows="5" placeholder='Type any Lojban text in the following textarea and press "Parse".' style="width: 100%;"></textarea>
+       <button class="btn btn-primary" onclick="parse(); return false;"><i class="icon-search icon-white"></i> Parse</button>
+       <a href="glosser.htm#output-options-modal" class="btn" data-toggle="modal"><i class="icon-wrench"></i> Output options</a>
+        <div id="output-options-modal" class="modal hide fade" tabindex="-1" role="dialog">
+        <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+         <h3>Output options</h3>
+        </div>
+        <div class="modal-body">
+         <p>The following options influence the way the parse output is shown.</p>
+         <legend>Mode</legend>
+         In which Lojban mode do you want to see the output?
+         <div class="btn-toolbar">
+          <div class="btn-group">
+           <a class="btn highlight-button active" id="latin-button" onclick="$(&#39;.highlight-button&#39;).removeClass(&#39;active&#39;); $(&#39;#latin-button&#39;).addClass(&#39;active&#39;);">Latin</a>
+           <a class="btn highlight-button" id="cyrillic-button" onclick="$(&#39;.highlight-button&#39;).removeClass(&#39;active&#39;); $(&#39;#cyrillic-button&#39;).addClass(&#39;active&#39;);">Cyrillic</a>
+           <a class="btn highlight-button" id="tengwar-button" onclick="$(&#39;.highlight-button&#39;).removeClass(&#39;active&#39;); $(&#39;#tengwar-button&#39;).addClass(&#39;active&#39;);">Tengwar</a>
+           <a class="btn highlight-button" id="hiragana-button" onclick="$(&#39;.highlight-button&#39;).removeClass(&#39;active&#39;); $(&#39;#hiragana-button&#39;).addClass(&#39;active&#39;);">Hiragana</a>
+          </div>
+         </div>
+         <legend>Periods</legend>
+         Which rule should be applied for adding periods to words? <b>(Not working yet...)</b>
+         <div class="btn-toolbar">
+          <div class="btn-group">
+           <a class="btn dots-button" id="nodots-button" onclick="$(&#39;.dots-button&#39;).removeClass(&#39;active&#39;); $(&#39;#nodots-button&#39;).addClass(&#39;active&#39;);">None</a>
+           <a class="btn dots-button active" id="traditionaldots-button" onclick="$(&#39;.dots-button&#39;).removeClass(&#39;active&#39;); $(&#39;#traditionaldots-button&#39;).addClass(&#39;active&#39;);">Traditional</a>
+           <a class="btn dots-button" id="dotside-button" onclick="$(&#39;.dots-button&#39;).removeClass(&#39;active&#39;); $(&#39;#dotside-button&#39;).addClass(&#39;active&#39;);">Dotside</a>
+          </div>
+         </div>
+        </div>
+        <div class="modal-footer">
+         <a href="glosser.htm#" data-dismiss="modal" class="btn btn-primary"><i class="icon icon-ok icon-white"></i> Save and close</a>
+        </div>
+        </div>
+      </fieldset></form></div>
+     
+    
+   </div>
+   <div class="row">
+    <div id="result-row" class="span12" style="display: none;">
+     <legend>Result <small><span id="time-label"></span></small></legend>
+     <ul class="nav nav-tabs">
+      <li class="active"><a id="parse-result-highlighted-tab" href="glosser.htm#parse-result-highlighted" data-toggle="tab">Highlighted</a></li>
+      <li><a id="parse-result-raw-tab" href="glosser.htm#parse-result-raw" data-toggle="tab">Raw tree</a></li>
+      <li><a id="parse-result-tree-tab" href="glosser.htm#parse-result-tree" data-toggle="tab">Parse tree</a></li>
+      <li><a id="parse-result-simplified-tab" href="glosser.htm#parse-result-simplified" data-toggle="tab">Simplified tree</a></li>
+      <li><a id="parse-result-boxes-tab" href="glosser.htm#parse-result-boxes" data-toggle="tab">Boxes</a></li>
+      <li><a id="parse-result-glossing-tab" href="glosser.htm#parse-result-glossing" data-toggle="tab">Glosses</a></li>
+     </ul>
+     <div class="tab-content">
+      <div id="parse-result-highlighted" class="tab-pane active in fade"><i>Here, the sentence will be shown with highlighting...</i></div>
+      <div id="parse-result-raw" class="tab-pane fade"><i>Here, the raw parse output will be shown...</i></div>
+      <div id="parse-result-tree" class="tab-pane fade"><i>Here, the parse result will be shown as a tree...</i></div>
+      <div id="parse-result-simplified" class="tab-pane fade"><i>Here, the parse result will be shown as a simplified tree...</i></div>
+      <div id="parse-result-boxes" class="tab-pane fade"><i>Here, the parse result will be shown as a series of nested boxes (not implemented yet)...</i></div>
+      <div id="parse-result-glossing" class="tab-pane fade"><i>Here, a gloss of the individual words will appear...</i></div>
+     </div>
+    </div>
+   </div>
+  </div>
+ 
+</body></html>

@@ -1,0 +1,154 @@
+1) implementation of foretought BE-clause
+• {lo be mi broda} now parses.
+
+2) A/JA/JOI merge, gijek implementation
+• {brode gi je brodo} now parses.
+• {brode na gi joi nai brodo} now parses.
+• {na je nai gi mi klama gi mi citka} now parses.
+• {broda gi .a brode .e brodo} now parses.
+
+3) merging ZIhE with JA/JOI
+• {da po'u do je nai poi drata} now parses.
+
+4) GI TAG BO (suggested by tsani; implemented by selpa'i)
+• {mi klama lo zarci gi mu'i bo .ei cpacu lo cidja} now parses.
+
+5) brivla / cmevla merge
+• {lo .cmevlas. broda ku co'e} now parses.
+• {la .cmevlas. broda ku} now parses.
+• {la .cmevlas. ku} now parses.
+
+6) ZOhOI and MEhOI implemented.
+
+7) NAhE BO SUMTI  → NAhE SUMTI  (the bo is no longer necessary)
+    (So far it has been only implemented outside MEX.)
+• {na'e mi broda} now parses.
+
+8) Recycling SOI (implementation of the new SOI).
+
+9) TAG grammar simplification + assimilation of FA into TAG
+• {tavla fi je fo lo jbobau} and {.i se fe bo ko'a broda} now parses.
+
+10) Add of a digit preprocessing (e.g. 3→ci, 4→vo) and a [diacritic → upper case] preprocessing.
+
+11) NAI/UI merge.
+
+12) ZOI now fully implemented.
+
+13) Experimental change from Tsani: empty BE clause + enabling linkargs before tanru_unit_1.
+• {be be broda} now parses.
+• {jai be broda} now parses.
+
+14) Changes in VUhO's grammar: now the following relative clause is optional, and if present, adding a trailing JOI+SUMTI is now allowed.
+• {mi je do vu'o .ei broda} now parses.
+• {mi je do vu'o noi broda joi ko'a} now parses.
+
+15) Allowing JA to play the same role as GIhA (yes, this is possible!)
+• {mi klama vau je sanga} is now equivalent to {mi klama gi je sanga} and {mi klama gi'e sanga}
+• {mi klama do je sanga} is now equivalent to {mi klama do gi je sanga} and {mi klama do gi'e sanga}
+• now {mi klama lo pendo ku je sanga} = {mi klama lo pendo gi je sanga} = {mi klama lo pendo gi'e sanga}
+
+16) Allowing CU without bridi-head, so that it is now a mere main-selbri prefix, and not anymore a "bridi-head terminator"
+• {fi'i lo vitke cu se pluka .a'o} now parses.
+• {sei kucli cu slabu xu do} now parses.
+
+17) Elided terminators are now shown in upper case in the parser's output.
+
+18) NOhOI–KUhOI now implemented.
+• {do sanga no'oi pluka mi} (= "you're singing, which is pleasant to me") now parses.
+
+======
+
+2013-11-07: Replaced _node() calls with _node2() within several *_clause productions (e.g. VAU_clause), fixing a bug in the original camxes.js.peg, whereby indicators (e.g. UI_clause) didn't show up in the output when following such productions. We should fix this in the original Camxes too. :)
+
+2013-12-27: Empty prenexes allowed.
+
+2013-12-27: Minor fix in gihek_1 (thanks to Selpa'i)
+
+2013-12-27: {uy} and {iy} added to BY (requested by Selpa'i)
+
+2013-12-27: Cleanup of camxes_postprocessor.js and output modes (minimalistic modes renamed to "prettified" and deletion of fa'orma'o modes).
+
+2013-12-28: Add of {ko'oi} and {si'au} to UI.
+
+======
+
+2014-01-13:  Term grammar changed so that tags immediately followed by a selbri become part thereof.
+This behavior is more in accordande with that of Jbofi'e, except that in Jbofi'e, terms within the bridi-tail of a subordinate bridi are handled differently so that a trailing tag can't be stolen from the subordinate clause by the following selbri, i.e. {lo nu broda pu brode} parses as {lo nu broda pu (ku) (kei) (ku) (cu) brode} in Jbofi'e, whereas it currently parses as {lo nu broda (kei) (ku) (cu) pu brode} in Camxes-Exp. Copying Jbofi'e's behavior in this regard would necessitate further tinkering and a significantly increased complexity in terms and termset grammars, and the resulting twofold handling of terms is probably not as intuitive as unconditional absorbtion into selbri anyway.
+
+2014-01-13:  Allowing the pattern {TAG TAGTERM JA TAG TAGTERM}: {ba ko'a je na ku} now parses.
+
+2014-01-13:  Minor node naming mistake fixed (PU_clause was misnamed "PA_clause" in the output of the original Camxes).
+
+======
+
+• 2014-01-26: A few node naming mistakes fixed.
+• Fix: selbri tcita before gek_sentence (fix also added to the standard version of the grammar).
+• Implementation of a change by Selpa'i on the "number" production ( of whose purpose I don't recall :p ).
+• Allowing NA sequences in sentence fragments (now {.i na ja'a .i} parses).
+• 2014-03-19: Implementation of JACU bridi tail connection (a new alternative to GIhA proposed by Selpa'i).
+• Implementation of forethought relative clause connections (both on NOI and NOhOI). Now {lo plise ge noi se citka gi poi xunre} parses.
+• Implementation of FIhOI-FIhAU (bridi —adverbial— relative clause).
+• 2014-04-02: Tag sequences fixed, so that {lo prenu pe pu zi} has {pu zi} treated back as a single term.
+
+======
+======
+
+140403:	Fix in JACU
+140404:	Fixing {JA TAG bo cu} - Thank you Selpahi!
+140428:	Making bare mex a legal quantifier (without vei); BO optional in NAhE+BO+operand
+	Implementation of GAJA
+	gaJA implemented; previous change in _quantifier_ reverted.
+140501:	The "gek-subsentence selbri tcita fix" was breaking {tag gi... gi...}, so I removed it.
+140513:	Allowing semi-vowels after diphthongs
+140518:	Adding cmavo - xai xo'o xoi xu'e
+140529:	Allowing NA without KU as a term
+140626: Update camxes morphology to v119 (October 2009)
+	Adding the missing most frequent experimental cmavo.
+	Merging FIhOI and new-SOI.
+	Fixing NA selbritcita, plus allowing FREE within NAKU.
+140628: Allowing {lo mi .e do broda}.
+140630: The experimental change for allowing {lo mi .e do broda} is breaking the grammar ( {lo pa broda} doesn't parse anymore ), so I'm reverting this change.
+140718: [patch from laMudri for the preprocessor] "ʃɛʒə" => "cejy" and related letters
+140815: lagleki: {mi'ai} added
+140816: Fixes: #1 in camxes-exp, the tag simplification resulted in VIhA being ungrammatical; #2 fixing an ordered choice mistake in space_interval, as well as simplifying statement_2 (standard camxes); Thanks alanpost. :)
+	Folding two orded choices into one in sumti_tail_1 (Thanks alanpost)
+	Combining two ordered choices into one in space_interval, plus a further fix of VIhA_clause in the same production (Thanks alanpost).
+140820: Fix: {gau} was broken by the experimental gaJA connective. Postproc modified to render the ga_word selmaho properly.
+	Fixing the node outputs of Y and ybu.
+140906: camxes-exp: Disallowing ViiV and VuuV vowel sequences.
+140926: Adding experimental cmavo {sa'ei}, {mu'ei}, {poi'i} and {kai'u} to camxes-exp.
+	Implementing LOhOI-KUhAU in camxes-exp.
+	Fixing kai'u
+141009: Fixing ku-less NA adverbial: a NA before a connective shouldn't be treated as an adverbial: it's part of the connective. :)
+141017: Fix in JACU: {brode ja cu brodo vau mi} was broken.
+141018: Fixing {lo me li pa moi} and reverting alanpost's optimization of the sumti_tail_1 production.
+	MAJOR CHANGE: MEX SIMPLIFICATION IMPLEMENTED (Thank you Selpahi!)
+	Camxes-exp: removing the experimental code for the internal grammar of quantifiers.
+141026: Camxes-std: Fixing {vi bai broda} which was broken by the selbritcita absorbtion rules.
+141030: Camxes-exp fix: The node names of bridi_tail_t1 and bridi_tail_t2 were wrong.
+141106: CAMXES FIX: fu'ivla rafsi stress (thank you Xorxes!)
+141223: Change "text" rule from node() to node_nonempty() to fix TO parsing (also in camxes-std)
+142512: t o h a i / v o h a i / x o h a i / s u h e i / s u h a i  added
+
+======
+
+150105: ban CGV strings anywhere per BPFK decision (http://mw.lojban.org/papri/BPFK_Section:_Ban_on_consonant-glide-vowel_strings )
+150107: fix slinkuhi detection in extended rafsi (https://groups.google.com/forum/#!msg/bpfk-list/P0YKLOBDvNY/6l6LXBXb81sJ )
+150116: (off only) show elided FEhU (this only included the source fix, not the compiled camxes.js)
+150131-150201: (exp only) add lo'ai sa'ai le'ai as lo'u-like free modifier
+150204: insert y into voiced-voiceless clusters (preprocessor)
+150219: (exp only) add cmavo: CAI (mau'i, dau'i, me'ai), COI (a'oi), KE (pi'ai), PA (xei), UI (fu'au, a'ei), XI (te'ai)
+150220: convert · to . (preprocessor)
+150324: complete the FEhU fix from 150116
+150325-150506: various additions to the grammar, later removed from here and spun off as altatufa (http://github.com/lagleki/glekitufa ):
+	* sentences and subsentences without selbri
+	* postpositions
+	* split nouns (fa ti fa je ta, fa ti fa noi nei)
+	* suffixed articles
+	* {ze'ei}
+	* sumti place detection
+	Some of these also survived into morfologi (https://github.com/mezohe/ilmentufa/tree/morfologi )
+150525: (off and exp) update to BPFK morphology 137 (allow glides after diphthongs and rafsi ending in Gy), and fix stressed {cmavrfy}-shaped rafsi
+		(exp only) fix {to'e TAG SELBRI} (parse as selbritcita, not sumti), allow {cu TERMS SELBRI} 
+			(see http://mw.lojban.org/papri/nu_curmi_lo_nu_lo_sumti_cu_jbini_zo_cu_joi_lo_selbri )

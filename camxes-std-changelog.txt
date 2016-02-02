@@ -1,0 +1,25 @@
+# CHANGELOG SINCE MASATO HAGIWARA'S VERSION
+
+> Javascript node naming fixes
+> _node -> _node2 fixes in *_clause productions
+> Rename every occurences of "cmene" to "cmevla"
+> Termset expr:() fix
+===
+> Implementation of ZOI fix
+> Show elided terminators
+> selbri tcita fix
+! fix: selbri tcita before gek_sentence  // partially removed
+===
+140626: Update camxes morphology to v119 (October 2009)
+140816: Fixing an ordered choice mistake in space_interval, as well as simplifying statement_2 (standard camxes); Thanks alanpost. :)
+	Folding two orded choices into one in sumti_tail_1 (Thanks alanpost)
+	Combining two ordered choices into one in space_interval, plus a further fix of VIhA_clause in the same production (Thanks alanpost).
+140820: Fixing the node outputs of Y and ybu.
+141018: Camxes-std: reverting alanpost's optimization of the sumti_tail_1 production.
+141106: CAMXES FIX: fu'ivla rafsi stress (thank you Xorxes!)
+141223: Change "text" rule from node() to node_nonempty() to fix TO parsing
+
+
+# TODO:
+zoi func :: alert -> throw
+

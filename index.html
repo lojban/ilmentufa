@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>la ilmentufa</title>
+  <meta name="description" content="">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">la ilmentufa</h1>
+    </header>
+    <div id="container">
+      <p class="tagline"></p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/lojban/ilmentufa" class="code">View la ilmentufa on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+
+<p>'la ilmentufa' is a syntactical and not yet semantical parser for the Lojban language.</p>
+
+<h3>Available versions</h3>
+<p><a href="./camxes.html">la camxes, a version closer to the official grammar</a></p>
+<p><a href="http://guskant.github.io/gerna_cipra/maltufa-1.1.html">la maltufa, another parser trying to implement the official grammar</a></p>
+<p><a href="./camxes-exp.html">la camxes, an experimental unofficial grammar version</a></p>
+
+<h3>Requirements</h3>
+
+For generating a PEGJS grammar engine from its PEG grammar file, as well as for running the IRC bot interfaces, you need to have Node.js installed on your machine.<br/>
+
+For generating PEGJS engine, you may need to get the Node.js module 'pegjs'. For running the IRC bots, you may need to get the Node.js module 'irc'.<br/>
+
+However, as the necessary node_modules are already included in this project, I think you'll probably not have to download any of the aforementioned modules. ;)<br/>
+
+<h3>Building a PEGJS engine</h3>
+
+After having entered the ilmentufa directory, run the following command:<br/>
+
+$ node [builder-filename]<br/>
+
+For example, "node camxes-builder" for building the standard grammar engine or "node camxes-exp-builder" for experimental grammar.<br/>
+
+Now, the grammar engine should have been created/updated, and be ready for use. :)<br/>
+
+<h3>Running the IRC bots</h3>
+
+Nothing easier; after having entered the ilmentufa directory, run the command "node ircbot/camxes-bot" or "node ircbot/cipra-bot" (the latter is for the experimental grammar). The list of the channels joined by the bot can be found and edited within the bot script.<br/>
+
+</body>
+</html>

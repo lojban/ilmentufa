@@ -1,0 +1,188 @@
+body, textarea {
+    font-family: sans-serif !important;
+}
+
+span.translation {
+    color: #aaaaaa;
+    font-style: italic;
+}
+
+li.implicit {
+    color: #aaaaaa;
+    /* display: none; */
+}
+
+.error-marker {
+    position: relative;
+    top: 6pt;
+    margin-right: -6px;
+}
+
+.error-sentence {
+    text-align: center;
+    font-style: italic;
+}
+
+#parse-result {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.lojban-separator {
+    color: #aaaaaa;
+}
+
+.lojban-selbri {
+    color: #6699cc;
+    font-weight: bold;
+}
+
+.lojban-sumti1 {
+    color: #dd3322;
+}
+
+.lojban-sumti2 {
+    color: #cc5522;
+}
+
+.lojban-sumti3 {
+    color: #bb7722;
+}
+
+.lojban-sumti4 {
+    color: #aa9922;
+}
+
+.lojban-sumti5 {
+    color: #99bb22;
+}
+
+.lojban-sumti6 {
+    color: #88dd22;
+}
+
+.lojban-modal {
+    color: #339944;
+}
+
+.lojban-prenex {
+    color: #2288aa;
+}
+
+.lojban-vocative {
+    color: #8822aa;
+}
+
+.lojban-indicator {
+    color: #446699;
+}
+
+.lojban-nesting {
+    transition: top 0.2s, box-shadow 0.2s;
+}
+
+.lojban-nesting:hover {
+    border-radius: 3px;
+    box-shadow: rgba(64, 128, 255, 0.4) 0px 0px 4px 0px;
+}
+
+.lojban-error {
+    background-color: rgba(255, 0, 0, 0.2);
+    border-radius: 3px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 3px 3px;
+    padding: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+/* Translations */
+.alternative {
+    color: #6699cc;
+    display: none;
+}
+
+.tengwar-highlighting {
+    font-family: "Tengwar Telcontar", "Tengwar Formal";
+    font-size: 110%;
+}
+
+.tengwar-highlighting .lojban-error {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+/* Boxes */
+#parse-result-boxes {
+    overflow-x: scroll;
+}
+
+.box {
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 4px;
+    padding: 2px;
+    border: 2px black solid;
+    white-space: nowrap;
+}
+
+.box.box-sentence {
+    background: #aaccee;
+}
+
+.box.box-sumti {
+    background: #f099aa;
+}
+
+.box.box-sumti1 {
+    background: #f099aa;
+}
+
+.box.box-sumti2 {
+    background: #e8aaaa;
+}
+
+.box.box-sumti3 {
+    background: #e0bbaa;
+}
+
+.box.box-sumti4 {
+    background: #d8ccaa;
+}
+
+.box.box-sumti5 {
+    background: #d0ddaa;
+}
+
+.box.box-sumti6 {
+    background: #c8eeaa;
+}
+
+.box.box-modal {
+    background: #88cc99;
+}
+
+.box.box-selbri {
+    background: #ccaadd;
+}
+
+.box.box-prenex {
+    background: #88bbdd;
+}
+
+.box.box-terminal {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+.box.box-not-shown {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+.box span.translation {
+    color: black;
+    font-style: italic;
+}

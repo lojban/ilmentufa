@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<body>
+<meta charset='utf-8' />
+
+<span style="font: 15px arial, sans-serif;">Type any Lojban text in the following textarea. The result will be parsed as you type:</span>
+<br /><br />
+
+<form id="form1" name="form1" method="post" action="" style="width:100%">
+  <textarea id="input_textarea" style="width:100%" rows="8" autofocus></textarea>
+  <br />
+  <span style="font: 15px arial, sans-serif;">Output mode: </span>
+  <select id="optlist" onChange="run_camxes()">
+    <option>Raw output</option>
+    <option>Condensed</option>
+    <option id="default">Prettified</option>
+    <option>Prettified + selmaho</option>
+    <option>Prettified + sm ext</option>
+    <option>Prettified --fm</option>
+    <option>Prettified --fm + selmaho</option>
+    <option>Prettified --fm + sm ext</option>
+  </select>
+  <span style="padding-left: 32px; text-align: right; font-size: 12px;">
+    <a href="camxes-exp.js.peg" target="_blank">[ Grammar file ]</a>
+  </span>
+  <span style="padding-left: 24px; text-align: right; font-size: 12px;">
+    <a href="camxes.html">[ Switch to standard grammar ]</a>
+  </span>
+</form>
+
+<div style="display:block; overflow: scroll; max-height:24em; border: solid 1px; padding: 10px; background-color: #DDDDFF;"
+     height="24em">
+  <pre style="white-space: pre-wrap;"><code id="parse_result" width="100%" height="100%"> </code></pre>
+</div>
+
+<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="camxes-exp.js"></script>
+<script type="text/javascript" src="camxes_preproc.js"></script>
+<script type="text/javascript" src="camxes_postproc.js"></script>
+
+<script>
+document.getElementById("default").defaultSelected = true;
+
+/*
+ *  Binding the function run_camxes() to keyup event on demo_textarea by using jQuery
+ */
+$('#input_textarea').bind( "keyup",
+  function(e) {
+    run_camxes();
+  } );
+
+function run_camxes() {
+	try {
+	  var input = $('#input_textarea').val();
+	  input = camxes_preprocessing(input);
+      var result = camxes.parse(input);
+    } catch (e) {
+      $('#parse_result').text( e.toString() );
+      return;
+    }
+    var result_str = JSON.stringify(result, undefined, 2);
+	/* We get the output mode selected in the combobox */
+	var mode = document.getElementById("optlist").selectedIndex;
+	/* Postprocessing — if mode == 0, the below function won't modify camxes' output */
+	result_str = camxes_postprocessing(result_str, mode);  // @camxes_postproc.js
+	/* Retrieve the result */
+    $('#parse_result').text( result_str );
+}
+</script>
+
+</body>
+</html>
+
