@@ -10,8 +10,8 @@ awk --assign awk_detri="$DETRI" '
 	/^\173/,/^\175/ { next }
 	{
 	sub(/=/, "<-");
-	sub(/expr:\(?/, "");
-	sub(/\)? +\173.*$/, "");
+	sub(/expr:/, "");
+	sub(/ +\173.*$/, "");
 	sub(/pre:/, "");
 	sub(/post:/, "");
 	print }
