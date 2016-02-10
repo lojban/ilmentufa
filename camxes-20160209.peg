@@ -1,4 +1,4 @@
-// de'e ve vimcu lo javaskript zei pagbu la'o zoi https://raw.githubusercontent.com/lojban/ilmentufa/gh-pages/camxes.js.peg zoi de'i li 20160209 tede'i UTC i lo peg zei velski cu claxu lo zoi zei stura fa'o
+// de'e ve vimcu lo javaskript zei pagbu la'o zoi https://raw.githubusercontent.com/lojban/ilmentufa/gh-pages/camxes.js.peg zoi de'i li 20160209 tede'i UTC i lo peg zei velski cu claxu lo zo zoi zei stura fa'o
 text <- (intro_null NAI_clause* text_part_2 (!gek joik_jek)? text_1? faho_clause EOF?)
 intro_null <- (initial_spaces? su_clause* intro_si_clause)
 text_part_2 <- ((CMEVLA_clause+ / indicators?) free*)
