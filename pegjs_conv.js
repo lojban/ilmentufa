@@ -150,16 +150,16 @@ function peg_to_pegjs(peg) {
         i += 2;
     }
     i = 0;
-    var has_parser_action_been_added = false;
+    var has_js_initializer_been_added = false;
     while (i < speg.length) {
         if (speg[i].length > 0) {
             speg[i] = process_peg_code(speg[i]);
-            if (!has_parser_action_been_added) {
+            if (!has_js_initializer_been_added) {
                 if (speg[i].search(/[^\s]/gm) >= 0) {
                     var j = speg[i].search(/[^\r\n]/gm);
                     speg[i] = speg[i].substring(0, j) + js_initializer()
                             + speg[i].substring(j);
-                    has_parser_action_been_added = true;
+                    has_js_initializer_been_added = true;
                 }
             }
         }
