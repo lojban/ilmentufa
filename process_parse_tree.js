@@ -13,7 +13,7 @@ process.exit();
  * 
  * process_parse_tree(parse_tree)
  * 
- * This function takes a parse tree, and join the expressions of the following
+ * This function takes a parse tree, and joins the expressions of the following
  * nodes:
  * "cmevla", "gismu_2", "lujvo", "fuhivla", "spaces"
  * as well as any selmaho node (e.g. "KOhA").
