@@ -1,0 +1,786 @@
+// de'e ve vimcu lo javaskript zei pagbu la'o zoi https://raw.githubusercontent.com/lojban/ilmentufa/gh-pages/camxes.js.peg zoi de'i li 20160209 tede'i UTC i lo peg zei velski cu claxu lo zo zoi zei stura fa'o
+text <- (intro_null NAI_clause* text_part_2 (!gek joik_jek)? text_1? faho_clause EOF?)
+intro_null <- (initial_spaces? su_clause* intro_si_clause)
+text_part_2 <- ((CMEVLA_clause+ / indicators?) free*)
+intro_si_clause <- (si_clause? SI_clause*)
+faho_clause <- ((FAhO_clause dot_star)?)
+text_1 <- (I_clause (jek / joik)? (stag? BO_clause)? free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs)
+paragraphs <- (paragraph? (NIhO_clause+ free* su_clause* paragraphs)?)
+paragraph <- ((statement / fragment) (I_clause !jek !joik !joik_jek free* (statement / fragment)?)*)
+statement <- (statement_1 / prenex statement)
+statement_1 <- (statement_2 (I_clause joik_jek statement_2?)*)
+statement_2 <- (statement_3 (I_clause (jek / joik)? stag? BO_clause free* statement_2?)?)
+statement_3 <- (sentence / tag? TUhE_clause free* text_1 TUhU_elidible free*)
+fragment <- (prenex / terms VAU_elidible free* / ek free* / gihek free* / quantifier / NA_clause !JA_clause free* / relative_clauses / links / linkargs)
+prenex <- (terms ZOhU_clause free*)
+sentence <- ((terms bridi_tail_sa* CU_elidible free*)? bridi_tail_sa* bridi_tail)
+sentence_sa <- (sentence_start (!sentence_start (sa_word / SA_clause !sentence_start ) )* SA_clause &text_1)
+sentence_start <- (I_pre / NIhO_pre)
+subsentence <- (sentence / prenex subsentence)
+bridi_tail <- (bridi_tail_1 (gihek stag? KE_clause free* bridi_tail KEhE_elidible free* tail_terms)?)
+bridi_tail_sa <- (bridi_tail_start (term / !bridi_tail_start (sa_word / SA_clause !bridi_tail_start ) )* SA_clause &bridi_tail)
+bridi_tail_start <- (ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail)
+bridi_tail_1 <- (bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*)
+bridi_tail_2 <- (bridi_tail_3 (gihek stag? BO_clause free* bridi_tail_2 tail_terms)?)
+bridi_tail_3 <- (selbri tail_terms / gek_sentence)
+gek_sentence <- (gek subsentence gik subsentence tail_terms / tag* KE_clause free* gek_sentence KEhE_elidible free* / NA_clause free* gek_sentence)
+tail_terms <- (nonabs_terms? VAU_elidible free*)
+terms <- (terms_1+)
+terms_1 <- (terms_2 (pehe_sa* PEhE_clause free* joik_jek terms_2)*)
+terms_2 <- (abs_term (cehe_sa* CEhE_clause free* abs_term)*)
+nonabs_terms <- (nonabs_terms_1+)
+nonabs_terms_1 <- (nonabs_terms_2 (pehe_sa* PEhE_clause free* joik_jek nonabs_terms_2)*)
+nonabs_terms_2 <- (term (cehe_sa* CEhE_clause free* term)*)
+pehe_sa <- (PEhE_clause (!PEhE_clause (sa_word / SA_clause !PEhE_clause))* SA_clause)
+cehe_sa <- (CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_clause)
+term <- (term_sa* term_1)
+term_1 <- (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / nonabs_termset / NA_clause KU_clause free*)
+abs_term <- (term_sa* abs_term_1)
+abs_term_1 <- (sumti / abs_tag_term / termset / NA_clause KU_clause free*)
+abs_tag_term <- ( !gek (tag !(!tag selbri) !gek_sentence / FA_clause free*) (sumti / KU_elidible free*) )
+term_sa <- (term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1)
+term_start <- (term_1 / LA_clause / LE_clause / LI_clause / LU_clause / LAhE_clause / quantifier term_start / gek sumti gik / FA_clause / tag term_start)
+termset <- (gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free*)
+gek_termset <- (gek terms_gik_terms)
+terms_gik_terms <- (abs_term (gik / terms_gik_terms) abs_term)
+nonabs_termset <- (nonabs_gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik nonabs_terms NUhU_elidible free* / NUhI_clause free* nonabs_terms NUhU_elidible free*)
+nonabs_gek_termset <- (gek nonabs_terms_gik_terms)
+nonabs_terms_gik_terms <- (term (gik / nonabs_terms_gik_terms) term)
+sumti <- (sumti_1 (VUhO_clause free* relative_clauses)?)
+sumti_1 <- (sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?)
+sumti_2 <- (sumti_3 (joik_ek sumti_3)*)
+sumti_3 <- (sumti_4 (joik_ek stag? BO_clause free* sumti_3)?)
+sumti_4 <- (sumti_5 / gek sumti gik sumti_4)
+sumti_5 <- (quantifier? sumti_6 relative_clauses? / quantifier selbri KU_elidible free* relative_clauses?)
+sumti_6 <- (ZO_clause free* / ZOI_clause free* / LOhU_clause free* / lerfu_string !MOI_clause BOI_elidible free* / LU_clause text LIhU_elidible free* / (LAhE_clause free* / NAhE_clause BO_clause free*) relative_clauses? sumti LUhU_elidible free* / KOhA_clause free* / LA_clause free* relative_clauses? CMEVLA_clause+ free* / (LA_clause / LE_clause) free* sumti_tail KU_elidible free* / li_clause)
+li_clause <- (LI_clause free* mex LOhO_elidible free*)
+sumti_tail <- ((sumti_6 relative_clauses?)? sumti_tail_1 / relative_clauses sumti_tail_1)
+sumti_tail_1 <- (selbri relative_clauses? / quantifier selbri relative_clauses? / quantifier sumti)
+relative_clauses <- (relative_clause (ZIhE_clause free* relative_clause)*)
+relative_clause <- (relative_clause_sa* relative_clause_1)
+relative_clause_sa <- (relative_clause_start (!relative_clause_start (sa_word / SA_clause !relative_clause_start ) )* SA_clause &relative_clause_1)
+relative_clause_1 <- (GOI_clause free* term GEhU_elidible free* / NOI_clause free* subsentence KUhO_elidible free* )
+relative_clause_start <- (GOI_clause / NOI_clause)
+selbri <- (tag? selbri_1)
+selbri_1 <- (selbri_2 / NA_clause free* selbri)
+selbri_2 <- (selbri_3 (CO_clause free* selbri_2)?)
+selbri_3 <- (selbri_4+)
+selbri_4 <- (selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)*)
+selbri_5 <- (selbri_6 ((jek / joik) stag? BO_clause free* selbri_5)?)
+selbri_6 <- (tanru_unit (BO_clause free* selbri_6)? / NAhE_clause? free* guhek selbri gik selbri_6)
+tanru_unit <- (tanru_unit_1 (CEI_clause free* tanru_unit_1)*)
+tanru_unit_1 <- (tanru_unit_2 linkargs?)
+tanru_unit_2 <- (BRIVLA_clause free* / GOhA_clause RAhO_clause? free* / KE_clause free* selbri_3 KEhE_elidible free* / ME_clause free* (sumti / lerfu_string) MEhU_elidible free* MOI_clause? free* / (number / lerfu_string) MOI_clause free* / NUhA_clause free* mex_operator / SE_clause free* tanru_unit_2 / JAI_clause free* tag? tanru_unit_2 / NAhE_clause free* tanru_unit_2 / NU_clause NAI_clause? free* (joik_jek NU_clause NAI_clause? free*)* subsentence KEI_elidible free*)
+linkargs <- (linkargs_sa* linkargs_1)
+linkargs_1 <- (BE_clause free* term links? BEhO_elidible free*)
+linkargs_sa <- (linkargs_start (!linkargs_start (sa_word / SA_clause !linkargs_start ) )* SA_clause &linkargs_1)
+linkargs_start <- BE_clause
+links <- (links_sa* links_1)
+links_1 <- (BEI_clause free* term links?)
+links_sa <- (links_start (!links_start (sa_word / SA_clause !links_start ) )* SA_clause &links_1)
+links_start <- (BEI_clause)
+quantifier <- (number !MOI_clause BOI_elidible free* / VEI_clause free* mex VEhO_elidible free*)
+mex <- (mex_sa* mex_0)
+mex_0 <- (mex_1 (operator mex_1)* / rp_clause)
+mex_sa <- (mex_start (!mex_start (sa_word / SA_clause !mex_start) )* SA_clause &mex_0)
+mex_start <- (FUhA_clause / PEhO_clause / operand_start)
+rp_clause <- (FUhA_clause free* rp_expression)
+mex_1 <- (mex_2 (BIhE_clause free* operator mex_1)?)
+mex_2 <- (operand / mex_forethought)
+mex_forethought <- PEhO_clause? free* operator fore_operands KUhE_elidible free*
+fore_operands <- (mex_2+ )
+rp_expression <- (operand rp_expression_tail)
+rp_expression_tail <- (rp_expression operator rp_expression_tail / "")
+operator <- (operator_sa* operator_0)
+operator_0 <- (operator_1 (joik_jek operator_1 / joik stag? KE_clause free* operator KEhE_elidible free*)*)
+operator_sa <- (operator_start (!operator_start (sa_word / SA_clause !operator_start) )* SA_clause &operator_0)
+operator_start <- (guhek / KE_clause / SE_clause? NAhE_clause / SE_clause? MAhO_clause / SE_clause? VUhU_clause)
+operator_1 <- (operator_2 / guhek operator_1 gik operator_2 / operator_2 (jek / joik) stag? BO_clause free* operator_1)
+operator_2 <- (mex_operator / KE_clause free* operator KEhE_elidible free*)
+mex_operator <- (SE_clause free* mex_operator / NAhE_clause free* mex_operator / MAhO_clause free* mex TEhU_elidible free* / NAhU_clause free* selbri TEhU_elidible free* / VUhU_clause free*)
+operand <- (operand_sa* operand_0)
+operand_0 <- (operand_1 (joik_ek stag? KE_clause free* operand KEhE_elidible free*)?)
+operand_sa <- (operand_start (!operand_start (sa_word / SA_clause !operand_start) )* SA_clause &operand_0)
+operand_start <- (quantifier / lerfu_word / NIhE_clause / MOhE_clause / JOhI_clause / gek / LAhE_clause / NAhE_clause)
+operand_1 <- (operand_2 (joik_ek operand_2)*)
+operand_2 <- (operand_3 (joik_ek stag? BO_clause free* operand_2)?)
+operand_3 <- (quantifier / lerfu_string !MOI_clause BOI_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause free* sumti TEhU_elidible free* / JOhI_clause free* mex_2+ TEhU_elidible free* / gek operand gik operand_3 / (LAhE_clause free* / NAhE_clause BO_clause free*) operand LUhU_elidible free*)
+number <- (PA_clause (PA_clause / lerfu_word)*)
+lerfu_string <- (lerfu_word (PA_clause / lerfu_word)*)
+lerfu_word <- (BY_clause / LAU_clause lerfu_word / TEI_clause lerfu_string FOI_clause)
+ek <- (NA_clause? SE_clause? A_clause NAI_clause?)
+gihek <- (gihek_sa* gihek_1)
+gihek_1 <- (NA_clause? SE_clause? GIhA_clause NAI_clause?)
+gihek_sa <- (gihek_1 (!gihek_1 (sa_word / SA_clause !gihek_1 ) )* SA_clause &gihek)
+jek <- (NA_clause? SE_clause? JA_clause NAI_clause?)
+joik <- (SE_clause? JOI_clause NAI_clause? / interval / GAhO_clause interval GAhO_clause)
+interval <- (SE_clause? BIhI_clause NAI_clause?)
+joik_ek <- (joik_ek_sa* joik_ek_1)
+joik_ek_1 <- ((joik free* / ek free*))
+joik_ek_sa <- (joik_ek_1 (!joik_ek_1 (sa_word / SA_clause !joik_ek_1 ) )* SA_clause &joik_ek)
+joik_jek <- (joik free* / jek free*)
+gek <- (SE_clause? GA_clause NAI_clause? free* / joik GI_clause free* / stag gik)
+guhek <- (SE_clause? GUhA_clause NAI_clause? free*)
+gik <- (GI_clause NAI_clause? free*)
+tag <- (tense_modal (joik_jek tense_modal)*)
+stag <- (simple_tense_modal ((jek / joik) simple_tense_modal)* / tense_modal (joik_jek tense_modal)*)
+tense_modal <- (simple_tense_modal free* / FIhO_clause free* selbri FEhU_elidible free*)
+simple_tense_modal <- (NAhE_clause? SE_clause? BAI_clause NAI_clause? KI_clause? / NAhE_clause? ( ((time space? / space time?) CAhA_clause) / (time space? / space time?) / CAhA_clause ) KI_clause? / KI_clause / CUhE_clause)
+time <- (ZI_clause time_offset* (ZEhA_clause (PU_clause NAI_clause?)?)? interval_property* / ZI_clause? time_offset+ (ZEhA_clause (PU_clause NAI_clause?)?)? interval_property* / ZI_clause? time_offset* ZEhA_clause (PU_clause NAI_clause?)? interval_property* / ZI_clause? time_offset* (ZEhA_clause (PU_clause NAI_clause?)?)? interval_property+)
+time_offset <- (PU_clause NAI_clause? ZI_clause?)
+space <- (VA_clause space_offset* space_interval? (MOhI_clause space_offset)? / VA_clause? space_offset+ space_interval? (MOhI_clause space_offset)? / VA_clause? space_offset* space_interval (MOhI_clause space_offset)? / VA_clause? space_offset* space_interval? MOhI_clause space_offset)
+space_offset <- (FAhA_clause NAI_clause? VA_clause?)
+space_interval <- ((VEhA_clause VIhA_clause? / VIhA_clause) (FAhA_clause NAI_clause?)? space_int_props? / space_int_props)
+space_int_props <- ((FEhE_clause interval_property)+)
+interval_property <- (number ROI_clause NAI_clause? / TAhE_clause NAI_clause? / ZAhO_clause NAI_clause?)
+free <- (SEI_clause free* (terms CU_elidible free*)? selbri SEhU_elidible / SOI_clause free* sumti sumti? SEhU_elidible / vocative relative_clauses? selbri relative_clauses? DOhU_elidible / vocative relative_clauses? CMEVLA_clause+ free* relative_clauses? DOhU_elidible / vocative sumti? DOhU_elidible / (number / lerfu_string) MAI_clause / TO_clause text TOI_elidible / xi_clause)
+xi_clause <- (XI_clause free* (number / lerfu_string) BOI_elidible / XI_clause free* VEI_clause free* mex VEhO_elidible)
+vocative <- ((COI_clause NAI_clause?)+ DOI_clause / (COI_clause NAI_clause?) (COI_clause NAI_clause?)* / DOI_clause)
+indicators <- (FUhE_clause? indicator+)
+indicator <-  ((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_clause) !BU_clause
+zei_clause <- (pre_clause zei_clause_no_pre)
+zei_clause_no_pre <- (pre_zei_bu (zei_tail? bu_tail)* zei_tail post_clause)
+bu_clause <- (pre_clause bu_clause_no_pre)
+bu_clause_no_pre <- (pre_zei_bu (bu_tail? zei_tail)* bu_tail post_clause)
+zei_tail <- (ZEI_clause any_word)+
+bu_tail <- BU_clause+
+pre_zei_bu <- (!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_clause !FAhO_clause any_word_SA_handling si_clause?)
+dot_star <- (.*)
+post_clause <- (spaces? si_clause? !ZEI_clause !BU_clause indicators*)
+pre_clause <- BAhE_clause?
+any_word_SA_handling <- (BRIVLA_pre / known_cmavo_SA / CMAVO_pre / CMEVLA_pre)
+known_cmavo_SA <- A_pre / BAI_pre / BAhE_pre / BE_pre / BEI_pre / BEhO_pre / BIhE_pre / BIhI_pre / BO_pre / BOI_pre / BU_pre / BY_pre / CAI_pre / CAhA_pre / CEI_pre / CEhE_pre / CO_pre / COI_pre / CU_pre / CUhE_pre / DAhO_pre / DOI_pre / DOhU_pre / FA_pre / FAhA_pre / FEhE_pre / FEhU_pre / FIhO_pre / FOI_pre / FUhA_pre / FUhE_pre / FUhO_pre / GA_pre / GAhO_pre / GEhU_pre / GI_pre / GIhA_pre / GOI_pre / GOhA_pre / GUhA_pre / I_pre / JA_pre / JAI_pre / JOI_pre / JOhI_pre / KE_pre / KEI_pre / KEhE_pre / KI_pre / KOhA_pre / KU_pre / KUhE_pre / KUhO_pre / LA_pre / LAU_pre / LAhE_pre / LE_pre / LEhU_pre / LI_pre / LIhU_pre / LOhO_pre / LOhU_pre / LU_pre / LUhU_pre / MAI_pre / MAhO_pre / ME_pre / MEhU_pre / MOI_pre / MOhE_pre / MOhI_pre / NA_pre / NAI_pre / NAhE_pre / NAhU_pre / NIhE_pre / NIhO_pre / NOI_pre / NU_pre / NUhA_pre / NUhI_pre / NUhU_pre / PA_pre / PEhE_pre / PEhO_pre / PU_pre / RAhO_pre / ROI_pre / SA_pre / SE_pre / SEI_pre / SEhU_pre / SI_clause / SOI_pre / SU_pre / TAhE_pre / TEI_pre / TEhU_pre / TO_pre / TOI_pre / TUhE_pre / TUhU_pre / UI_pre / VA_pre / VAU_pre / VEI_pre / VEhA_pre / VEhO_pre / VIhA_pre / VUhO_pre / VUhU_pre / XI_pre / ZAhO_pre / ZEI_pre / ZEhA_pre / ZI_pre / ZIhE_pre / ZO_pre / ZOI_pre / ZOhU_pre
+su_clause <- (erasable_clause / su_word)* SU_clause 
+si_clause <- ((erasable_clause / si_word / SA_clause) si_clause? SI_clause)+
+erasable_clause <- (bu_clause_no_pre !ZEI_clause !BU_clause / zei_clause_no_pre !ZEI_clause !BU_clause)
+sa_word <- pre_zei_bu
+si_word <- pre_zei_bu
+su_word <- !ZOI_start !NIhO_clause !LU_clause !TUhE_clause !TO_clause !SU_clause !FAhO_clause any_word_SA_handling
+BEhO_elidible <- (BEhO_clause?)
+BOI_elidible <- (BOI_clause?)
+CU_elidible <- (CU_clause?)
+DOhU_elidible <- (DOhU_clause?)
+FEhU_elidible <- (FEhU_clause?)
+GEhU_elidible <- (GEhU_clause?)
+KEI_elidible <- (KEI_clause?)
+KEhE_elidible <- (KEhE_clause?)
+KU_elidible <- (KU_clause?)
+KUhE_elidible <- (KUhE_clause?)
+KUhO_elidible <- (KUhO_clause?)
+LIhU_elidible <- (LIhU_clause?)
+LOhO_elidible <- (LOhO_clause?)
+LUhU_elidible <- (LUhU_clause?)
+MEhU_elidible <- (MEhU_clause?)
+NUhU_elidible <- (NUhU_clause?)
+SEhU_elidible <- (SEhU_clause?)
+TEhU_elidible <- (TEhU_clause?)
+TOI_elidible <- (TOI_clause?)
+TUhU_elidible <- (TUhU_clause?)
+VAU_elidible <- (VAU_clause?)
+VEhO_elidible <- (VEhO_clause?)
+BRIVLA_clause <- (BRIVLA_pre BRIVLA_post / zei_clause)
+BRIVLA_pre <- pre_clause BRIVLA spaces?
+BRIVLA_post <- post_clause
+CMEVLA_clause <- CMEVLA_pre CMEVLA_post
+CMEVLA_pre <- pre_clause CMEVLA spaces?
+CMEVLA_post <- post_clause
+CMAVO_clause <- CMAVO_pre CMAVO_post
+CMAVO_pre <- pre_clause CMAVO spaces?
+CMAVO_post <- post_clause
+A_clause <- A_pre A_post
+A_pre <- pre_clause A spaces?
+A_post <- post_clause
+BAI_clause <- BAI_pre BAI_post
+BAI_pre <- pre_clause BAI spaces?
+BAI_post <- post_clause
+BAhE_clause <- (BAhE_pre BAhE_post)+
+BAhE_pre <- BAhE spaces?
+BAhE_post <- si_clause? !ZEI_clause !BU_clause
+BE_clause <- BE_pre BE_post
+BE_pre <- pre_clause BE spaces?
+BE_post <- post_clause
+BEI_clause <- BEI_pre BEI_post
+BEI_pre <- pre_clause BEI spaces?
+BEI_post <- post_clause
+BEhO_clause <- BEhO_pre BEhO_post
+BEhO_pre <- pre_clause BEhO spaces?
+BEhO_post <- post_clause
+BIhE_clause <- BIhE_pre BIhE_post
+BIhE_pre <- pre_clause BIhE spaces?
+BIhE_post <- post_clause
+BIhI_clause <- BIhI_pre BIhI_post
+BIhI_pre <- pre_clause BIhI spaces?
+BIhI_post <- post_clause
+BO_clause <- BO_pre BO_post
+BO_pre <- pre_clause BO spaces?
+BO_post <- post_clause
+BOI_clause <- BOI_pre BOI_post
+BOI_pre <- pre_clause BOI spaces?
+BOI_post <- post_clause
+BU_clause <- BU_pre BU_post
+BU_pre <- pre_clause BU spaces?
+BU_post <- spaces?
+BY_clause <- (BY_pre BY_post / bu_clause)
+BY_pre <- pre_clause BY spaces?
+BY_post <- post_clause
+CAhA_clause <- CAhA_pre CAhA_post
+CAhA_pre <- pre_clause CAhA spaces?
+CAhA_post <- post_clause
+CAI_clause <- CAI_pre CAI_post
+CAI_pre <- pre_clause CAI spaces?
+CAI_post <- post_clause
+CEI_clause <- CEI_pre CEI_post
+CEI_pre <- pre_clause CEI spaces?
+CEI_post <- post_clause
+CEhE_clause <- CEhE_pre CEhE_post
+CEhE_pre <- pre_clause CEhE spaces?
+CEhE_post <- post_clause
+CO_clause <- CO_pre CO_post
+CO_pre <- pre_clause CO spaces?
+CO_post <- post_clause
+COI_clause <- COI_pre COI_post
+COI_pre <- pre_clause COI spaces?
+COI_post <- post_clause
+CU_clause <- CU_pre CU_post
+CU_pre <- pre_clause CU spaces?
+CU_post <- post_clause
+CUhE_clause <- CUhE_pre CUhE_post
+CUhE_pre <- pre_clause CUhE spaces?
+CUhE_post <- post_clause
+DAhO_clause <- DAhO_pre DAhO_post
+DAhO_pre <- pre_clause DAhO spaces?
+DAhO_post <- post_clause
+DOI_clause <- DOI_pre DOI_post
+DOI_pre <- pre_clause DOI spaces?
+DOI_post <- post_clause
+DOhU_clause <- DOhU_pre DOhU_post
+DOhU_pre <- pre_clause DOhU spaces?
+DOhU_post <- post_clause
+FA_clause <- FA_pre FA_post
+FA_pre <- pre_clause FA spaces?
+FA_post <- post_clause
+FAhA_clause <- FAhA_pre FAhA_post
+FAhA_pre <- pre_clause FAhA spaces?
+FAhA_post <- post_clause
+FAhO_clause <- (pre_clause FAhO spaces?)
+FEhE_clause <- FEhE_pre FEhE_post
+FEhE_pre <- pre_clause FEhE spaces?
+FEhE_post <- post_clause
+FEhU_clause <- FEhU_pre FEhU_post
+FEhU_pre <- pre_clause FEhU spaces?
+FEhU_post <- post_clause
+FIhO_clause <- FIhO_pre FIhO_post
+FIhO_pre <- pre_clause FIhO spaces?
+FIhO_post <- post_clause
+FOI_clause <- FOI_pre FOI_post
+FOI_pre <- pre_clause FOI spaces?
+FOI_post <- post_clause
+FUhA_clause <- FUhA_pre FUhA_post
+FUhA_pre <- pre_clause FUhA spaces?
+FUhA_post <- post_clause
+FUhE_clause <- FUhE_pre FUhE_post
+FUhE_pre <- pre_clause FUhE spaces?
+FUhE_post <- !BU_clause spaces? !ZEI_clause !BU_clause
+FUhO_clause <- FUhO_pre FUhO_post
+FUhO_pre <- pre_clause FUhO spaces?
+FUhO_post <- post_clause
+GA_clause <- GA_pre GA_post
+GA_pre <- pre_clause GA spaces?
+GA_post <- post_clause
+GAhO_clause <- GAhO_pre GAhO_post
+GAhO_pre <- pre_clause GAhO spaces?
+GAhO_post <- post_clause
+GEhU_clause <- GEhU_pre GEhU_post
+GEhU_pre <- pre_clause GEhU spaces?
+GEhU_post <- post_clause
+GI_clause <- GI_pre GI_post
+GI_pre <- pre_clause GI spaces?
+GI_post <- post_clause
+GIhA_clause <- GIhA_pre GIhA_post
+GIhA_pre <- pre_clause GIhA spaces?
+GIhA_post <- post_clause
+GOI_clause <- GOI_pre GOI_post
+GOI_pre <- pre_clause GOI spaces?
+GOI_post <- post_clause
+GOhA_clause <- GOhA_pre GOhA_post
+GOhA_pre <- pre_clause GOhA spaces?
+GOhA_post <- post_clause
+GUhA_clause <- GUhA_pre GUhA_post
+GUhA_pre <- pre_clause GUhA spaces?
+GUhA_post <- post_clause
+I_clause <- (sentence_sa* I_pre I_post)
+I_pre <- pre_clause I spaces?
+I_post <- post_clause
+JA_clause <- JA_pre JA_post
+JA_pre <- pre_clause JA spaces?
+JA_post <- post_clause
+JAI_clause <- JAI_pre JAI_post
+JAI_pre <- pre_clause JAI spaces?
+JAI_post <- post_clause
+JOhI_clause <- JOhI_pre JOhI_post
+JOhI_pre <- pre_clause JOhI spaces?
+JOhI_post <- post_clause
+JOI_clause <- JOI_pre JOI_post
+JOI_pre <- pre_clause JOI spaces?
+JOI_post <- post_clause
+KE_clause <- KE_pre KE_post
+KE_pre <- pre_clause KE spaces?
+KE_post <- post_clause
+KEhE_clause <- KEhE_pre KEhE_post
+KEhE_pre <- pre_clause KEhE spaces?
+KEhE_post <- post_clause
+KEI_clause <- KEI_pre KEI_post
+KEI_pre <- pre_clause KEI spaces?
+KEI_post <- post_clause
+KEI_no_SA_handling <- pre_clause KEI post_clause
+KI_clause <- KI_pre KI_post
+KI_pre <- pre_clause KI spaces?
+KI_post <- post_clause
+KOhA_clause <- KOhA_pre KOhA_post
+KOhA_pre <- pre_clause KOhA spaces?
+KOhA_post <- post_clause
+KU_clause <- KU_pre KU_post
+KU_pre <- pre_clause KU spaces?
+KU_post <- post_clause
+KUhE_clause <- KUhE_pre KUhE_post
+KUhE_pre <- pre_clause KUhE spaces?
+KUhE_post <- post_clause
+KUhO_clause <- KUhO_pre KUhO_post
+KUhO_pre <- pre_clause KUhO spaces?
+KUhO_post <- post_clause
+LA_clause <- LA_pre LA_post
+LA_pre <- pre_clause LA spaces?
+LA_post <- post_clause
+LAU_clause <- LAU_pre LAU_post
+LAU_pre <- pre_clause LAU spaces?
+LAU_post <- post_clause
+LAhE_clause <- LAhE_pre LAhE_post
+LAhE_pre <- pre_clause LAhE spaces?
+LAhE_post <- post_clause
+LE_clause <- LE_pre LE_post
+LE_pre <- pre_clause LE spaces?
+LE_post <- post_clause
+LEhU_clause <- LEhU_pre LEhU_post
+LEhU_pre <- pre_clause LEhU spaces?
+LEhU_post <- spaces?
+LI_clause <- LI_pre LI_post
+LI_pre <- pre_clause LI spaces?
+LI_post <- post_clause
+LIhU_clause <- LIhU_pre LIhU_post
+LIhU_pre <- pre_clause LIhU spaces?
+LIhU_post <- post_clause
+LOhO_clause <- LOhO_pre LOhO_post
+LOhO_pre <- pre_clause LOhO spaces?
+LOhO_post <- post_clause
+LOhU_clause <- LOhU_pre LOhU_post
+LOhU_pre <- pre_clause LOhU spaces? (!LEhU any_word)* LEhU_clause spaces?
+LOhU_post <- post_clause
+LU_clause <- LU_pre LU_post
+LU_pre <- pre_clause LU spaces?
+LU_post <- post_clause
+LUhU_clause <- LUhU_pre LUhU_post
+LUhU_pre <- pre_clause LUhU spaces?
+LUhU_post <- post_clause
+MAhO_clause <- MAhO_pre MAhO_post
+MAhO_pre <- pre_clause MAhO spaces?
+MAhO_post <- post_clause
+MAI_clause <- MAI_pre MAI_post
+MAI_pre <- pre_clause MAI spaces?
+MAI_post <- post_clause
+ME_clause <- ME_pre ME_post
+ME_pre <- pre_clause ME spaces?
+ME_post <- post_clause
+MEhU_clause <- MEhU_pre MEhU_post
+MEhU_pre <- pre_clause MEhU spaces?
+MEhU_post <- post_clause
+MOhE_clause <- MOhE_pre MOhE_post
+MOhE_pre <- pre_clause MOhE spaces?
+MOhE_post <- post_clause
+MOhI_clause <- MOhI_pre MOhI_post
+MOhI_pre <- pre_clause MOhI spaces?
+MOhI_post <- post_clause
+MOI_clause <- MOI_pre MOI_post
+MOI_pre <- pre_clause MOI spaces?
+MOI_post <- post_clause
+NA_clause <- NA_pre NA_post
+NA_pre <- pre_clause NA spaces?
+NA_post <- post_clause
+NAI_clause <- NAI_pre NAI_post
+NAI_pre <- pre_clause NAI spaces?
+NAI_post <- post_clause
+NAhE_clause <- NAhE_pre NAhE_post
+NAhE_pre <- pre_clause NAhE spaces?
+NAhE_post <- post_clause
+NAhU_clause <- NAhU_pre NAhU_post
+NAhU_pre <- pre_clause NAhU spaces?
+NAhU_post <- post_clause
+NIhE_clause <- NIhE_pre NIhE_post
+NIhE_pre <- pre_clause NIhE spaces?
+NIhE_post <- post_clause
+NIhO_clause <- (sentence_sa* NIhO_pre NIhO_post)
+NIhO_pre <- pre_clause NIhO spaces?
+NIhO_post <- su_clause* post_clause
+NOI_clause <- NOI_pre NOI_post
+NOI_pre <- pre_clause NOI spaces?
+NOI_post <- post_clause
+NU_clause <- NU_pre NU_post
+NU_pre <- pre_clause NU spaces?
+NU_post <- post_clause
+NUhA_clause <- NUhA_pre NUhA_post
+NUhA_pre <- pre_clause NUhA spaces?
+NUhA_post <- post_clause
+NUhI_clause <- NUhI_pre NUhI_post
+NUhI_pre <- pre_clause NUhI spaces?
+NUhI_post <- post_clause
+NUhU_clause <- NUhU_pre NUhU_post
+NUhU_pre <- pre_clause NUhU spaces?
+NUhU_post <- post_clause
+PA_clause <- PA_pre PA_post
+PA_pre <- pre_clause PA spaces?
+PA_post <- post_clause
+PEhE_clause <- PEhE_pre PEhE_post
+PEhE_pre <- pre_clause PEhE spaces?
+PEhE_post <- post_clause
+PEhO_clause <- PEhO_pre PEhO_post
+PEhO_pre <- pre_clause PEhO spaces?
+PEhO_post <- post_clause
+PU_clause <- PU_pre PU_post
+PU_pre <- pre_clause PU spaces?
+PU_post <- post_clause
+RAhO_clause <- RAhO_pre RAhO_post
+RAhO_pre <- pre_clause RAhO spaces?
+RAhO_post <- post_clause
+ROI_clause <- ROI_pre ROI_post
+ROI_pre <- pre_clause ROI spaces?
+ROI_post <- post_clause
+SA_clause <- SA_pre SA_post
+SA_pre <- pre_clause SA spaces?
+SA_post <- spaces?
+SE_clause <- SE_pre SE_post
+SE_pre <- pre_clause SE spaces?
+SE_post <- post_clause
+SEI_clause <- SEI_pre SEI_post
+SEI_pre <- pre_clause SEI spaces?
+SEI_post <- post_clause
+SEhU_clause <- SEhU_pre SEhU_post
+SEhU_pre <- pre_clause SEhU spaces?
+SEhU_post <- post_clause
+SI_clause <- (spaces? SI spaces?)
+SOI_clause <- SOI_pre SOI_post
+SOI_pre <- pre_clause SOI spaces?
+SOI_post <- post_clause
+SU_clause <- SU_pre SU_post
+SU_pre <- pre_clause SU spaces?
+SU_post <- post_clause
+TAhE_clause <- TAhE_pre TAhE_post
+TAhE_pre <- pre_clause TAhE spaces?
+TAhE_post <- post_clause
+TEhU_clause <- TEhU_pre TEhU_post
+TEhU_pre <- pre_clause TEhU spaces?
+TEhU_post <- post_clause
+TEI_clause <- TEI_pre TEI_post
+TEI_pre <- pre_clause TEI spaces?
+TEI_post <- post_clause
+TO_clause <- TO_pre TO_post
+TO_pre <- pre_clause TO spaces?
+TO_post <- post_clause
+TOI_clause <- TOI_pre TOI_post
+TOI_pre <- pre_clause TOI spaces?
+TOI_post <- post_clause
+TUhE_clause <- TUhE_pre TUhE_post
+TUhE_pre <- pre_clause TUhE spaces?
+TUhE_post <- su_clause* post_clause
+TUhU_clause <- TUhU_pre TUhU_post
+TUhU_pre <- pre_clause TUhU spaces?
+TUhU_post <- post_clause
+UI_clause <- UI_pre UI_post
+UI_pre <- pre_clause UI spaces?
+UI_post <- post_clause
+VA_clause <- VA_pre VA_post
+VA_pre <- pre_clause VA spaces?
+VA_post <- post_clause
+VAU_clause <- VAU_pre VAU_post
+VAU_pre <- pre_clause VAU spaces?
+VAU_post <- post_clause
+VEI_clause <- VEI_pre VEI_post
+VEI_pre <- pre_clause VEI spaces?
+VEI_post <- post_clause
+VEhO_clause <- VEhO_pre VEhO_post
+VEhO_pre <- pre_clause VEhO spaces?
+VEhO_post <- post_clause
+VUhU_clause <- VUhU_pre VUhU_post
+VUhU_pre <- pre_clause VUhU spaces?
+VUhU_post <- post_clause
+VEhA_clause <- VEhA_pre VEhA_post
+VEhA_pre <- pre_clause VEhA spaces?
+VEhA_post <- post_clause
+VIhA_clause <- VIhA_pre VIhA_post
+VIhA_pre <- pre_clause VIhA spaces?
+VIhA_post <- post_clause
+VUhO_clause <- VUhO_pre VUhO_post
+VUhO_pre <- pre_clause VUhO spaces?
+VUhO_post <- post_clause
+XI_clause <- XI_pre XI_post
+XI_pre <- pre_clause XI spaces?
+XI_post <- post_clause
+ZAhO_clause <- ZAhO_pre ZAhO_post
+ZAhO_pre <- pre_clause ZAhO spaces?
+ZAhO_post <- post_clause
+ZEhA_clause <- ZEhA_pre ZEhA_post
+ZEhA_pre <- pre_clause ZEhA spaces?
+ZEhA_post <- post_clause
+ZEI_clause <- ZEI_pre ZEI_post
+ZEI_pre <- pre_clause ZEI spaces?
+ZEI_post <- spaces?
+ZI_clause <- ZI_pre ZI_post
+ZI_pre <- pre_clause ZI spaces?
+ZI_post <- post_clause
+ZIhE_clause <- ZIhE_pre ZIhE_post
+ZIhE_pre <- pre_clause ZIhE spaces?
+ZIhE_post <- post_clause
+ZO_clause <- ZO_pre ZO_post
+ZO_pre <- pre_clause ZO spaces? any_word spaces?
+ZO_post <- post_clause
+ZOI_clause <- ZOI_pre ZOI_post
+ZOI_pre <- pre_clause ZOI spaces? zoi_open spaces? zoi_word* zoi_close spaces?
+ZOI_post <- post_clause
+ZOI_start <- !ZOI_pre ZOI
+ZOhU_clause <- ZOhU_pre ZOhU_post
+ZOhU_pre <- pre_clause ZOhU spaces?
+ZOhU_post <- post_clause
+CMEVLA <- cmevla
+BRIVLA <- (gismu_2 / lujvo / fuhivla)
+gismu_2 <- (gismu)
+CMAVO <- (A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhU / LI / LIhU / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo)
+lojban_word <- (CMEVLA / CMAVO / BRIVLA)
+any_word <- lojban_word spaces?
+zoi_open <- lojban_word
+zoi_word <- (non_space+) spaces 
+zoi_close <- any_word
+cmevla <- (jbocme / zifcme)
+zifcme <- (!h (nucleus / glide / h / consonant !pause / digit)* consonant &pause)
+jbocme <- (&zifcme (any_syllable / digit)* &pause)
+cmavo <- (!cmevla !CVCy_lujvo cmavo_form &post_word)
+CVCy_lujvo <- (CVC_rafsi y h? initial_rafsi* brivla_core / stressed_CVC_rafsi y short_final_rafsi)
+cmavo_form <- (!h !cluster onset (nucleus h)* (!stressed nucleus / nucleus !cluster) / y+ / digit)
+brivla <- (!cmavo initial_rafsi* brivla_core)
+brivla_core <- (fuhivla / gismu / CVV_final_rafsi / stressed_initial_rafsi short_final_rafsi)
+stressed_initial_rafsi <- (stressed_extended_rafsi / stressed_y_rafsi / stressed_y_less_rafsi)
+initial_rafsi <- (extended_rafsi / y_rafsi / !any_extended_rafsi y_less_rafsi !any_extended_rafsi)
+any_extended_rafsi <- (fuhivla / extended_rafsi / stressed_extended_rafsi)
+fuhivla <- (fuhivla_head stressed_syllable consonantal_syllable* final_syllable)
+stressed_extended_rafsi <- (stressed_brivla_rafsi / stressed_fuhivla_rafsi)
+extended_rafsi <- (brivla_rafsi / fuhivla_rafsi)
+stressed_brivla_rafsi <- (&unstressed_syllable brivla_head stressed_syllable h y)
+brivla_rafsi <- (&(syllable consonantal_syllable* syllable) brivla_head h y h?)
+stressed_fuhivla_rafsi <- (fuhivla_head stressed_syllable consonantal_syllable* !h onset y)
+fuhivla_rafsi <- (&unstressed_syllable fuhivla_head !h onset y h?)
+fuhivla_head <- (!rafsi_string brivla_head)
+brivla_head <- (!cmavo !slinkuhi !h &onset unstressed_syllable*)
+slinkuhi <- (!rafsi_string consonant rafsi_string)
+rafsi_string <- (y_less_rafsi* (gismu / CVV_final_rafsi / stressed_y_less_rafsi short_final_rafsi / y_rafsi / stressed_y_rafsi / stressed_y_less_rafsi? initial_pair y / hy_rafsi / stressed_hy_rafsi))
+gismu <- ((initial_pair stressed_vowel / consonant stressed_vowel consonant) &final_syllable consonant vowel &post_word)
+CVV_final_rafsi <- (consonant stressed_vowel h &final_syllable vowel &post_word)
+short_final_rafsi <- (&final_syllable (consonant diphthong / initial_pair vowel) &post_word)
+stressed_y_rafsi <- ((stressed_long_rafsi / stressed_CVC_rafsi) y)
+stressed_y_less_rafsi <- (stressed_CVC_rafsi !y / stressed_CCV_rafsi / stressed_CVV_rafsi)
+stressed_long_rafsi <- (initial_pair stressed_vowel consonant / consonant stressed_vowel consonant consonant)
+stressed_CVC_rafsi <- (consonant stressed_vowel consonant)
+stressed_CCV_rafsi <- (initial_pair stressed_vowel)
+stressed_CVV_rafsi <- (consonant (unstressed_vowel h stressed_vowel / stressed_diphthong) r_hyphen?)
+y_rafsi <- ((long_rafsi / CVC_rafsi) y h?)
+y_less_rafsi <- (!y_rafsi !stressed_y_rafsi !hy_rafsi !stressed_hy_rafsi (CVC_rafsi / CCV_rafsi / CVV_rafsi) !h)
+hy_rafsi <- ((long_rafsi vowel / CCV_rafsi / CVV_rafsi) h y h?)
+stressed_hy_rafsi <- ((long_rafsi stressed_vowel / stressed_CCV_rafsi / stressed_CVV_rafsi) h y)
+long_rafsi <- (initial_pair unstressed_vowel consonant / consonant unstressed_vowel consonant consonant)
+CVC_rafsi <- (consonant unstressed_vowel consonant)
+CCV_rafsi <- (initial_pair unstressed_vowel)
+CVV_rafsi <- (consonant (unstressed_vowel h unstressed_vowel / unstressed_diphthong) r_hyphen?)
+r_hyphen <- (r &consonant / n &r)
+final_syllable <- (onset !y !stressed nucleus !cmevla &post_word)
+stressed_syllable <- (&stressed syllable / syllable &stress)
+stressed_diphthong <- (&stressed diphthong / diphthong &stress)
+stressed_vowel <- (&stressed vowel / vowel &stress)
+unstressed_syllable <- (!stressed syllable !stress / consonantal_syllable)
+unstressed_diphthong <- (!stressed diphthong !stress)
+unstressed_vowel <- (!stressed vowel !stress)
+stress <- ((consonant / glide)* h? y? syllable pause)
+stressed <- (onset comma* [AEIOU])
+any_syllable <- (onset nucleus coda? / consonantal_syllable)
+syllable <- (onset !y nucleus coda?)
+consonantal_syllable <- (consonant &syllabic coda)
+coda <- (!any_syllable consonant &any_syllable / syllabic? consonant? &pause)
+onset <- (h / glide / initial)
+nucleus <- (vowel / diphthong / y !nucleus)
+glide <- (i / u) &nucleus
+diphthong <- (a i !i / a u !u / e i !i / o i !i) !nucleus
+vowel <- (a / e / i / o / u) !nucleus
+a <- comma* [aA]
+e <- comma* [eE]
+i <- comma* [iI]
+o <- comma* [oO]
+u <- comma* [uU]
+y <- comma* [yY] !(!y nucleus)
+cluster <- (consonant consonant+)
+initial_pair <- (&initial consonant consonant !consonant)
+initial <- (affricate / sibilant? other? liquid?) !consonant !glide
+affricate <- (t c / t s / d j / d z)
+liquid <- (l / r)
+other <- (p / t !l / k / f / x / b / d !l / g / v / m / n !liquid)
+sibilant <- (c / s !x / (j / z) !n !liquid)
+consonant <- (voiced / unvoiced / syllabic)
+syllabic <- (l / m / n / r)
+voiced <- (b / d / g / j / v / z)
+unvoiced <- (c / f / k / p / s / t / x)
+l <- comma* [lL] !h !glide !l
+m <- comma* [mM] !h !glide !m !z
+n <- comma* [nN] !h !glide !n !affricate
+r <- comma* [rR] !h !glide !r
+b <- comma* [bB] !h !glide !b !unvoiced
+d <- comma* [dD] !h !glide !d !unvoiced
+g <- comma* [gG] !h !glide !g !unvoiced
+v <- comma* [vV] !h !glide !v !unvoiced
+j <- comma* [jJ] !h !glide !j !z !unvoiced
+z <- comma* [zZ] !h !glide !z !j !unvoiced
+s <- comma* [sS] !h !glide !s !c !voiced
+c <- comma* [cC] !h !glide !c !s !x !voiced
+x <- comma* [xX] !h !glide !x !c !k !voiced
+k <- comma* [kK] !h !glide !k !x !voiced
+f <- comma* [fF] !h !glide !f !voiced
+p <- comma* [pP] !h !glide !p !voiced
+t <- comma* [tT] !h !glide !t !voiced
+h <- comma* ['h] &nucleus
+digit <- (comma* [0123456789] !h !nucleus)
+post_word <- (pause / !nucleus lojban_word)
+pause <- (comma* space_char+ / EOF)
+EOF <- (comma* !.)
+comma <- [,]
+non_lojban_word <- (!lojban_word non_space+)
+non_space <- (!space_char .)
+space_char <- [.\t\n\r?!\u0020]
+spaces <- (!Y initial_spaces)
+initial_spaces <- ((comma* space_char / !ybu Y)+ EOF? / EOF)
+ybu <- (Y space_char* BU)
+lujvo <- (!gismu !fuhivla brivla)
+A <- &cmavo ( a / e / j i / o / u ) &post_word
+BAI <- &cmavo ( d u h o / s i h u / z a u / k i h i / d u h i / c u h u / t u h i / t i h u / d i h o / j i h u / r i h a / n i h i / m u h i / k i h u / v a h u / k o i / c a h i / t a h i / p u h e / j a h i / k a i / b a i / f i h e / d e h i / c i h o / m a u / m u h u / r i h i / r a h i / k a h a / p a h u / p a h a / l e h a / k u h u / t a i / b a u / m a h i / c i h e / f a u / p o h i / c a u / m a h e / c i h u / r a h a / p u h a / l i h e / l a h u / b a h i / k a h i / s a u / f a h e / b e h i / t i h i / j a h e / g a h a / v a h o / j i h o / m e h a / d o h e / j i h e / p i h o / g a u / z u h e / m e h e / r a i ) &post_word
+BAhE <- &cmavo ( b a h e / z a h e ) &post_word
+BE <- &cmavo ( b e ) &post_word
+BEI <- &cmavo ( b e i ) &post_word
+BEhO <- &cmavo ( b e h o ) &post_word
+BIhE <- &cmavo ( b i h e ) &post_word
+BIhI <- &cmavo ( m i h i / b i h o / b i h i ) &post_word
+BO <- &cmavo ( b o ) &post_word
+BOI <- &cmavo ( b o i ) &post_word
+BU <- &cmavo ( b u ) &post_word
+BY <- &cmavo (ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word
+CAhA <- &cmavo ( c a h a / p u h i / n u h o / k a h e ) &post_word
+CAI <- &cmavo ( p e i / c a i / c u h i / s a i / r u h e ) &post_word
+CEI <- &cmavo ( c e i ) &post_word
+CEhE <- &cmavo ( c e h e ) &post_word
+CO <- &cmavo ( c o ) &post_word
+COI <- &cmavo ( j u h i / c o i / f i h i / t a h a / m u h o / f e h o / c o h o / p e h u / k e h o / n u h e / r e h i / b e h e / j e h e / m i h e / k i h e / v i h o ) &post_word
+CU <- &cmavo ( c u ) &post_word
+CUhE <- &cmavo ( c u h e / n a u ) &post_word
+DAhO <- &cmavo ( d a h o ) &post_word
+DOI <- &cmavo ( d o i ) &post_word
+DOhU <- &cmavo ( d o h u ) &post_word
+FA <- &cmavo ( f a i / f a / f e / f o / f u / f i h a / f i ) &post_word
+FAhA <- &cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a ) &post_word  &post_word
+FAhO <- &cmavo ( f a h o ) &post_word
+FEhE <- &cmavo ( f e h e ) &post_word
+FEhU <- &cmavo ( f e h u ) &post_word
+FIhO <- &cmavo ( f i h o ) &post_word
+FOI <- &cmavo ( f o i ) &post_word
+FUhA <- &cmavo ( f u h a ) &post_word
+FUhE <- &cmavo ( f u h e ) &post_word
+FUhO <- &cmavo ( f u h o ) &post_word
+GA <- &cmavo ( g e h i / g e / g o / g a / g u ) &post_word
+GAhO <- &cmavo ( k e h i / g a h o ) &post_word
+GEhU <- &cmavo ( g e h u ) &post_word
+GI <- &cmavo ( g i ) &post_word
+GIhA <- &cmavo ( g i h e / g i h i / g i h o / g i h a / g i h u ) &post_word
+GOI <- &cmavo ( n o h u / n e / g o i / p o h u / p e / p o h e / p o ) &post_word
+GOhA <- &cmavo ( m o / n e i / g o h u / g o h o / g o h i / n o h a / g o h e / g o h a / d u / b u h a / b u h e / b u h i / c o h e ) &post_word
+GUhA <- &cmavo ( g u h e / g u h i / g u h o / g u h a / g u h u ) &post_word
+I <- &cmavo ( i ) &post_word
+JA <- &cmavo ( j e h i / j e / j o / j a / j u ) &post_word
+JAI <- &cmavo ( j a i ) &post_word
+JOhI <- &cmavo ( j o h i ) &post_word
+JOI <- &cmavo ( f a h u / p i h u / j o i / c e h o / c e / j o h u / k u h a / j o h e / j u h e ) &post_word
+KE <- &cmavo ( k e ) &post_word
+KEhE <- &cmavo ( k e h e ) &post_word
+KEI <- &cmavo ( k e i ) &post_word
+KI <- &cmavo ( k i ) &post_word
+KOhA <- &cmavo ( d a h u / d a h e / d i h u / d i h e / d e h u / d e h e / d e i / d o h i / m i h o / m a h a / m i h a / d o h o / k o h a / f o h u / k o h e / k o h i / k o h o / k o h u / f o h a / f o h e / f o h i / f o h o / v o h a / v o h e / v o h i / v o h o / v o h u / r u / r i / r a / t a / t u / t i / z i h o / k e h a / m a / z u h i / z o h e / c e h u / d a / d e / d i / k o / m i / d o ) &post_word
+KU <- &cmavo ( k u ) &post_word
+KUhE <- &cmavo ( k u h e ) &post_word
+KUhO <- &cmavo ( k u h o ) &post_word
+LA <- &cmavo ( l a i / l a h i / l a ) &post_word
+LAU <- &cmavo ( c e h a / l a u / z a i / t a u ) &post_word
+LAhE <- &cmavo ( t u h a / l u h a / l u h o / l a h e / v u h i / l u h i / l u h e ) &post_word
+LE <- &cmavo ( l e i / l o i / l e h i / l o h i / l e h e / l o h e / l o / l e ) &post_word
+LEhU <- &cmavo ( l e h u ) &post_word
+LI <- &cmavo ( m e h o / l i ) &post_word
+LIhU <- &cmavo ( l i h u ) &post_word
+LOhO <- &cmavo ( l o h o ) &post_word
+LOhU <- &cmavo ( l o h u ) &post_word
+LU <- &cmavo ( l u ) &post_word
+LUhU <- &cmavo ( l u h u ) &post_word
+MAhO <- &cmavo ( m a h o ) &post_word
+MAI <- &cmavo ( m o h o / m a i ) &post_word
+ME <- &cmavo ( m e ) &post_word
+MEhU <- &cmavo ( m e h u ) &post_word
+MOhE <- &cmavo ( m o h e ) &post_word
+MOhI <- &cmavo ( m o h i ) &post_word
+MOI <- &cmavo ( m e i / m o i / s i h e / c u h o / v a h e ) &post_word
+NA <- &cmavo ( j a h a / n a ) &post_word
+NAI <- &cmavo ( n a i ) &post_word
+NAhE <- &cmavo ( t o h e / j e h a / n a h e / n o h e ) &post_word
+NAhU <- &cmavo ( n a h u ) &post_word
+NIhE <- &cmavo ( n i h e ) &post_word
+NIhO <- &cmavo ( n i h o / n o h i ) &post_word
+NOI <- &cmavo ( v o i / n o i / p o i ) &post_word
+NU <- &cmavo ( n i / d u h u / s i h o / n u / l i h i / k a / j e i / s u h u / z u h o / m u h e / p u h u / z a h i ) &post_word
+NUhA <- &cmavo ( n u h a ) &post_word
+NUhI <- &cmavo ( n u h i ) &post_word
+NUhU <- &cmavo ( n u h u ) &post_word
+PA <- &cmavo ( d a u / f e i / g a i / j a u / r e i / v a i / p i h e / p i / f i h u / z a h u / m e h i / n i h u / k i h o / c e h i / m a h u / r a h e / d a h a / s o h a / j i h i / s u h o / s u h e / r o / r a u / s o h u / s o h i / s o h e / s o h o / m o h a / d u h e / t e h o / k a h o / c i h i / t u h o / x o / p a i / n o h o / n o / p a / r e / c i / v o / m u / x a / z e / b i / s o / digit ) &post_word
+PEhE <- &cmavo ( p e h e ) &post_word
+PEhO <- &cmavo ( p e h o ) &post_word
+PU <- &cmavo ( b a / p u / c a ) &post_word
+RAhO <- &cmavo ( r a h o ) &post_word
+ROI <- &cmavo ( r e h u / r o i ) &post_word
+SA <- &cmavo ( s a ) &post_word
+SE <- &cmavo ( s e / t e / v e / x e ) &post_word
+SEI <- &cmavo ( s e i / t i h o ) &post_word
+SEhU <- &cmavo ( s e h u ) &post_word
+SI <- &cmavo ( s i ) &post_word
+SOI <- &cmavo ( s o i ) &post_word
+SU <- &cmavo ( s u ) &post_word
+TAhE <- &cmavo ( r u h i / t a h e / d i h i / n a h o ) &post_word
+TEhU <- &cmavo ( t e h u ) &post_word
+TEI <- &cmavo ( t e i ) &post_word
+TO <- &cmavo ( t o h i / t o ) &post_word
+TOI <- &cmavo ( t o i ) &post_word
+TUhE <- &cmavo ( t u h e ) &post_word
+TUhU <- &cmavo ( t u h u ) &post_word
+UI <- &cmavo ( i h a / i e / a h e / u h i / i h o / i h e / a h a / i a / o h i / o h e / e h e / o i / u o / e h i / u h o / a u / u a / a h i / i h u / i i / u h a / u i / a h o / a i / a h u / i u / e i / o h o / e h a / u u / o h a / o h u / u h u / e h o / i o / e h u / u e / i h i / u h e / b a h a / j a h o / c a h e / s u h a / t i h e / k a h u / s e h o / z a h a / p e h i / r u h a / j u h a / t a h o / r a h u / l i h a / b a h u / m u h a / d o h a / t o h u / v a h i / p a h e / z u h u / s a h e / l a h a / k e h u / s a h u / d a h i / j e h u / s a h a / k a u / t a h u / n a h i / j o h a / b i h u / l i h o / p a u / m i h u / k u h i / j i h a / s i h a / p o h o / p e h a / r o h i / r o h e / r o h o / r o h u / r o h a / r e h e / l e h o / j u h o / f u h i / d a i / g a h i / z o h o / b e h u / r i h e / s e h i / s e h a / v u h e / k i h a / x u / g e h e / b u h o ) &post_word
+VA <- &cmavo ( v i / v a / v u ) &post_word
+VAU <- &cmavo ( v a u ) &post_word
+VEI <- &cmavo ( v e i ) &post_word
+VEhO <- &cmavo ( v e h o ) &post_word
+VUhU <- &cmavo ( g e h a / f u h u / p i h i / f e h i / v u h u / s u h i / j u h u / g e i / p a h i / f a h i / t e h a / c u h a / v a h a / n e h o / d e h o / f e h a / s a h o / r e h a / r i h o / s a h i / p i h a / s i h i ) &post_word
+VEhA <- &cmavo ( v e h u / v e h a / v e h i / v e h e ) &post_word
+VIhA <- &cmavo ( v i h i / v i h a / v i h u / v i h e ) &post_word
+VUhO <- &cmavo ( v u h o ) &post_word
+XI <- &cmavo ( x i ) &post_word
+Y <- &cmavo ( y+ ) &post_word
+ZAhO <- &cmavo ( c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o ) &post_word
+ZEhA <- &cmavo ( z e h u / z e h a / z e h i / z e h e ) &post_word
+ZEI <- &cmavo ( z e i ) &post_word
+ZI <- &cmavo ( z u / z a / z i ) &post_word
+ZIhE <- &cmavo ( z i h e ) &post_word
+ZO <- &cmavo ( z o ) &post_word
+ZOI <- &cmavo ( z o i / l a h o ) &post_word
+ZOhU <- &cmavo ( z o h u ) &post_word
