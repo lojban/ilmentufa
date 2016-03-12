@@ -212,7 +212,7 @@ function process_pegjs_code(peg) {
 
 function process_peg_code(peg) {
     peg = peg.replace(/<-/g, "=");
-    peg = peg_add_js_parser_action(peg);
+    peg = peg_add_js_parser_actions(peg);
     return peg;
 }
 
@@ -281,7 +281,7 @@ function split_peg_code_and_comments(peg, is_peg_to_pegjs) {
     return sp;
 }
 
-function peg_add_js_parser_action(peg) {
+function peg_add_js_parser_actions(peg) {
     peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^ ][^\r\n]+)/gm,
                       '$1_elidible = expr:($2) {return (expr == "") '
                       + '? ["$1"] : _node_empty("$1", expr);}');
