@@ -212,6 +212,7 @@ function process_pegjs_code(peg) {
 
 function process_peg_code(peg) {
     peg = peg.replace(/<-/g, "=");
+    peg = peg.replace(/-/g, "_");
     peg = peg_add_js_parser_actions(peg);
     return peg;
 }
