@@ -205,7 +205,7 @@ function process_peg_comment(cs) {
 function process_pegjs_code(peg) {
     peg = peg.replace(/=/g, "<-");
     peg = peg.replace(/[a-zA-Z0-9_-]+:/g, ""); // Removing "expr:" and such.
-    // Remove useless parentheses, as in "exp = (r1 r2)".
+    // Removing useless parentheses, as in "expr = (r1 r2)" or "((expr))".
     peg = remove_superfluous_parentheses(peg);
     return peg;
 }
