@@ -1,10 +1,14 @@
-module.exports = process_parse_tree;
+var IS_NODEJS_ENV = new Function("try {return this===global;} catch(e) {return false;}");
 
-/* Just for testing the program from the terminal. */
-var test_input = ["text",["text_part_2",[["free",["vocative",[["COI_clause",["COI_pre",["COI",[["c","c"],["o","o"],["i","i"]]],["spaces",["initial_spaces"]]]]]],["sumti",["sumti_1",["sumti_2",["sumti_3",["sumti_4",["sumti_5",["quantifier",["number",["PA_clause",["PA_pre",["PA",[["r","r"],["o","o"]]],["spaces",["initial_spaces"]]]]],["BOI"]],["sumti_6",["KOhA_clause",["KOhA_pre",["KOhA",[["d","d"],["o","o"]]]]]]]]]]]],["DOhU"]]]]];
+if (IS_NODEJS_ENV()) {
+    module.exports = process_parse_tree;
 
-console.log(JSON.stringify(process_parse_tree(test_input)));
-process.exit();
+    /* Just for testing the program from the terminal. */
+    var test_input = ["text",["text_part_2",[["free",["vocative",[["COI_clause",["COI_pre",["COI",[["c","c"],["o","o"],["i","i"]]],["spaces",["initial_spaces"]]]]]],["sumti",["sumti_1",["sumti_2",["sumti_3",["sumti_4",["sumti_5",["quantifier",["number",["PA_clause",["PA_pre",["PA",[["r","r"],["o","o"]]],["spaces",["initial_spaces"]]]]],["BOI"]],["sumti_6",["KOhA_clause",["KOhA_pre",["KOhA",[["d","d"],["o","o"]]]]]]]]]]]],["DOhU"]]]]];
+
+    console.log(JSON.stringify(process_parse_tree(test_input)));
+    process.exit();
+}
 
 // =========================================================================== //
 
@@ -64,7 +68,7 @@ function join_expr(n) {
 
 /* Checks whether the argument node is a target for pruning. */
 function is_target_node(n) {
-    return (among(n[0], ["cmevla", "gismu_2", "lujvo", "fuhivla", "spaces"])
+    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "spaces"])
             || is_selmaho(n[0]));
 }
 

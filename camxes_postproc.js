@@ -1,11 +1,12 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2014-01-26.
+ * Last change: 2016-03-16.
  * 
- * Entry point: camxes_postprocessing(text, mode)
+ * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
- *    -- text:  [string] camxes' raw output
+ *    -- input:  [string] camxes' stringified output
+ *            OR [array] camxes' parse tree output
  *    -- mode:  [uint] output mode flag
  *         0 = Raw output (no change)
  *         1 = Condensed
@@ -15,32 +16,47 @@
  *         5 = Prettified - famyma'o
  *         6 = Prettified - famyma'o + selma'o
  *         7 = Prettified - famyma'o + selma'o + bridi parts
+ *    -- ptproc:  OPTIONAL [function] parse tree processor
  * Return value:
  *       [string] postprocessed version of camxes' output
  */
 
 /*
  * Function list:
- *   -- camxes_postprocessing(text, mode)
+ *   -- camxes_postprocessing(text, mode, ptproc)
  *   -- erase_elided_terminators(str)
  *   -- delete_superfluous_brackets(str)
  *   -- prettify_brackets(str)
- *   -- is_string(v)
  *   -- str_print_uint(val, charset)
  *   -- str_replace(str, pos, len, sub)
  *   -- chr_check(chr, list)
+ *   -- is_string(v)
+ *   -- is_array(v)
  *   -- dbg_bracket_count(str)
  */
 
-alert = console.log;
+// import { process_parse_tree } from 'process_parse_tree.js';
 
-function camxes_postprocessing(text, mode) {
-	if (!is_string(text)) return "ERROR: Wrong input type.";
+if (typeof process_parse_tree !== 'function') 
+    process_parse_tree = (x) => x;
+
+if (typeof alert !== 'function')
+    alert = console.log; // For Node.js
+
+function camxes_postprocessing(input, mode, ptproc) {
+    var text;
+    if (is_array(input)) {
+        if (typeof ptproc === 'function')
+            input = ptproc(input);
+        text = JSON.stringify(input, undefined, 2);
+    } else if (is_string(input)) {
+        text = input;
+    } else return "ERROR: Wrong input type.";
 	if (mode == 0) return text;
 	if (text.charAt(0) != '[') return text;
 	/** Condensation **/
 	text = text.replace(/ +/gm, "");
-	text = text.replace(/\r\n|\n|\r/gm, "");
+	text = text.replace(/[\r\n]/gm, "");
 	if (mode == 1) return text;
 	/** Prettified forms **/
 	var with_selmaho = (mode >= 3 && mode != 5);
@@ -76,6 +92,9 @@ function camxes_postprocessing(text, mode) {
 	/* Making things easier to read */
 	if (!with_selmaho) text = text.replace(/[A-Za-z_]+:/g, "");
 	text = text.replace(/\]\[/g, "] [");
+    // Replacing "spaces" with "_"
+    text = text.replace(/([ \[\]])spaces([ \[\]])/gm, "$1_$2");
+    // Bracket prettification
 	text = prettify_brackets(text);
 	text = text.replace(/ +/gm, " ");
 	text = text.replace(/^ +/, "");
@@ -97,7 +116,6 @@ function erase_elided_terminators(str) {
 			if (str[i] != '[' || str[j] != ']') break;
 		i++;
 		j--;
-		//alert("DEL "+str.substr(i,j-i+1));
 		str = str_replace(str, i, j-i+1, "");
 	} while (parachute--);
 	return str;
@@ -146,7 +164,7 @@ function delete_superfluous_brackets(string) {
 	} while (i < str.length && --parachute > 0);
 	if (parachute <= 0)
 		alert("@delete_superfluous_brackets #1: INFINITE LOOP\ni = " + i
-		    + "\nstr from i:\n" + str.slice(i));
+		    + "\nstr from i:\n" + str.slice(i).join(""));
 	/**
 		### SECOND CLEANUP: BRACKETS SURROUNDING GROUPS OF WORDS ETC. ###
 	**/
@@ -182,7 +200,7 @@ function delete_superfluous_brackets(string) {
 	}
 	if (parachute <= 0)
 		alert("@delete_superfluous_brackets #2: INFINITE LOOP\ni = " + i
-		    + "\nstr from i:\n" + str.slice(i));
+		    + "\nstr from i:\n" + str.slice(i).join(""));
 	return str.join("");
 }
 
@@ -219,10 +237,6 @@ function prettify_brackets(str) {
 /* ===  Routines  === */
 /* ================== */
 
-function is_string(v) {
-    return typeof v.valueOf() === 'string';
-}
-
 function str_print_uint(val, charset) {
 	// 'charset' must be a character array.
 	var radix = charset.length;
@@ -248,6 +262,16 @@ function chr_check(chr, list) {
 	if (!is_string(list)) return false;
 	do if (chr == list[i]) return true; while (i++ < list.length);
 	return false;
+}
+
+function is_string(v) {
+    if (typeof v === 'undefined') return false;
+    else return typeof v.valueOf() === 'string';
+}
+
+function is_array(v) {
+    if (typeof v === 'undefined') return false;
+    else return (typeof v === 'object' && v.constructor === Array);
 }
 
 function dbg_bracket_count(str) {
