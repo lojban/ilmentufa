@@ -285,7 +285,7 @@ function split_peg_code_and_comments(peg, is_peg_to_pegjs) {
 function peg_add_js_parser_actions(peg) {
     peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^ ][^\r\n]+)/gm,
                       '$1_elidible = expr:($2) {return (expr == "") '
-                      + '? ["$1"] : _node_empty("$1", expr);}');
+                      + '? ["$1"] : _node_empty("$1_elidible", expr);}');
     peg = peg.replace(/([0-9a-zA-Z_-]+) *= *([^ ][^:\r\n]+)([\r\n])/gm,
                       '$1 = expr:($2) {return _node("$1", expr);}$3');
     return peg;
