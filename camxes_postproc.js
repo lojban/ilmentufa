@@ -64,7 +64,8 @@ function camxes_postprocessing(input, mode, ptproc) {
 	var without_terminator = (mode >= 5);
 	text = text.replace(/\"/gm, ""); // Delete every quote marks
 	/* Save selmaho and brivla types */
-	text = text.replace(/(gismu|lujvo|fuhivla|cmene|cmevla),([A-Za-z']+)/g, "$1:$2");
+	text = text.replace(/(gismu|lujvo|fuhivla|cmene|cmevla),([A-Za-z']+)/g,
+                        "$1:$2");
 	text = text.replace(/([A-Za-z_]+),([A-Za-z']+)/g, "$1:$2");
 	/* Save a few nodes from deletion (optional) */
 	if (with_nodes_labels) {
@@ -92,9 +93,11 @@ function camxes_postprocessing(input, mode, ptproc) {
 	/* Making things easier to read */
 	if (!with_selmaho) text = text.replace(/[A-Za-z_]+:/g, "");
 	text = text.replace(/\]\[/g, "] [");
-    // Replacing "spaces" with "_"
+    // Replacing "spaces" with "_":
     text = text.replace(/([ \[\]])spaces([ \[\]])/gm, "$1_$2");
-    // Bracket prettification
+    // Removing stuff like "a:a" that may remain when morphology is kept:
+    text = text.replace(/[ \[\]][a-z]:([a-z'])[ \[\]]/gm, "$1");
+    // Bracket prettification:
 	text = prettify_brackets(text);
 	text = text.replace(/ +/gm, " ");
 	text = text.replace(/^ +/, "");
