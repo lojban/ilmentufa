@@ -207,12 +207,14 @@ function process_pegjs_code(peg) {
     peg = peg.replace(/[a-zA-Z0-9_-]+:/g, ""); // Removing "expr:" and such.
     // Removing useless parentheses, as in "expr = (r1 r2)" or "((expr))".
     peg = remove_superfluous_parentheses(peg);
+    peg = peg.replace(/ {2,}/g, " ");
     return peg;
 }
 
 function process_peg_code(peg) {
     peg = peg.replace(/<-/g, "=");
     peg = peg.replace(/-/g, "_");
+    peg = peg.replace(/ {2,}/g, " ");
     peg = peg_add_js_parser_actions(peg);
     return peg;
 }
