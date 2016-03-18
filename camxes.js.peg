@@ -1316,7 +1316,7 @@ ZO_post = post_clause
 
 //         delimited quote marker 
 ZOI_clause = pre:ZOI_pre post:ZOI_post {return _node2("ZOI_clause", pre, post); }
-ZOI_pre = pre_clause ZOI spaces? zoi_open spaces? zoi_word* zoi_close spaces?
+ZOI_pre = pre_clause ZOI spaces? zoi_open spaces? (zoi_word spaces)* zoi_close spaces?
 ZOI_post = post_clause
 ZOI_start = !ZOI_pre ZOI
 // ZOI_no_SA_handling = pre_clause ZOI spaces? zoi_open zoi_word* zoi_close spaces?
@@ -1331,8 +1331,8 @@ ZOhU_post = post_clause
 // ___ MORPHOLOGY ___
 
 CMEVLA = expr:cmevla {return ["CMEVLA", expr];}
-BRIVLA = expr:(gismu_2 / lujvo / fuhivla) {return ["BRIVLA", expr];}
-gismu_2 = expr:(gismu) {return ["gismu", expr];}
+BRIVLA = expr:(gismu / lujvo / fuhivla) {return ["BRIVLA", expr];}
+// gismu_2 = expr:(gismu) {return ["gismu", expr];}
 CMAVO = expr:(A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhU / LI / LIhU / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo) {return ["CMAVO", expr];}
 
 // This is a Parsing Expression Grammar for the morphology of Lojban.
@@ -1383,7 +1383,7 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) { return expr; }
 any_word = expr:lojban_word spaces? { return expr; }
 
 zoi_open = w:lojban_word { return _zoi_assign_delim(w); }
-zoi_word = expr:( w:(non_space+) spaces &{ return (! _zoi_check_quote(w)); } ) {return "";}
+zoi_word = expr:( w:(non_space+) &{ return (! _zoi_check_quote(w)); } ) {return "";}
 zoi_close = w:any_word &{ return (_zoi_check_delim(w)); }
 
 //___________________________________________________________________

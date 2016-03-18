@@ -1320,7 +1320,7 @@ ZO_post = expr:(post_clause) {return _node("ZO_post", expr);}
 
 //         delimited quote marker
 ZOI_clause = expr:(ZOI_pre ZOI_post) {return _node("ZOI_clause", expr);}
-ZOI_pre = expr:(pre_clause ZOI spaces? zoi_open spaces? zoi_word* zoi_close spaces?) {return _node("ZOI_pre", expr);}
+ZOI_pre = expr:(pre_clause ZOI spaces? zoi_open spaces? (zoi_word spaces)* zoi_close spaces?) {return _node("ZOI_pre", expr);}
 ZOI_post = expr:(post_clause) {return _node("ZOI_post", expr);}
 ZOI_start = expr:(!ZOI_pre ZOI) {return _node("ZOI_start", expr);}
 // ZOI_no_SA_handling = pre_clause ZOI spaces? zoi_open zoi_word* zoi_close spaces?
@@ -1335,8 +1335,8 @@ ZOhU_post = expr:(post_clause) {return _node("ZOhU_post", expr);}
 // ___ MORPHOLOGY ___
 
 CMEVLA = expr:(cmevla) {return _node("CMEVLA", expr);}
-BRIVLA = expr:(gismu_2 / lujvo / fuhivla) {return _node("BRIVLA", expr);}
-gismu_2 = expr:(gismu) {return _node("gismu_2", expr);}
+BRIVLA = expr:(gismu / lujvo / fuhivla) {return _node("BRIVLA", expr);}
+// gismu_2 = expr:(gismu) {return ["gismu", expr];}
 CMAVO = expr:(A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhU / LI / LIhU / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo) {return _node("CMAVO", expr);}
 
 // This is a Parsing Expression Grammar for the morphology of Lojban.
@@ -1387,7 +1387,7 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) {return _node("lojban_word", expr);
 any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 
 zoi_open = expr:(lojban_word) {return _node("zoi_open", expr);}
-zoi_word = expr:((non_space+) spaces &__EXTERN_PREDICATE_SYMBOL__) {return _node("zoi_word", expr);}
+zoi_word = expr:((non_space+) &__EXTERN_PREDICATE_SYMBOL__) {return _node("zoi_word", expr);}
 zoi_close = expr:(any_word &__EXTERN_PREDICATE_SYMBOL__) {return _node("zoi_close", expr);}
 
 //___________________________________________________________________
