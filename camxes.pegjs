@@ -51,24 +51,20 @@
 {
   var _g_zoi_delim;
 
-  function _join(arg)
-  {
+  function _join(arg) {
     if (typeof(arg) == "string")
       return arg;
-    else if (arg)
-    {
+    else if (arg) {
       var ret = "";
       for (var v in arg) { if (arg[v]) ret += _join(arg[v]); }
       return ret;
     }
   }
 
-  function _node_empty(label, arg)
-  {
+  function _node_empty(label, arg) {
     var ret = [];
     if (label) ret.push(label);
-    if (arg && typeof arg == "object" && typeof arg[0] == "string" && arg[0])
-    {
+    if (arg && typeof arg == "object" && typeof arg[0] == "string" && arg[0]) {
       ret.push( arg );
       return ret;
     }
@@ -79,28 +75,24 @@
     return _node_int(label, arg);
   }
 
-  function _node_int(label, arg)
-  {
+  function _node_int(label, arg) {
     if (typeof arg == "string")
       return arg;
     if (!arg) arg = [];
     var ret = [];
     if (label) ret.push(label);
-    for (var v in arg)
-    {
+    for (var v in arg) {
       if (arg[v] && arg[v].length != 0)
         ret.push( _node_int( null, arg[v] ) );
     }
     return ret;
   }
 
-  function _node2(label, arg1, arg2)
-  {
+  function _node2(label, arg1, arg2) {
     return [label].concat(_node_empty(arg1)).concat(_node_empty(arg2));
   }
 
-  function _node(label, arg)
-  {
+  function _node(label, arg) {
     var _n = _node_empty(label, arg);
     return (_n.length == 1 && label) ? [] : _n;
   }
@@ -108,39 +100,40 @@
 
   // === ZOI functions === //
 
-  function _zoi_assign_delim(word) {
-    var a = word.toString().split(",");
-    if (a.length > 0) _g_zoi_delim = a[a.length - 1];
-    else _g_zoi_delim = "";
-    return word;
+  function _assign_zoi_delim(w) {
+    if (is_array(w)) w = join_expr(w);
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
+    _g_zoi_delim = w;
+    return;
   }
 
-  function _zoi_check_quote(word) {
-    if (typeof(word) == "object") word = word.toString();
-    if (!is_string(word)) {
-      throw "ZOI word is not a string";
-      return false;
-    } else {
-      return (word.toLowerCase().replace(/,/gm, "").replace(/h/g, "'") === _g_zoi_delim);
-    }
+  function _is_zoi_delim(w) {
+    if (is_array(w)) w = join_expr(w);
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
+    return w === _g_zoi_delim;
   }
 
-  function _zoi_check_delim(word) {
-    if (typeof(word) == "object") word = word.toString();
-    if (!is_string(word)) {
-      throw "ZOI word is not a string";
-      return false;
-    } else {
-      word = word.split(",");
-      if (word.length > 0) word = word[word.length - 1];
-      else word = "";
-      return (word === _g_zoi_delim);
+  function join_expr(n) {
+    if (!is_array(n) || n.length < 1) return "";
+    var s = "";
+    var i = is_array(n[0]) ? 0 : 1;
+    while (i < n.length) {
+      s += is_string(n[i]) ? n[i] : join_expr(n[i]);
+      i++;
     }
+    return s;
   }
 
   function is_string(v) {
     if (typeof v === 'undefined') return false;
     else return typeof v.valueOf() === 'string';
+  }
+
+  function is_array(v) {
+    if (typeof v === 'undefined') return false;
+    else return (typeof v === 'object' && v.constructor === Array);
   }
 }
 
@@ -1386,9 +1379,9 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) {return _node("lojban_word", expr);
 
 any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 
-zoi_open = expr:(lojban_word) {return _node("zoi_open", expr);}
-zoi_word = expr:((non_space+) &__EXTERN_PREDICATE_SYMBOL__) {return _node("zoi_word", expr);}
-zoi_close = expr:(any_word &__EXTERN_PREDICATE_SYMBOL__) {return _node("zoi_close", expr);}
+zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
+zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return _node("zoi_word", [join_expr(expr)]); }
+zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
 
 //___________________________________________________________________
 
@@ -1685,7 +1678,7 @@ DOhU = expr:(&cmavo ( d o h u ) &post_word) {return _node("DOhU", expr);}
 
 FA = expr:(&cmavo ( f a i / f a / f e / f o / f u / f i h a / f i ) &post_word) {return _node("FA", expr);}
 
-FAhA = expr:(&cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a ) &post_word  &post_word) {return _node("FAhA", expr);}
+FAhA = expr:(&cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a ) &post_word &post_word) {return _node("FAhA", expr);}
 
 FAhO = expr:(&cmavo ( f a h o ) &post_word) {return _node("FAhO", expr);}
 

@@ -138,7 +138,7 @@ abs_term <- term_sa* abs_term_1
 
 abs_term_1 <- sumti / abs_tag_term / termset / NA_clause KU_clause free*
 
-abs_tag_term <-  !gek (tag !(!tag selbri) !gek_sentence / FA_clause free*) (sumti / KU_elidible free*)
+abs_tag_term <- !gek (tag !(!tag selbri) !gek_sentence / FA_clause free*) (sumti / KU_elidible free*)
 # /*** END EXP-SELBRITCITA-FIX ***/
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
@@ -364,7 +364,7 @@ vocative <- (COI_clause NAI_clause?)+ DOI_clause / (COI_clause NAI_clause?) (COI
 
 indicators <- FUhE_clause? indicator+
 
-indicator <-  ((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_clause) !BU_clause
+indicator <- ((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_clause) !BU_clause
 
 
 # ****************
@@ -1291,7 +1291,7 @@ lojban_word <- CMEVLA / CMAVO / BRIVLA
 any_word <- lojban_word spaces?
 
 zoi_open <- lojban_word
-zoi_word <-  (non_space+) &__EXTERN_PREDICATE_SYMBOL__
+zoi_word <- (non_space+) &__EXTERN_PREDICATE_SYMBOL__
 zoi_close <- any_word &__EXTERN_PREDICATE_SYMBOL__
 
 #___________________________________________________________________
@@ -1589,7 +1589,7 @@ DOhU <- &cmavo ( d o h u ) &post_word
 
 FA <- &cmavo ( f a i / f a / f e / f o / f u / f i h a / f i ) &post_word
 
-FAhA <- &cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a ) &post_word  &post_word
+FAhA <- &cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a ) &post_word &post_word
 
 FAhO <- &cmavo ( f a h o ) &post_word
 

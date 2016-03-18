@@ -20,6 +20,8 @@
  * Initial author: Ilmen (ilmen.pokebip@gmail.com)
  */
 
+/* TODO: Let's just remove this and completely remove PEGJS predicates
+   alltogether. */
 var EXTERN_PREDICATE_SYMBOL = "__EXTERN_PREDICATE_SYMBOL__";
 
 main(process.argv, require("fs"));
@@ -212,6 +214,8 @@ function process_pegjs_code(peg) {
 }
 
 function process_peg_code(peg) {
+    var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
+    peg = peg.replace(re, "");
     peg = peg.replace(/<-/g, "=");
     peg = peg.replace(/-/g, "_");
     peg = peg.replace(/ {2,}/g, " ");
@@ -285,9 +289,22 @@ function split_peg_code_and_comments(peg, is_peg_to_pegjs) {
 }
 
 function peg_add_js_parser_actions(peg) {
+    /* ZOI handling parser actions */
+    peg = peg.replace(/^(zoi[-_]open) *= *([^ ][^\r\n]+)/gm,
+                      '$1 = expr:($2) { _assign_zoi_delim(expr);'
+                      + ' return _node("$1", expr); }');
+    peg = peg.replace(/^(zoi[-_]word) *= *([^ ][^\r\n]+)/gm,
+                      '$1 = expr:($2) !{ return _is_zoi_delim(expr); } '
+                      + '{ return _node("$1", [join_expr(expr)]); }');
+    peg = peg.split("((non_space+))").join("(non_space+)");
+    peg = peg.replace(/^(zoi[-_]close) *= *([^ ][^\r\n]+)/gm,
+                      '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
+                      + '{ return _node("$1", expr); }');
+    /* Parser action for elidible terminators */
     peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^ ][^\r\n]+)/gm,
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
+    /* Default parser action */
     peg = peg.replace(/([0-9a-zA-Z_-]+) *= *([^ ][^:\r\n]+)([\r\n])/gm,
                       '$1 = expr:($2) {return _node("$1", expr);}$3');
     return peg;
@@ -297,24 +314,20 @@ function js_initializer() {
     return `{
   var _g_zoi_delim;
   
-  function _join(arg)
-  {
+  function _join(arg) {
     if (typeof(arg) == "string")
       return arg;
-    else if (arg)
-    {
+    else if (arg) {
       var ret = "";
       for (var v in arg) { if (arg[v]) ret += _join(arg[v]); }
       return ret;
     }
   }
 
-  function _node_empty(label, arg)
-  {
+  function _node_empty(label, arg) {
     var ret = [];
     if (label) ret.push(label);
-    if (arg && typeof arg == "object" && typeof arg[0] == "string" && arg[0])
-    {
+    if (arg && typeof arg == "object" && typeof arg[0] == "string" && arg[0]) {
       ret.push( arg );
       return ret;
     }
@@ -325,68 +338,65 @@ function js_initializer() {
     return _node_int(label, arg);
   }
 
-  function _node_int(label, arg)
-  {
+  function _node_int(label, arg) {
     if (typeof arg == "string")
       return arg;
     if (!arg) arg = [];
     var ret = [];
     if (label) ret.push(label);
-    for (var v in arg)
-    {
+    for (var v in arg) {
       if (arg[v] && arg[v].length != 0)
         ret.push( _node_int( null, arg[v] ) );
     }
     return ret;
   }
- 
-  function _node2(label, arg1, arg2)
-  {
+
+  function _node2(label, arg1, arg2) {
     return [label].concat(_node_empty(arg1)).concat(_node_empty(arg2));
   }
 
-  function _node(label, arg)
-  {
+  function _node(label, arg) {
     var _n = _node_empty(label, arg);
     return (_n.length == 1 && label) ? [] : _n;
   }
   var _node_nonempty = _node;
-  
+
   // === ZOI functions === //
 
-  function _zoi_assign_delim(word) {
-    var a = word.toString().split(",");
-    if (a.length > 0) _g_zoi_delim = a[a.length - 1];
-    else _g_zoi_delim = "";
-    return word;
+  function _assign_zoi_delim(w) {
+    if (is_array(w)) w = join_expr(w);
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
+    _g_zoi_delim = w;
+    return;
   }
 
-  function _zoi_check_quote(word) {
-    if (typeof(word) == "object") word = word.toString();
-    if (!is_string(word)) {
-      throw "ZOI word is not a string";
-      return false;
-    } else {
-      return (word.toLowerCase().replace(/,/gm, "").replace(/h/g, "'") === _g_zoi_delim);
-    }
+  function _is_zoi_delim(w) {
+    if (is_array(w)) w = join_expr(w);
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
+    return w === _g_zoi_delim;
   }
-  
-  function _zoi_check_delim(word) {
-    if (typeof(word) == "object") word = word.toString();
-    if (!is_string(word)) {
-      throw "ZOI word is not a string";
-      return false;
-    } else {
-      word = word.split(",");
-      if (word.length > 0) word = word[word.length - 1];
-      else word = "";
-      return (word === _g_zoi_delim);
+
+  function join_expr(n) {
+    if (!is_array(n) || n.length < 1) return "";
+    var s = "";
+    var i = is_array(n[0]) ? 0 : 1;
+    while (i < n.length) {
+      s += is_string(n[i]) ? n[i] : join_expr(n[i]);
+      i++;
     }
+    return s;
   }
-  
+
   function is_string(v) {
     if (typeof v === 'undefined') return false;
     else return typeof v.valueOf() === 'string';
+  }
+
+  function is_array(v) {
+    if (typeof v === 'undefined') return false;
+    else return (typeof v === 'object' && v.constructor === Array);
   }
 }
 
