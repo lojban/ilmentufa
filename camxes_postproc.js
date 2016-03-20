@@ -1,13 +1,13 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-03-17.
+ * Last change: 2016-03-20.
  * 
- * Entry point: camxes_postprocessing(input, mode)
+ * Entry point: camxes_postprocessing(input, mode, ptproc, postproc_id)
  * Arguments:
  *    -- input:  [string] camxes' stringified output
  *            OR [array] camxes' parse tree output
- *    -- mode:  [uint] output mode flag
+ *    -- mode:  [number] output mode flag
  *         0 = Raw output (no change)
  *         1 = Condensed
  *         2 = Prettified
@@ -17,13 +17,22 @@
  *         6 = Prettified - famyma'o + selma'o
  *         7 = Prettified - famyma'o + selma'o + bridi parts
  *    -- ptproc:  OPTIONAL [function] parse tree processor
+ *    -- postproc_id:  OPTIONAL [number] selecter postprocessors
+ *         0 = New postprocessor
+ *         1 = Old postprocessor
+ *         2 = Both
+ *         
  * Return value:
  *       [string] postprocessed version of camxes' output
  */
 
 /*
  * Function list:
- *   -- camxes_postprocessing(text, mode, ptproc)
+ *   -- camxes_postprocessing(text, mode, ptproc, postproc_id)
+ *   -- new_postprocessor(input, no_morpho, with_selmaho, with_terminator)
+ *   -- prune_unwanted_nodes(tree, is_wanted_node)
+ *   -- prefix_wordclass(tree, replacements)
+ *   -- old_postprocessor(text, with_selmaho, without_terminator, with_nodes_labels)
  *   -- erase_elided_terminators(str)
  *   -- delete_superfluous_brackets(str)
  *   -- prettify_brackets(str)
@@ -35,33 +44,136 @@
  *   -- dbg_bracket_count(str)
  */
 
-// import { process_parse_tree } from 'process_parse_tree.js';
-
-if (typeof process_parse_tree !== 'function') 
-    process_parse_tree = (x) => x;
 
 if (typeof alert !== 'function')
     alert = console.log; // For Node.js
 
-function camxes_postprocessing(input, mode, ptproc) {
-    var text;
+/*
+ * Version of transition between the older string processing and the newer
+ * parse tree processing.
+ * The below function's content is temporary and allows choosing which of the
+ * two postprocessor (the older, the newer or even both) to use.
+ * If the new postprocessor proves satisfactory, the older postprocessor's code
+ * will be entirely removed.
+ */
+function camxes_postprocessing(input, mode, ptproc, postproc_id) {
+    var with_selmaho = (mode != 2 && mode != 5);
+    var with_nodes_labels = (mode == 4 || mode == 7);
+    var without_terminator = (mode >= 5);
+    var output_1, output_2;
+    // Default: older postprocessor.
+    if (typeof postproc_id !== 'number') postproc_id = 1;
     if (is_array(input)) {
         if (typeof ptproc === 'function')
-            input = ptproc(input);
-        text = JSON.stringify(input, undefined, 2);
+            input = ptproc(input); // Deleting morphology nodes.
+        if (postproc_id > 0 || mode <= 1)
+            output_1 = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
+        else output_1 = "";
+        if (mode <= 1 || postproc_id == 1) {
+            output_2 = "";
+        } else {
+            input = new_postprocessor(input, ptproc !== null, with_selmaho,
+                                      !without_terminator);
+            output_2 = JSON.stringify(input);
+            output_2 = output_2.replace(/\"/gm, "");
+            output_2 = output_2.replace(/,/gm, " ");
+            output_2 = prettify_brackets(output_2);
+        }
     } else if (is_string(input)) {
-        text = input;
+        if (input.charAt(0) != '[') return input;
+        if (postproc_id == 0)
+            return "/!\\ The new postprocessor doesn't support string input.";
+        output_1 = input;
+        output_2 = "";
+        if (mode >= 1) {
+            output_1 = output_1.replace(/ +/gm, "");
+            output_1 = output_1.replace(/[\r\n]/gm, "");
+        }
     } else return "ERROR: Wrong input type.";
-	if (mode == 0) return text;
-	if (text.charAt(0) != '[') return text;
-	/** Condensation **/
-	text = text.replace(/ +/gm, "");
-	text = text.replace(/[\r\n]/gm, "");
-	if (mode == 1) return text;
+    if (output_1 !== "" && mode >= 2)
+        output_1 = old_postprocessor(output_1, with_selmaho, without_terminator,
+                                     with_nodes_labels);
+    var output;
+    if (postproc_id == 2)
+        output = "\n\n=== New postprocessor ===\n\n" + output_2
+               + "\n\n=== Old postprocessor ===\n\n" + output_1;
+    else output = output_2 + output_1;
+    // Replacing "spaces" with "_":
+    output = output.replace(/([ \[\],])spaces([ \[\],])/gm, "$1_$2");
+	return output;
+}
+
+
+// ====== NEW POSTPROCESSOR ====== //
+
+function new_postprocessor(input, no_morpho, with_selmaho, with_terminator) {
+    var filter;
+    if (no_morpho)
+        filter = (v,b) => (with_selmaho ?
+                  among(v, ["cmevla", "gismu", "lujvo", "fuhivla", "spaces"])
+                  || (is_selmaho(v) && (with_terminator || !b))
+                  : is_selmaho(v) && b && with_terminator);
+    else filter = (v,b) => v == "initial_spaces" ||
+                  (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
+                  : is_selmaho(v) && b && with_terminator);
+    input = prune_unwanted_nodes(input, filter);
+    if (with_selmaho) {
+        var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
+                            ["lujvo", "L"], ["fuhivla", "Z"]];
+        input = prefix_wordclass(input, replacements);
+        if (is_string(input)) input = [input];
+    }
+    return input;
+}
+
+function prune_unwanted_nodes(tree, is_wanted_node) {
+    if (is_string(tree)) return tree;
+    if (!is_array(tree)) throw "ERR";
+    if (tree.length == 0) return null;
+    var no_label = is_array(tree[0]);
+    var k = 0;
+    var i = no_label ? 0 : 1;
+    while (i < tree.length) {
+        tree[i] = prune_unwanted_nodes(tree[i], is_wanted_node);
+        if (tree[i]) {
+            k++;
+            i++;
+        } else tree.splice(i, 1);
+    }
+    if (!no_label) {
+        if (!is_wanted_node(tree[0], tree.length == 1)) tree.splice(0, 1);
+        else k++;
+    }
+    if (k == 1) return tree[0];
+    else return (k > 0) ? tree : null;
+}
+
+function prefix_wordclass(tree, replacements) {
+    if (tree.length == 2 && is_string(tree[0]) && is_string(tree[1])) {
+        var i = 0;
+        while (i < replacements.length) {
+            if (tree[0] == replacements[i][0]) {
+                tree[0] = replacements[i][1];
+                break;
+            }
+            i++;
+        }
+        return tree[0] + ':' + tree[1];
+    }
+    var i = 0;
+    while (i < tree.length) {
+        if (is_array(tree[i]))
+            tree[i] = prefix_wordclass(tree[i], replacements);
+        i++;
+    }
+    return tree;
+}
+
+
+// ====== OLD POSTPROCESSOR ====== //
+
+function old_postprocessor(text, with_selmaho, without_terminator, with_nodes_labels) {
 	/** Prettified forms **/
-	var with_selmaho = (mode >= 3 && mode != 5);
-	var with_nodes_labels = (mode == 4 || mode == 7);
-	var without_terminator = (mode >= 5);
 	text = text.replace(/\"/gm, ""); // Delete every quote marks
 	/* Save selmaho and brivla types */
 	text = text.replace(/(gismu|lujvo|fuhivla|cmene|cmevla),([A-Za-z']+)/g,
@@ -93,12 +205,10 @@ function camxes_postprocessing(input, mode, ptproc) {
 	/* Making things easier to read */
 	if (!with_selmaho) text = text.replace(/[A-Za-z_]+:/g, "");
 	text = text.replace(/\]\[/g, "] [");
-    // Replacing "spaces" with "_":
-    text = text.replace(/([ \[\]])spaces([ \[\]])/gm, "$1_$2");
     // Removing stuff like "a:a" that may remain when morphology is kept:
     text = text.replace(/[ \[\]][a-z]:([a-z'])[ \[\]]/gm, "$1");
     // Bracket prettification:
-	text = prettify_brackets(text);
+    text = prettify_brackets(text);
 	text = text.replace(/ +/gm, " ");
 	text = text.replace(/^ +/, "");
 	return text;
@@ -207,6 +317,11 @@ function delete_superfluous_brackets(string) {
 	return str.join("");
 }
 
+
+/* ================== */
+/* ===  Routines  === */
+/* ================== */
+
 function prettify_brackets(str) {
 	var open_brackets = ["(", "[", "{", "<"];
 	var close_brackets = [")", "]", "}", ">"];
@@ -234,11 +349,6 @@ function prettify_brackets(str) {
 	}
 	return str;
 }
-
-
-/* ================== */
-/* ===  Routines  === */
-/* ================== */
 
 function str_print_uint(val, charset) {
 	// 'charset' must be a character array.

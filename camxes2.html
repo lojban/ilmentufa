@@ -24,6 +24,11 @@
     <option>Remove morphology</option>
     <option>Keep morphology</option>
   </select>
+  <select id="postproc-cb" onChange="run_camxes()">
+    <option>New postprocessor</option>
+    <option>Old postprocessor</option>
+    <option>Both</option>
+  </select>
   <span style="padding-left: 32px; text-align: right; font-size: 12px;">
     <a href="camxes.pegjs" target="_blank">[ Grammar file ]</a>
   </span>
@@ -70,8 +75,9 @@ function run_camxes() {
     if (0 == document.getElementById("morpho-mode").selectedIndex)
         parse_tree_proc = process_parse_tree; // @ process_parse_tree.js
     else parse_tree_proc = null;
+    var postproc_id = document.getElementById("postproc-cb").selectedIndex;
 	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
-	result = camxes_postprocessing(result, mode, parse_tree_proc);
+	result = camxes_postprocessing(result, mode, parse_tree_proc, postproc_id);
                      // @ camxes_postproc.js
 	/* Retrieve the result */
     $('#parse_result').text(result);
