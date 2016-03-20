@@ -117,7 +117,6 @@ function new_postprocessor(input, no_morpho, with_selmaho, with_terminator) {
     else filter = (v,b) => v == "initial_spaces" ||
                   (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
                   : is_selmaho(v) && b && with_terminator);
-    alert("" + filter("gismu", true));
     input = prune_unwanted_nodes(input, filter);
     if (with_selmaho) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
