@@ -127,13 +127,11 @@
   }
 
   function is_string(v) {
-    if (typeof v === 'undefined') return false;
-    else return typeof v.valueOf() === 'string';
+    return $.type(v) === "string";
   }
 
   function is_array(v) {
-    if (typeof v === 'undefined') return false;
-    else return (typeof v === 'object' && v.constructor === Array);
+    return $.type(v) === "array";
   }
 }
 
