@@ -98,7 +98,7 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
                + "\n\n=== Old postprocessor ===\n\n" + output_1;
     else output = output_2 + output_1;
     // Replacing "spaces" with "_":
-    output = output.replace(/([ \[\],])spaces([ \[\],])/gm, "$1_$2");
+    output = output.replace(/([ \[\],])spaces(?=[ \[\],])/gm, "$1_");
     // Bracket prettification:
     output = prettify_brackets(output);
 	return output;
@@ -111,10 +111,11 @@ function new_postprocessor(input, no_morpho, with_selmaho, with_terminator) {
     var filter;
     if (no_morpho)
         filter = (v,b) => (with_selmaho ?
-                  among(v, ["cmevla", "gismu", "lujvo", "fuhivla", "spaces"])
+                  among(v, ["cmevla", "gismu", "lujvo", "fuhivla", "spaces", "dot_star"])
                   || (is_selmaho(v) && (with_terminator || !b))
-                  : v == "spaces" || (is_selmaho(v) && b && with_terminator));
-    else filter = (v,b) => v == "initial_spaces" ||
+                  : among(v, ["spaces", "dot_star"])
+                  || (is_selmaho(v) && b && with_terminator));
+    else filter = (v,b) => among(v, ["initial_spaces", "dot_star"]) ||
                   (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
                   : is_selmaho(v) && b && with_terminator);
     input = prune_unwanted_nodes(input, filter);

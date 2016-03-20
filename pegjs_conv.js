@@ -305,7 +305,7 @@ function peg_add_js_parser_actions(peg) {
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
     peg = peg.replace(/^(dot[-_]star) *= *([^ ][^\r\n]+)/gm,
-                      "$1 = expr:($2) {return _join(expr);}");
+                      '$1 = expr:($2) {return ["$1"];}');
     /* Default parser action */
     peg = peg.replace(/([0-9a-zA-Z_-]+) *= *([^ ][^:\r\n]+)([\r\n])/gm,
                       '$1 = expr:($2) {return _node("$1", expr);}$3');
