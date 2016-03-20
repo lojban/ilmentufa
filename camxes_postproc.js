@@ -93,7 +93,7 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
         output_1 = old_postprocessor(output_1, with_selmaho, without_terminator,
                                      with_nodes_labels);
     var output;
-    if (postproc_id == 2)
+    if (postproc_id == 2 && mode >= 2)
         output = "\n\n=== New postprocessor ===\n\n" + output_2
                + "\n\n=== Old postprocessor ===\n\n" + output_1;
     else output = output_2 + output_1;

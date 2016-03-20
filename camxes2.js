@@ -181,7 +181,7 @@ var camxes = (function() {
         peg$c145 = function(expr) {return _node("bu_tail", expr);},
         peg$c146 = function(expr) {return _node("pre_zei_bu", expr);},
         peg$c147 = { type: "any", description: "any character" },
-        peg$c148 = function(expr) {return _node("dot_star", expr);},
+        peg$c148 = function(expr) {return _join(expr);},
         peg$c149 = function(expr) {return _node("post_clause", expr);},
         peg$c150 = function(expr) {return _node("pre_clause", expr);},
         peg$c151 = function(expr) {return _node("any_word_SA_handling", expr);},
@@ -62282,9 +62282,11 @@ var camxes = (function() {
     parse:       peg$parse
   };
 })()
+
 if (typeof module !== 'undefined') module.exports = camxes;
 if (typeof process !== 'undefined') {
   var input = process.argv[2];
   if (Object.prototype.toString.call(input) === '[object String]')
     console.log(JSON.stringify(camxes.parse(input)));
 }
+
