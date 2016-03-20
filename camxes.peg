@@ -1518,6 +1518,7 @@ EOF <- comma* !.
 
 comma <- [,]
 
+# This is a orphan rule.
 non_lojban_word <- !lojban_word non_space+
 
 non_space <- !space_char .

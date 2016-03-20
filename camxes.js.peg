@@ -1610,6 +1610,7 @@ EOF = expr:(comma* !.)  {return _join(expr);}
 
 comma = [,] {return "";}
 
+// This is a orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+)  {return _join(expr);}
 
 non_space = expr:(!space_char .) {return _join(expr);}

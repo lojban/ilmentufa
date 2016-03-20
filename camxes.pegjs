@@ -1605,6 +1605,7 @@ EOF = expr:(comma* !.) {return _node("EOF", expr);}
 
 comma = expr:([,]) {return _node("comma", expr);}
 
+// This is a orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
 
 non_space = expr:(!space_char .) {return _node("non_space", expr);}
