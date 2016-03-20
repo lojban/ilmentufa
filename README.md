@@ -21,15 +21,15 @@ However, as the necessary `node_modules` are already included in this project, I
 After having entered the ilmentufa directory, run the following command:
 
 ```
-node [builder-filename]
+nodejs [builder-filename]
 ```
 
-For example, `node camxes-builder` for building the standard grammar engine or `node camxes-exp-builder` for experimental grammar.
+For example, `nodejs camxes-builder` for building the standard grammar engine or `nodejs camxes-exp-builder` for experimental grammar.
 
 Now, the grammar engine should have been created/updated, and be ready for use. :)
 
 
 ### Running the IRC bots ###
 
-Nothing easier; after having entered the ilmentufa directory, run the command `node ircbot/camxes-bot` or `node ircbot/cipra-bot` (the latter is for the experimental grammar).
+Nothing easier; after having entered the ilmentufa directory, run the command `nodejs ircbot/camxes-bot` or `nodejs ircbot/cipra-bot` (the latter is for the experimental grammar).
 The list of the channels joined by the bot can be found and edited within the bot script.
