@@ -50,5 +50,6 @@
 	return input;
 }
 
-module.exports.preprocessing = camxes_preprocessing;
+if (typeof module !== 'undefined')
+    module.exports.preprocessing = camxes_preprocessing;
 

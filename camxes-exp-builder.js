@@ -20,7 +20,16 @@ var buffer = new Buffer('var camxes = ');
 fs.writeSync(fd, buffer, 0, buffer.length);
 buffer = new Buffer(camxes);
 fs.writeSync(fd, buffer, 0, buffer.length);
-buffer = new Buffer("\n\nmodule.exports = camxes;\n\nterm = process.argv[2];\nif (term !== undefined && typeof term.valueOf() === 'string')\n  console.log(JSON.stringify(camxes.parse(term)));\n\n");
+buffer = new Buffer(`
+
+if (typeof module !== 'undefined') module.exports = camxes;
+if (typeof process !== 'undefined') {
+  var input = process.argv[2];
+  if (Object.prototype.toString.call(input) === '[object String]')
+    console.log(JSON.stringify(camxes.parse(input)));
+}
+
+`);
 fs.writeSync(fd, buffer, 0, buffer.length);
 fs.close(fd);
 

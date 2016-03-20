@@ -287,5 +287,6 @@ function dbg_bracket_count(str) {
 	alert("Bracket count: open = " + x + ", close = " + y);
 }
 
-module.exports.postprocessing = camxes_postprocessing;
+if (typeof module !== 'undefined')
+    module.exports.postprocessing = camxes_postprocessing;
 

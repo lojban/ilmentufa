@@ -62282,10 +62282,9 @@ var camxes = (function() {
     parse:       peg$parse
   };
 })()
-
-module.exports = camxes;
-
-term = process.argv[2];
-if (term !== undefined && typeof term.valueOf() === 'string')
-  console.log(JSON.stringify(camxes.parse(term)));
-
+if (typeof module !== 'undefined') module.exports = camxes;
+if (typeof process !== 'undefined') {
+  var input = process.argv[2];
+  if (Object.prototype.toString.call(input) === '[object String]')
+    console.log(JSON.stringify(camxes.parse(input)));
+}
