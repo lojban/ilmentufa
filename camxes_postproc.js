@@ -77,7 +77,6 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
             output_2 = JSON.stringify(input);
             output_2 = output_2.replace(/\"/gm, "");
             output_2 = output_2.replace(/,/gm, " ");
-            output_2 = prettify_brackets(output_2);
         }
     } else if (is_string(input)) {
         if (input.charAt(0) != '[') return input;
@@ -100,6 +99,8 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
     else output = output_2 + output_1;
     // Replacing "spaces" with "_":
     output = output.replace(/([ \[\],])spaces([ \[\],])/gm, "$1_$2");
+    // Bracket prettification:
+    output = prettify_brackets(output);
 	return output;
 }
 
@@ -112,10 +113,11 @@ function new_postprocessor(input, no_morpho, with_selmaho, with_terminator) {
         filter = (v,b) => (with_selmaho ?
                   among(v, ["cmevla", "gismu", "lujvo", "fuhivla", "spaces"])
                   || (is_selmaho(v) && (with_terminator || !b))
-                  : is_selmaho(v) && b && with_terminator);
+                  : v == "spaces" || (is_selmaho(v) && b && with_terminator));
     else filter = (v,b) => v == "initial_spaces" ||
                   (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
                   : is_selmaho(v) && b && with_terminator);
+    alert("" + filter("gismu", true));
     input = prune_unwanted_nodes(input, filter);
     if (with_selmaho) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
@@ -207,8 +209,6 @@ function old_postprocessor(text, with_selmaho, without_terminator, with_nodes_la
 	text = text.replace(/\]\[/g, "] [");
     // Removing stuff like "a:a" that may remain when morphology is kept:
     text = text.replace(/[ \[\]][a-z]:([a-z'])[ \[\]]/gm, "$1");
-    // Bracket prettification:
-    text = prettify_brackets(text);
 	text = text.replace(/ +/gm, " ");
 	text = text.replace(/^ +/, "");
 	return text;
