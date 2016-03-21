@@ -990,7 +990,9 @@ LOhAI_post = post_clause
 //         grammatical text left quote 
 LU_clause = pre:LU_pre post:LU_post {return _node2("LU_clause", pre, post); }
 LU_pre = pre_clause LU spaces?
-LU_post = post_clause
+//// EXP: Disallowing indicators to attach to LU directly:
+// LU_post = post_clause
+LU_post = spaces? si_clause? !ZEI_clause !BU_clause
 // LU_no_SA_handling = pre_clause LU post_clause
 
 //         LAhE close delimiter 
