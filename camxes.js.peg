@@ -193,11 +193,9 @@ bridi_tail_2 = expr:(bridi_tail_3 (gihek stag? BO_clause free* bridi_tail_2 tail
 
 bridi_tail_3 = expr:(selbri tail_terms / gek_sentence) {return _node("bridi_tail_3", expr);}
 
-//// EXP-FIX: tag? KE --> tag* KE
 gek_sentence = expr:(gek subsentence gik subsentence tail_terms / tag* KE_clause free* gek_sentence KEhE_elidible free* / NA_clause free* gek_sentence) {return _node("gek_sentence", expr);}
 
-//// EXP: Bridi-tail nonabsorbable terms implementation
-tail_terms = expr:(nonabs_terms? VAU_elidible free*) {return _node_nonempty("tail_terms", expr); }
+tail_terms = expr:(terms? VAU_elidible free*) {return _node_nonempty("tail_terms", expr); }
 
 terms = expr:(terms_1+) {return _node("terms", expr);}
 
@@ -205,16 +203,9 @@ terms = expr:(terms_1+) {return _node("terms", expr);}
 
 //; terms_2 = term (CEhE_clause free* term)*
 
-/*** EXP-SELBRITCITA-FIX ***/
 terms_1 = expr:(terms_2 (pehe_sa* PEhE_clause free* joik_jek terms_2)*) {return _node("terms_1", expr);}
 
-terms_2 = expr:(abs_term (cehe_sa* CEhE_clause free* abs_term)*) {return _node("terms_2", expr);}
-
-nonabs_terms = expr:(nonabs_terms_1+) {return _node("nonabs_terms", expr);}
-
-nonabs_terms_1 = expr:(nonabs_terms_2 (pehe_sa* PEhE_clause free* joik_jek nonabs_terms_2)*) {return _node("nonabs_terms_1", expr);}
-
-nonabs_terms_2 = expr:(term (cehe_sa* CEhE_clause free* term)*) {return _node("nonabs_terms_2", expr);}
+terms_2 = expr:(term (cehe_sa* CEhE_clause free* term)*) {return _node("terms_2", expr);}
 
 pehe_sa = expr:(PEhE_clause (!PEhE_clause (sa_word / SA_clause !PEhE_clause))* SA_clause) {return _node("pehe_sa", expr);}
 
@@ -224,14 +215,7 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-term_1 = expr:(sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / nonabs_termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
-
-abs_term = expr:(term_sa* abs_term_1) {return _node("abs_term", expr);}
-
-abs_term_1 = expr:(sumti / abs_tag_term / termset / NA_clause KU_clause free*) {return _node("abs_term_1", expr);}
-
-abs_tag_term = expr:( !gek (tag !(!tag selbri) !gek_sentence / FA_clause free*) (sumti / KU_elidible free*) ) {return _node("abs_tag_term", expr);}
-/*** END EXP-SELBRITCITA-FIX ***/
+term_1 = expr:(sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
 
@@ -241,15 +225,7 @@ termset = expr:(gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gi
 
 gek_termset = expr:(gek terms_gik_terms) {return _node("gek_termset", expr);}
 
-/*** EXP-SELBRITCITA-FIX ***/
-terms_gik_terms = expr:(abs_term (gik / terms_gik_terms) abs_term) {return _node("terms_gik_terms", expr);}
-
-nonabs_termset = expr:(nonabs_gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik nonabs_terms NUhU_elidible free* / NUhI_clause free* nonabs_terms NUhU_elidible free*) {return _node("nonabs_termset", expr);}
-
-nonabs_gek_termset = expr:(gek nonabs_terms_gik_terms) {return _node("nonabs_gek_termset", expr);}
-
-nonabs_terms_gik_terms = expr:(term (gik / nonabs_terms_gik_terms) term) {return _node("nonabs_terms_gik_terms", expr);}
-/*** END EXP-SELBRITCITA-FIX ***/
+terms_gik_terms = expr:(term (gik / terms_gik_terms) term) {return _node("terms_gik_terms", expr);}
 
 sumti = expr:(sumti_1 (VUhO_clause free* relative_clauses)?) {return _node("sumti", expr);}
 

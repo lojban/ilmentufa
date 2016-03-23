@@ -101,11 +101,9 @@ bridi_tail_2 <- bridi_tail_3 (gihek stag? BO_clause free* bridi_tail_2 tail_term
 
 bridi_tail_3 <- selbri tail_terms / gek_sentence
 
-#// EXP-FIX: tag? KE --> tag* KE
 gek_sentence <- gek subsentence gik subsentence tail_terms / tag* KE_clause free* gek_sentence KEhE_elidible free* / NA_clause free* gek_sentence
 
-#// EXP: Bridi-tail nonabsorbable terms implementation
-tail_terms <- nonabs_terms? VAU_elidible free*
+tail_terms <- terms? VAU_elidible free*
 
 terms <- terms_1+
 
@@ -113,16 +111,9 @@ terms <- terms_1+
 
 #; terms_2 = term (CEhE_clause free* term)*
 
-# /*** EXP-SELBRITCITA-FIX ***/
 terms_1 <- terms_2 (pehe_sa* PEhE_clause free* joik_jek terms_2)*
 
-terms_2 <- abs_term (cehe_sa* CEhE_clause free* abs_term)*
-
-nonabs_terms <- nonabs_terms_1+
-
-nonabs_terms_1 <- nonabs_terms_2 (pehe_sa* PEhE_clause free* joik_jek nonabs_terms_2)*
-
-nonabs_terms_2 <- term (cehe_sa* CEhE_clause free* term)*
+terms_2 <- term (cehe_sa* CEhE_clause free* term)*
 
 pehe_sa <- PEhE_clause (!PEhE_clause (sa_word / SA_clause !PEhE_clause))* SA_clause
 
@@ -132,14 +123,7 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 
 term <- term_sa* term_1
 
-term_1 <- sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / nonabs_termset / NA_clause KU_clause free*
-
-abs_term <- term_sa* abs_term_1
-
-abs_term_1 <- sumti / abs_tag_term / termset / NA_clause KU_clause free*
-
-abs_tag_term <- !gek (tag !(!tag selbri) !gek_sentence / FA_clause free*) (sumti / KU_elidible free*)
-# /*** END EXP-SELBRITCITA-FIX ***/
+term_1 <- sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
 
@@ -149,15 +133,7 @@ termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik ter
 
 gek_termset <- gek terms_gik_terms
 
-# /*** EXP-SELBRITCITA-FIX ***/
-terms_gik_terms <- abs_term (gik / terms_gik_terms) abs_term
-
-nonabs_termset <- nonabs_gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik nonabs_terms NUhU_elidible free* / NUhI_clause free* nonabs_terms NUhU_elidible free*
-
-nonabs_gek_termset <- gek nonabs_terms_gik_terms
-
-nonabs_terms_gik_terms <- term (gik / nonabs_terms_gik_terms) term
-# /*** END EXP-SELBRITCITA-FIX ***/
+terms_gik_terms <- term (gik / terms_gik_terms) term
 
 sumti <- sumti_1 (VUhO_clause free* relative_clauses)?
 
