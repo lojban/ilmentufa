@@ -57,6 +57,8 @@ if (typeof alert !== 'function')
  * will be entirely removed.
  */
 function camxes_postprocessing(input, mode, ptproc, postproc_id) {
+    var with_spaces = mode & 8;
+    mode = mode & 7;
     var with_selmaho = (mode != 2 && mode != 5);
     var with_nodes_labels = (mode == 4 || mode == 7);
     var without_terminator = (mode >= 5);
@@ -72,8 +74,8 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
         if (mode <= 1 || postproc_id == 1) {
             output_2 = "";
         } else {
-            input = new_postprocessor(input, ptproc !== null, with_selmaho,
-                                      !without_terminator);
+            input = new_postprocessor(input, ptproc !== null, with_spaces,
+                                      with_selmaho, !without_terminator);
             output_2 = JSON.stringify(input);
             output_2 = output_2.replace(/\"/gm, "");
             output_2 = output_2.replace(/,/gm, " ");
@@ -98,7 +100,7 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
                + "\n\n=== Old postprocessor ===\n\n" + output_1;
     else output = output_2 + output_1;
     // Replacing "spaces" with "_":
-    output = output.replace(/([ \[\],])spaces(?=[ \[\],])/gm, "$1_");
+    output = output.replace(/([ \[\],])(initial_)?spaces(?=[ \[\],])/gm, "$1_");
     // Bracket prettification:
     output = prettify_brackets(output);
 	return output;
@@ -107,19 +109,22 @@ function camxes_postprocessing(input, mode, ptproc, postproc_id) {
 
 // ====== NEW POSTPROCESSOR ====== //
 
-function new_postprocessor(input, no_morpho, with_selmaho, with_terminator) {
+function new_postprocessor(input, no_morpho, with_spaces, with_selmaho, with_terminator) {
     var filter;
-    if (no_morpho)
+    var wanted_nodes = with_spaces ? ["initial_spaces", "dot_star"] : ["dot_star"];
+    if (no_morpho) {
         filter = (v,b) => (with_selmaho ?
-                  among(v, ["cmevla", "gismu", "lujvo", "fuhivla", "spaces", "dot_star"])
+                  among(v, wanted_nodes.concat(["cmevla", "gismu", "lujvo", "fuhivla"]))
                   || (is_selmaho(v) && (with_terminator || !b))
-                  : among(v, ["spaces", "dot_star"])
+                  : among(v, wanted_nodes)
                   || (is_selmaho(v) && b && with_terminator));
-    else filter = (v,b) => among(v, ["initial_spaces", "dot_star"]) ||
+    } else {
+        filter = (v,b) => among(v, wanted_nodes) ||
                   (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
                   : is_selmaho(v) && b && with_terminator);
+    }
     input = prune_unwanted_nodes(input, filter);
-    if (with_selmaho) {
+    if (with_selmaho && no_morpho) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
                             ["lujvo", "L"], ["fuhivla", "Z"]];
         input = prefix_wordclass(input, replacements);

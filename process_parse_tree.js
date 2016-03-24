@@ -68,7 +68,7 @@ function join_expr(n) {
 
 /* Checks whether the argument node is a target for pruning. */
 function is_target_node(n) {
-    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "spaces"])
+    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "initial_spaces"])
             || is_selmaho(n[0]));
 }
 
