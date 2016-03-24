@@ -1,13 +1,16 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-03-20.
+ * Last change: 2016-03-24.
  * 
  * Entry point: camxes_postprocessing(input, mode, ptproc, postproc_id)
  * Arguments:
  *    -- input:  [string] camxes' stringified output
  *            OR [array] camxes' parse tree output
  *    -- mode:  [number] output mode flag
+ *         If mode > 7, displaying spaces is enabled and mode's value is
+ *         truncated so mode <= 7. Then, depending on the value of mode,
+ *         the following options are set:
  *         0 = Raw output (no change)
  *         1 = Condensed
  *         2 = Prettified
@@ -58,7 +61,7 @@ if (typeof alert !== 'function')
  */
 function camxes_postprocessing(input, mode, ptproc, postproc_id) {
     var with_spaces = mode & 8;
-    mode = mode & 7;
+    mode = mode % 8;
     var with_selmaho = (mode != 2 && mode != 5);
     var with_nodes_labels = (mode == 4 || mode == 7);
     var without_terminator = (mode >= 5);
