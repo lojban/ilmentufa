@@ -116,15 +116,15 @@ function new_postprocessor(input, no_morpho, with_spaces, with_selmaho, with_ter
     var filter;
     var wanted_nodes = with_spaces ? ["initial_spaces", "dot_star"] : ["dot_star"];
     if (no_morpho) {
-        filter = (v,b) => (with_selmaho ?
+        filter = function (v,b) { (with_selmaho ?
                   among(v, wanted_nodes.concat(["cmevla", "gismu", "lujvo", "fuhivla"]))
                   || (is_selmaho(v) && (with_terminator || !b))
                   : among(v, wanted_nodes)
-                  || (is_selmaho(v) && b && with_terminator));
+                  || (is_selmaho(v) && b && with_terminator)) };
     } else {
-        filter = (v,b) => among(v, wanted_nodes) ||
+        filter = function (v,b) { among(v, wanted_nodes) ||
                   (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
-                  : is_selmaho(v) && b && with_terminator);
+                  : is_selmaho(v) && b && with_terminator) };
     }
     input = prune_unwanted_nodes(input, filter);
     if (with_selmaho && no_morpho) {
@@ -225,7 +225,7 @@ function old_postprocessor(text, with_selmaho, without_terminator, with_nodes_la
 function erase_elided_terminators(str) {
 	var i, j;
 	var parachute = 400;
-	str = str.replace(/([a-z']+)`/g, function(v) { return v.toUpperCase(); });
+	str = str.replace(/([a-z']+)`/g, function (v) { return v.toUpperCase(); });
 	str = str.replace(/([A-Z]+)'([A-Z]+)`/g,"$1h$2`");
 	str = str.replace(/([A-Z]+)H([A-Z]+)`/g,"$1h$2`");
 	str = str.replace(/([A-Zh]+)`/g,"$1");
