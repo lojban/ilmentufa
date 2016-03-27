@@ -210,6 +210,8 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
+nonabs_term = expr:(term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)) {return _node("nonabs_term", expr);}
+
 term_1 = expr:(sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
@@ -250,7 +252,7 @@ relative_clause = expr:(relative_clause_sa* relative_clause_1) {return _node("re
 
 relative_clause_sa = expr:(relative_clause_start (!relative_clause_start (sa_word / SA_clause !relative_clause_start ) )* SA_clause &relative_clause_1) {return _node("relative_clause_sa", expr);}
 
-relative_clause_1 = expr:(GOI_clause free* term GEhU_elidible free* / NOI_clause free* subsentence KUhO_elidible free*) {return _node("relative_clause_1", expr);}
+relative_clause_1 = expr:(GOI_clause free* nonabs_term GEhU_elidible free* / NOI_clause free* subsentence KUhO_elidible free*) {return _node("relative_clause_1", expr);}
 
 relative_clause_start = expr:(GOI_clause / NOI_clause) {return _node("relative_clause_start", expr);}
 
@@ -279,7 +281,7 @@ tanru_unit_2 = expr:(BRIVLA_clause free* / GOhA_clause RAhO_clause? free* / KE_c
 
 linkargs = expr:(linkargs_sa* linkargs_1) {return _node("linkargs", expr);}
 
-linkargs_1 = expr:(BE_clause free* term links? BEhO_elidible free*) {return _node("linkargs_1", expr);}
+linkargs_1 = expr:(BE_clause free* nonabs_term links? BEhO_elidible free*) {return _node("linkargs_1", expr);}
 
 linkargs_sa = expr:(linkargs_start (!linkargs_start (sa_word / SA_clause !linkargs_start ) )* SA_clause &linkargs_1) {return _node("linkargs_sa", expr);}
 
@@ -289,7 +291,7 @@ linkargs_start = expr:(BE_clause) {return _node("linkargs_start", expr);}
 
 links = expr:(links_sa* links_1) {return _node("links", expr);}
 
-links_1 = expr:(BEI_clause free* term links?) {return _node("links_1", expr);}
+links_1 = expr:(BEI_clause free* nonabs_term links?) {return _node("links_1", expr);}
 
 links_sa = expr:(links_start (!links_start (sa_word / SA_clause !links_start ) )* SA_clause &links_1) {return _node("links_sa", expr);}
 

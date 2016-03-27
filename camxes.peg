@@ -123,6 +123,8 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 
 term <- term_sa* term_1
 
+nonabs_term <- term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)
+
 term_1 <- sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
@@ -163,7 +165,7 @@ relative_clause <- relative_clause_sa* relative_clause_1
 
 relative_clause_sa <- relative_clause_start (!relative_clause_start (sa_word / SA_clause !relative_clause_start ) )* SA_clause &relative_clause_1
 
-relative_clause_1 <- GOI_clause free* term GEhU_elidible free* / NOI_clause free* subsentence KUhO_elidible free*
+relative_clause_1 <- GOI_clause free* nonabs_term GEhU_elidible free* / NOI_clause free* subsentence KUhO_elidible free*
 
 relative_clause_start <- GOI_clause / NOI_clause
 
@@ -192,7 +194,7 @@ tanru_unit_2 <- BRIVLA_clause free* / GOhA_clause RAhO_clause? free* / KE_clause
 
 linkargs <- linkargs_sa* linkargs_1
 
-linkargs_1 <- BE_clause free* term links? BEhO_elidible free*
+linkargs_1 <- BE_clause free* nonabs_term links? BEhO_elidible free*
 
 linkargs_sa <- linkargs_start (!linkargs_start (sa_word / SA_clause !linkargs_start ) )* SA_clause &linkargs_1
 
@@ -202,7 +204,7 @@ linkargs_start <- BE_clause
 
 links <- links_sa* links_1
 
-links_1 <- BEI_clause free* term links?
+links_1 <- BEI_clause free* nonabs_term links?
 
 links_sa <- links_start (!links_start (sa_word / SA_clause !links_start ) )* SA_clause &links_1
 
