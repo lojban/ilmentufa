@@ -113,7 +113,7 @@ terms <- terms_1+
 
 terms_1 <- terms_2 (pehe_sa* PEhE_clause free* joik_jek terms_2)*
 
-terms_2 <- term (cehe_sa* CEhE_clause free* term)*
+terms_2 <- term (cehe_sa* CEhE_clause free* nonabs_term)*
 
 pehe_sa <- PEhE_clause (!PEhE_clause (sa_word / SA_clause !PEhE_clause))* SA_clause
 
@@ -135,7 +135,7 @@ termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik ter
 
 gek_termset <- gek terms_gik_terms
 
-terms_gik_terms <- term (gik / terms_gik_terms) term
+terms_gik_terms <- nonabs_term (gik / terms_gik_terms) nonabs_term
 
 sumti <- sumti_1 (VUhO_clause free* relative_clauses)?
 

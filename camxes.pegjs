@@ -200,7 +200,7 @@ terms = expr:(terms_1+) {return _node("terms", expr);}
 
 terms_1 = expr:(terms_2 (pehe_sa* PEhE_clause free* joik_jek terms_2)*) {return _node("terms_1", expr);}
 
-terms_2 = expr:(term (cehe_sa* CEhE_clause free* term)*) {return _node("terms_2", expr);}
+terms_2 = expr:(term (cehe_sa* CEhE_clause free* nonabs_term)*) {return _node("terms_2", expr);}
 
 pehe_sa = expr:(PEhE_clause (!PEhE_clause (sa_word / SA_clause !PEhE_clause))* SA_clause) {return _node("pehe_sa", expr);}
 
@@ -222,7 +222,7 @@ termset = expr:(gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gi
 
 gek_termset = expr:(gek terms_gik_terms) {return _node("gek_termset", expr);}
 
-terms_gik_terms = expr:(term (gik / terms_gik_terms) term) {return _node("terms_gik_terms", expr);}
+terms_gik_terms = expr:(nonabs_term (gik / terms_gik_terms) nonabs_term) {return _node("terms_gik_terms", expr);}
 
 sumti = expr:(sumti_1 (VUhO_clause free* relative_clauses)?) {return _node("sumti", expr);}
 

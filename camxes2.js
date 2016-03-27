@@ -3775,7 +3775,7 @@ var camxes = (function() {
               s8 = peg$parsefree();
             }
             if (s7 !== peg$FAILED) {
-              s8 = peg$parseterm();
+              s8 = peg$parsenonabs_term();
               if (s8 !== peg$FAILED) {
                 s5 = [s5, s6, s7, s8];
                 s4 = s5;
@@ -3814,7 +3814,7 @@ var camxes = (function() {
                 s8 = peg$parsefree();
               }
               if (s7 !== peg$FAILED) {
-                s8 = peg$parseterm();
+                s8 = peg$parsenonabs_term();
                 if (s8 !== peg$FAILED) {
                   s5 = [s5, s6, s7, s8];
                   s4 = s5;
@@ -4969,14 +4969,14 @@ var camxes = (function() {
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      s2 = peg$parseterm();
+      s2 = peg$parsenonabs_term();
       if (s2 !== peg$FAILED) {
         s3 = peg$parsegik();
         if (s3 === peg$FAILED) {
           s3 = peg$parseterms_gik_terms();
         }
         if (s3 !== peg$FAILED) {
-          s4 = peg$parseterm();
+          s4 = peg$parsenonabs_term();
           if (s4 !== peg$FAILED) {
             s2 = [s2, s3, s4];
             s1 = s2;
