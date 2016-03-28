@@ -123,9 +123,9 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 
 term <- term_sa* term_1
 
-nonabs_term <- term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)
-
 term_1 <- sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*
+
+nonabs_term <- term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
 
