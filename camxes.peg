@@ -1268,9 +1268,22 @@ lojban_word <- CMEVLA / CMAVO / BRIVLA
 
 any_word <- lojban_word spaces?
 
+# === ZOI quote handling ===
+
+# Pure PEG cannot handle ZOI quotes, because it cannot check whether the closing
+# delimiter is the same as the opening one.
+# ZOI quote handling is the only part of Lojban's grammar that needs mechanisms
+# external to the pure PEG grammar to be implemented properly; those mechanisms
+# are implementation-specific.
+
 zoi_open <- lojban_word
+# Non-PEG: Remember the value matched by this zoi_open.
+
 zoi_word <- (non_space+) &__EXTERN_PREDICATE_SYMBOL__
+# Non-PEG: Match successfully only if different from the most recent zoi_open.
+
 zoi_close <- any_word &__EXTERN_PREDICATE_SYMBOL__
+# Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 #___________________________________________________________________
 

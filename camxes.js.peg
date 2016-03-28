@@ -1360,9 +1360,22 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) { return expr; }
 
 any_word = expr:lojban_word spaces? { return expr; }
 
+// === ZOI quote handling ===
+
+// Pure PEG cannot handle ZOI quotes, because it cannot check whether the closing
+// delimiter is the same as the opening one.
+// ZOI quote handling is the only part of Lojban's grammar that needs mechanisms
+// external to the pure PEG grammar to be implemented properly; those mechanisms
+// are implementation-specific.
+
 zoi_open = w:lojban_word { return _zoi_assign_delim(w); }
-zoi_word = expr:( w:(non_space+) &{ return (! _zoi_check_quote(w)); } ) {return "";}
+// Non-PEG: Remember the value matched by this zoi_open.
+
+zoi_word = w:(non_space+) &{ return (!_zoi_check_quote(w)); } {return "";}
+// Non-PEG: Match successfully only if different from the most recent zoi_open.
+
 zoi_close = w:any_word &{ return (_zoi_check_delim(w)); }
+// Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 //___________________________________________________________________
 

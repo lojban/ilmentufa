@@ -210,9 +210,9 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-nonabs_term = expr:(term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)) {return _node("nonabs_term", expr);}
-
 term_1 = expr:(sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
+
+nonabs_term = expr:(term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)) {return _node("nonabs_term", expr);}
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
 
@@ -1355,9 +1355,22 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) {return _node("lojban_word", expr);
 
 any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 
+// === ZOI quote handling ===
+
+// Pure PEG cannot handle ZOI quotes, because it cannot check whether the closing
+// delimiter is the same as the opening one.
+// ZOI quote handling is the only part of Lojban's grammar that needs mechanisms
+// external to the pure PEG grammar to be implemented properly; those mechanisms
+// are implementation-specific.
+
 zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
+// Non-PEG: Remember the value matched by this zoi_open.
+
 zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return _node("zoi_word", [join_expr(expr)]); }
+// Non-PEG: Match successfully only if different from the most recent zoi_open.
+
 zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
+// Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 //___________________________________________________________________
 
