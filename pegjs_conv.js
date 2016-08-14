@@ -167,7 +167,13 @@ function peg_to_pegjs(peg) {
         }
         i += 2;
     }
-    return speg.join("");
+    peg = speg.join("");
+    /* Parser actions for faking left recursion */
+    peg = peg.replace(/{return _node\("([0-9a-zA-Z_-]+)", expr\);}( +\/\/ +!LR)(?=[ \r\n])/gm,
+                      '{return _node_lg("$1", expr);}$2');
+    peg = peg.replace(/{return _node\("([0-9a-zA-Z_-]+)", expr\);}( +\/\/ +!LR2)(?=[ \r\n])/gm,
+                      '{return _node_lg2("$1", expr);}$2');
+    return peg;
 }
 
 function move_code_middle_comment(speg) {
@@ -290,31 +296,26 @@ function split_peg_code_and_comments(peg, is_peg_to_pegjs) {
 
 function peg_add_js_parser_actions(peg) {
     /* ZOI handling parser actions */
-    peg = peg.replace(/^(zoi[-_]open) *= *([^ ][^\r\n]+)/gm,
+    peg = peg.replace(/^(zoi[-_]open) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) { _assign_zoi_delim(expr);'
                       + ' return _node("$1", expr); }');
-    peg = peg.replace(/^(zoi[-_]word) *= *([^ ][^\r\n]+)/gm,
+    peg = peg.replace(/^(zoi[-_]word) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) !{ return _is_zoi_delim(expr); } '
                       + '{ return _node("$1", [join_expr(expr)]); }');
     peg = peg.split("((non_space+))").join("(non_space+)");
-    peg = peg.replace(/^(zoi[-_]close) *= *([^ ][^\r\n]+)/gm,
+    peg = peg.replace(/^(zoi[-_]close) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
                       + '{ return _node("$1", expr); }');
     /* Parser action for elidible terminators */
-    peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^ ][^\r\n]+)/gm,
+    peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^\r\n]+)/gm,
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
-    /* Parser actions for faking left recursion */
-    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ +!LR)(?=[ \r\n])/gm,
-                      '$1 = expr:($2) {return _node_lg("$1", expr);} $3');
-    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ +!LR2)(?=[ \r\n])/gm,
-                      '$1 = expr:($2) {return _node_lg2("$1", expr);} $3');
     /* Others */
-    peg = peg.replace(/^(dot[-_]star) *= *([^ ][^\r\n]+)/gm,
+    peg = peg.replace(/^(dot[-_]star) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) {return ["$1"];}');
     /* Default parser action */
-    peg = peg.replace(/([0-9a-zA-Z_-]+) *= *([^ ][^:\r\n]+)([\r\n])/gm,
-                      '$1 = expr:($2) {return _node("$1", expr);}$3');
+    peg = peg.replace(/([0-9a-zA-Z_-]+) *= *(([^: \r\n]+ )*[^: \r\n]+)( *)(?=\r|\n|$)/gm,
+                    '$1 = expr:($2) {return _node("$1", expr);}$4');
     return peg;
 }
 

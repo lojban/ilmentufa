@@ -218,7 +218,7 @@ bridi_tail_sa = expr:(bridi_tail_start (term / !bridi_tail_start (sa_word / SA_c
 
 bridi_tail_start = expr:(ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail) {return _node("bridi_tail_start", expr);}
 
-bridi_tail_1 = bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)* // !LR2
+bridi_tail_1 = expr:(bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*) {return _node_lg2("bridi_tail_1", expr);} // !LR2
 
 bridi_tail_2 = expr:(bridi_tail_3 (gihek stag? BO_clause free* bridi_tail_2 tail_terms)?) {return _node("bridi_tail_2", expr);}
 
@@ -264,7 +264,7 @@ sumti = expr:(sumti_1 (VUhO_clause free* relative_clauses)?) {return _node("sumt
 
 sumti_1 = expr:(sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?) {return _node("sumti_1", expr);}
 
-sumti_2 = sumti_3 (joik_ek sumti_3)* // !LR
+sumti_2 = expr:(sumti_3 (joik_ek sumti_3)*) {return _node_lg("sumti_2", expr);} // !LR
 
 sumti_3 = expr:(sumti_4 (joik_ek stag? BO_clause free* sumti_3)?) {return _node("sumti_3", expr);}
 
@@ -298,9 +298,9 @@ selbri_1 = expr:(selbri_2 / NA_clause free* selbri) {return _node("selbri_1", ex
 
 selbri_2 = expr:(selbri_3 (CO_clause free* selbri_2)?) {return _node("selbri_2", expr);}
 
-selbri_3 = selbri_4+ // !LR
+selbri_3 = expr:(selbri_4+) {return _node_lg("selbri_3", expr);} // !LR
 
-selbri_4 = selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)* // !LR2
+selbri_4 = expr:(selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)*) {return _node_lg2("selbri_4", expr);} // !LR2
 
 selbri_5 = expr:(selbri_6 ((jek / joik) stag? BO_clause free* selbri_5)?) {return _node("selbri_5", expr);}
 
@@ -473,15 +473,15 @@ indicator = expr:(((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_cla
 // ****************
 
 zei_clause = expr:(pre_clause zei_clause_no_pre) {return _node("zei_clause", expr);}
-zei_clause_no_pre = pre_zei_bu (zei_tail? bu_tail)* zei_tail post_clause // !LR
+zei_clause_no_pre = expr:(pre_zei_bu (zei_tail? BU_clause+)* zei_tail post_clause) {return _node_lg("zei_clause_no_pre", expr);} // !LR
 // zei_clause_no_SA = pre_zei_bu_no_SA (zei_tail? bu_tail)* zei_tail
 
 bu_clause = expr:(pre_clause bu_clause_no_pre) {return _node("bu_clause", expr);}
-bu_clause_no_pre = pre_zei_bu (bu_tail? zei_tail)* bu_tail post_clause // !LR
+bu_clause_no_pre = expr:(pre_zei_bu (BU_clause* zei_tail)* BU_clause+ post_clause) {return _node_lg("bu_clause_no_pre", expr);} // !LR
 // bu_clause_no_SA = pre_zei_bu_no_SA (bu_tail? zei_tail)* bu_tail
 
 zei_tail = expr:((ZEI_clause any_word)+) {return _node("zei_tail", expr);}
-bu_tail = expr:(BU_clause+) {return _node("bu_tail", expr);}
+bu_tail = expr:(BU_clause+) {return _node("bu_tail", expr);} // Obsolete: please use BU_clause+ instead for allowing later left-grouping faking.
 
 pre_zei_bu = expr:(!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_clause !FAhO_clause any_word_SA_handling si_clause?) {return _node("pre_zei_bu", expr);}
 // LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
@@ -498,7 +498,7 @@ dot_star = expr:(.*) {return ["dot_star"];}
 // Handling of what can go after a cmavo
 post_clause = expr:(spaces? si_clause? !ZEI_clause !BU_clause indicators*) {return _node("post_clause", expr);}
 
-pre_clause = BAhE_clause? // !LR
+pre_clause = expr:(BAhE_clause*) {return _node_lg("pre_clause", expr);} // !LR
 
 //any_word_SA_handling = BRIVLA_pre / known_cmavo_SA / !known_cmavo_pre CMAVO_pre / CMEVLA_pre
 any_word_SA_handling = expr:(BRIVLA_pre / known_cmavo_SA / CMAVO_pre / CMEVLA_pre) {return _node("any_word_SA_handling", expr);}
@@ -585,7 +585,7 @@ BAI_post = expr:(post_clause) {return _node("BAI_post", expr);}
 // BAI_no_SA_handling = pre_clause BAI post_clause
 
 //         next word intensifier
-BAhE_clause = expr:((BAhE_pre BAhE_post)+) {return _node("BAhE_clause", expr);}
+BAhE_clause = expr:(BAhE_pre BAhE_post) {return _node("BAhE_clause", expr);}
 BAhE_pre = expr:(BAhE spaces?) {return _node("BAhE_pre", expr);}
 BAhE_post = expr:(si_clause? !ZEI_clause !BU_clause) {return _node("BAhE_post", expr);}
 // BAhE_no_SA_handling = BAhE spaces? BAhE_post
@@ -975,7 +975,8 @@ LOhU_post = expr:(post_clause) {return _node("LOhU_post", expr);}
 //         grammatical text left quote
 LU_clause = expr:(LU_pre LU_post) {return _node("LU_clause", expr);}
 LU_pre = expr:(pre_clause LU spaces?) {return _node("LU_pre", expr);}
-LU_post = expr:(post_clause) {return _node("LU_post", expr);}
+LU_post = expr:(spaces? si_clause? !ZEI_clause !BU_clause) {return _node("LU_post", expr);}
+// LU_post isn't post_clause for avoiding indicators to attach to LU in the parse tree.
 // LU_no_SA_handling = pre_clause LU post_clause
 
 //         LAhE close delimiter
