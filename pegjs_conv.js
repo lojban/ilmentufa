@@ -305,9 +305,9 @@ function peg_add_js_parser_actions(peg) {
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
     /* Parser actions for faking left recursion */
-    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ !LR)(?=[ \r\n])/gm,
+    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ +!LR)(?=[ \r\n])/gm,
                       '$1 = expr:($2) {return _node_lg("$1", expr);} $3');
-    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ !LR2)(?=[ \r\n])/gm,
+    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ +!LR2)(?=[ \r\n])/gm,
                       '$1 = expr:($2) {return _node_lg2("$1", expr);} $3');
     /* Others */
     peg = peg.replace(/^(dot[-_]star) *= *([^ ][^\r\n]+)/gm,
