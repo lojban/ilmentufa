@@ -350,15 +350,15 @@ indicator <- ((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_clause) 
 # ****************
 
 zei_clause <- pre_clause zei_clause_no_pre
-zei_clause_no_pre <- pre_zei_bu (zei_tail? bu_tail)* zei_tail post_clause # !LR
+zei_clause_no_pre <- pre_zei_bu (zei_tail? BU_clause+)* zei_tail post_clause # !LR
 # zei_clause_no_SA = pre_zei_bu_no_SA (zei_tail? bu_tail)* zei_tail
 
 bu_clause <- pre_clause bu_clause_no_pre
-bu_clause_no_pre <- pre_zei_bu (bu_tail? zei_tail)* bu_tail post_clause # !LR
+bu_clause_no_pre <- pre_zei_bu (BU_clause* zei_tail)* BU_clause+ post_clause # !LR
 # bu_clause_no_SA = pre_zei_bu_no_SA (bu_tail? zei_tail)* bu_tail
 
 zei_tail <- (ZEI_clause any_word)+
-bu_tail <- BU_clause+
+bu_tail <- BU_clause+ # Obsolete: please use BU_clause+ instead for allowing later left-grouping faking.
 
 pre_zei_bu <- !ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_clause !FAhO_clause any_word_SA_handling si_clause?
 # LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
