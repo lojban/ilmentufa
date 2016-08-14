@@ -1280,10 +1280,10 @@ any_word <- lojban_word spaces?
 zoi_open <- lojban_word
 # Non-PEG: Remember the value matched by this zoi_open.
 
-zoi_word <- (non_space+) &__EXTERN_PREDICATE_SYMBOL__
+zoi_word <- non_space+
 # Non-PEG: Match successfully only if different from the most recent zoi_open.
 
-zoi_close <- any_word &__EXTERN_PREDICATE_SYMBOL__
+zoi_close <- any_word
 # Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 #___________________________________________________________________
@@ -1778,4 +1778,3 @@ ZOI <- &cmavo ( z o i / l a h o ) &post_word
 
 ZOhU <- &cmavo ( z o h u ) &post_word
 
-__EXTERN_PREDICATE_SYMBOL__ = (.*)
