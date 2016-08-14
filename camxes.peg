@@ -375,7 +375,7 @@ dot_star <- .*
 # Handling of what can go after a cmavo
 post_clause <- spaces? si_clause? !ZEI_clause !BU_clause indicators*
 
-pre_clause <- BAhE_clause? # !LR
+pre_clause <- BAhE_clause* # !LR
 
 #any_word_SA_handling = BRIVLA_pre / known_cmavo_SA / !known_cmavo_pre CMAVO_pre / CMEVLA_pre
 any_word_SA_handling <- BRIVLA_pre / known_cmavo_SA / CMAVO_pre / CMEVLA_pre
@@ -462,7 +462,7 @@ BAI_post <- post_clause
 # BAI_no_SA_handling = pre_clause BAI post_clause
 
 #         next word intensifier
-BAhE_clause <- (BAhE_pre BAhE_post)+
+BAhE_clause <- BAhE_pre BAhE_post
 BAhE_pre <- BAhE spaces?
 BAhE_post <- si_clause? !ZEI_clause !BU_clause
 # BAhE_no_SA_handling = BAhE spaces? BAhE_post
