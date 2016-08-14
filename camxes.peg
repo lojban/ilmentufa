@@ -852,7 +852,8 @@ LOhU_post <- post_clause
 #         grammatical text left quote
 LU_clause <- LU_pre LU_post
 LU_pre <- pre_clause LU spaces?
-LU_post <- post_clause
+LU_post <- spaces? si_clause? !ZEI_clause !BU_clause
+# LU_post isn't post_clause for avoiding indicators to attach to LU in the parse tree.
 # LU_no_SA_handling = pre_clause LU post_clause
 
 #         LAhE close delimiter
