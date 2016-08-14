@@ -98,6 +98,42 @@
   }
   var _node_nonempty = _node;
 
+  // === Functions for faking left recursion === //
+
+  function _flatten_node(a) {
+    // Flatten nameless nodes
+    // e.g. [Name1, [[Name2, X], [Name3, Y]]] --> [Name1, [Name2, X], [Name3, Y]]
+    if (is_array(a)) {
+      var i = 0;
+      while (i < a.length) {
+        if (!is_array(a[i])) i++;
+        else if (a[i].length === 0) // Removing []s
+          a = a.slice(0, i).concat(a.slice(i + 1));
+        else if (is_array(a[i][0]))
+          a = a.slice(0, i).concat(a[i], a.slice(i + 1));
+        else i++;
+      }
+    }
+    return a;
+  }
+
+  function _group_leftwise(arr) {
+    if (!is_array(arr)) return [];
+    else if (arr.length <= 2) return arr;
+    else return [_group_leftwise(arr.slice(0, -1)), arr[arr.length - 1]];
+  }
+
+  // "_lg" for "Leftwise Grouping".
+  function _node_lg(label, arg) {
+    return _node(label, _group_leftwise(_flatten_node(arg)));
+  }
+
+  function _node_lg2(label, arg) {
+    if (is_array(arg) && arg.length == 2)
+      arg = arg[0].concat(arg[1]);
+    return _node(label, _group_leftwise(arg));
+  }
+
   // === ZOI functions === //
 
   function _assign_zoi_delim(w) {
@@ -182,7 +218,7 @@ bridi_tail_sa = expr:(bridi_tail_start (term / !bridi_tail_start (sa_word / SA_c
 
 bridi_tail_start = expr:(ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail) {return _node("bridi_tail_start", expr);}
 
-bridi_tail_1 = expr:(bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*) {return _node("bridi_tail_1", expr);}
+bridi_tail_1 = bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)* // !LR2
 
 bridi_tail_2 = expr:(bridi_tail_3 (gihek stag? BO_clause free* bridi_tail_2 tail_terms)?) {return _node("bridi_tail_2", expr);}
 
@@ -228,7 +264,7 @@ sumti = expr:(sumti_1 (VUhO_clause free* relative_clauses)?) {return _node("sumt
 
 sumti_1 = expr:(sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?) {return _node("sumti_1", expr);}
 
-sumti_2 = expr:(sumti_3 (joik_ek sumti_3)*) {return _node("sumti_2", expr);}
+sumti_2 = sumti_3 (joik_ek sumti_3)* // !LR
 
 sumti_3 = expr:(sumti_4 (joik_ek stag? BO_clause free* sumti_3)?) {return _node("sumti_3", expr);}
 
@@ -262,9 +298,9 @@ selbri_1 = expr:(selbri_2 / NA_clause free* selbri) {return _node("selbri_1", ex
 
 selbri_2 = expr:(selbri_3 (CO_clause free* selbri_2)?) {return _node("selbri_2", expr);}
 
-selbri_3 = expr:(selbri_4+) {return _node("selbri_3", expr);}
+selbri_3 = selbri_4+ // !LR
 
-selbri_4 = expr:(selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)*) {return _node("selbri_4", expr);}
+selbri_4 = selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)* // !LR2
 
 selbri_5 = expr:(selbri_6 ((jek / joik) stag? BO_clause free* selbri_5)?) {return _node("selbri_5", expr);}
 
@@ -437,11 +473,11 @@ indicator = expr:(((UI_clause / CAI_clause) NAI_clause? / DAhO_clause / FUhO_cla
 // ****************
 
 zei_clause = expr:(pre_clause zei_clause_no_pre) {return _node("zei_clause", expr);}
-zei_clause_no_pre = expr:(pre_zei_bu (zei_tail? bu_tail)* zei_tail post_clause) {return _node("zei_clause_no_pre", expr);}
+zei_clause_no_pre = pre_zei_bu (zei_tail? bu_tail)* zei_tail post_clause // !LR
 // zei_clause_no_SA = pre_zei_bu_no_SA (zei_tail? bu_tail)* zei_tail
 
 bu_clause = expr:(pre_clause bu_clause_no_pre) {return _node("bu_clause", expr);}
-bu_clause_no_pre = expr:(pre_zei_bu (bu_tail? zei_tail)* bu_tail post_clause) {return _node("bu_clause_no_pre", expr);}
+bu_clause_no_pre = pre_zei_bu (bu_tail? zei_tail)* bu_tail post_clause // !LR
 // bu_clause_no_SA = pre_zei_bu_no_SA (bu_tail? zei_tail)* bu_tail
 
 zei_tail = expr:((ZEI_clause any_word)+) {return _node("zei_tail", expr);}
@@ -462,7 +498,7 @@ dot_star = expr:(.*) {return ["dot_star"];}
 // Handling of what can go after a cmavo
 post_clause = expr:(spaces? si_clause? !ZEI_clause !BU_clause indicators*) {return _node("post_clause", expr);}
 
-pre_clause = expr:(BAhE_clause?) {return _node("pre_clause", expr);}
+pre_clause = BAhE_clause? // !LR
 
 //any_word_SA_handling = BRIVLA_pre / known_cmavo_SA / !known_cmavo_pre CMAVO_pre / CMEVLA_pre
 any_word_SA_handling = expr:(BRIVLA_pre / known_cmavo_SA / CMAVO_pre / CMEVLA_pre) {return _node("any_word_SA_handling", expr);}
