@@ -264,7 +264,7 @@ sumti = expr:(sumti_1 (VUhO_clause free* relative_clauses)?) {return _node("sumt
 
 sumti_1 = expr:(sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?) {return _node("sumti_1", expr);}
 
-sumti_2 = expr:(sumti_3 (joik_ek sumti_3)*) {return _node_lg("sumti_2", expr);} // !LR
+sumti_2 = expr:(sumti_3 (joik_ek sumti_3)*) {return _node_lg2("sumti_2", expr);} // !LR2
 
 sumti_3 = expr:(sumti_4 (joik_ek stag? BO_clause free* sumti_3)?) {return _node("sumti_3", expr);}
 
@@ -1901,4 +1901,3 @@ ZOI = expr:(&cmavo ( z o i / l a h o ) &post_word) {return _node("ZOI", expr);}
 
 ZOhU = expr:(&cmavo ( z o h u ) &post_word) {return _node("ZOhU", expr);}
 
-__EXTERN_PREDICATE_SYMBOL__ = expr:((.*)) {return _node("__EXTERN_PREDICATE_SYMBOL__", expr);}

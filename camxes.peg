@@ -141,7 +141,7 @@ sumti <- sumti_1 (VUhO_clause free* relative_clauses)?
 
 sumti_1 <- sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?
 
-sumti_2 <- sumti_3 (joik_ek sumti_3)* # !LR
+sumti_2 <- sumti_3 (joik_ek sumti_3)* # !LR2
 
 sumti_3 <- sumti_4 (joik_ek stag? BO_clause free* sumti_3)?
 
