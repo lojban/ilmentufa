@@ -304,6 +304,12 @@ function peg_add_js_parser_actions(peg) {
     peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^ ][^\r\n]+)/gm,
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
+    /* Parser actions for faking left recursion */
+    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ !LR)(?=[ \r\n])/gm,
+                      '$1 = expr:($2) {return _node_lg("$1", expr);} $3');
+    peg = peg.replace(/^([0-9a-zA-Z_-]+) *= *([^ ][^\r\n]+)(\\\\ !LR2)(?=[ \r\n])/gm,
+                      '$1 = expr:($2) {return _node_lg2("$1", expr);} $3');
+    /* Others */
     peg = peg.replace(/^(dot[-_]star) *= *([^ ][^\r\n]+)/gm,
                       '$1 = expr:($2) {return ["$1"];}');
     /* Default parser action */
@@ -362,6 +368,42 @@ function js_initializer() {
     return (_n.length == 1 && label) ? [] : _n;
   }
   var _node_nonempty = _node;
+  
+  // === Functions for faking left recursion === //
+  
+  function _flatten_node(a) {
+    // Flatten nameless nodes
+    // e.g. [Name1, [[Name2, X], [Name3, Y]]] --> [Name1, [Name2, X], [Name3, Y]]
+    if (is_array(a)) {
+      var i = 0;
+      while (i < a.length) {
+        if (!is_array(a[i])) i++;
+        else if (a[i].length === 0) // Removing []s
+          a = a.slice(0, i).concat(a.slice(i + 1));
+        else if (is_array(a[i][0]))
+          a = a.slice(0, i).concat(a[i], a.slice(i + 1));
+        else i++;
+      }
+    }
+    return a;
+  }
+  
+  function _group_leftwise(arr) {
+    if (!is_array(arr)) return [];
+    else if (arr.length <= 2) return arr;
+    else return [_group_leftwise(arr.slice(0, -1)), arr[arr.length - 1]];
+  }
+  
+  // "_lg" for "Leftwise Grouping".
+  function _node_lg(label, arg) {
+    return _node(label, _group_leftwise(_flatten_node(arg)));
+  }
+  
+  function _node_lg2(label, arg) {
+    if (is_array(arg) && arg.length == 2)
+      arg = arg[0].concat(arg[1]);
+    return _node(label, _group_leftwise(arg));
+  }
 
   // === ZOI functions === //
 
