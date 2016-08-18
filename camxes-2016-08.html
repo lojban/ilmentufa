@@ -20,24 +20,11 @@
     <option>Prettified --fm + selmaho</option>
     <option>Prettified --fm + sm ext</option>
   </select>
-  <select id="morpho-mode" onChange="run_camxes()">
-    <option>Remove morphology</option>
-    <option>Keep morphology</option>
-  </select>
-  <select id="spaces-display-mode" onChange="run_camxes()">
-    <option>Display spaces as '_'</option>
-    <option>Hide spaces</option>
-  </select>
-  <select id="postproc-cb" onChange="run_camxes()">
-    <option>New postprocessor</option>
-    <option>Old postprocessor</option>
-    <option>Both</option>
-  </select>
   <span style="padding-left: 32px; text-align: right; font-size: 12px;">
-    <a href="camxes.pegjs" target="_blank">[ Grammar file ]</a>
+    <a href="camxes.js.peg" target="_blank">[ Grammar file ]</a>
   </span>
   <span style="padding-left: 24px; text-align: right; font-size: 12px;">
-    <a href="camxes.html">[ Switch to the traditional parser ]</a>
+    <a href="camxes-exp.html">[ Switch to experimental grammar ]</a>
   </span>
 </form>
 
@@ -47,8 +34,7 @@
 </div>
 
 <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="camxes2.js"></script>
-<script type="text/javascript" src="process_parse_tree.js"></script>
+<script type="text/javascript" src="camxes.js"></script>
 <script type="text/javascript" src="camxes_preproc.js"></script>
 <script type="text/javascript" src="camxes_postproc.js"></script>
 
@@ -69,24 +55,16 @@ function run_camxes() {
 	  input = camxes_preprocessing(input);
       var result = camxes.parse(input);
     } catch (e) {
-      $('#parse_result').text(e.toString());
+      $('#parse_result').text( e.toString() );
       return;
     }
+    var result_str = JSON.stringify(result, undefined, 2);
 	/* We get the output mode selected in the combobox */
 	var mode = document.getElementById("optlist").selectedIndex;
-    /* Get the parse tree processing selected in the second combobox  */
-    var parse_tree_proc;
-    if (0 == document.getElementById("morpho-mode").selectedIndex)
-        parse_tree_proc = process_parse_tree; // @ process_parse_tree.js
-    else parse_tree_proc = null;
-    var postproc_id = document.getElementById("postproc-cb").selectedIndex;
-    var b_display_spaces = !document.getElementById("spaces-display-mode").selectedIndex;
-    if (b_display_spaces) mode |= 8;
-	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
-	result = camxes_postprocessing(result, mode, parse_tree_proc, postproc_id);
-                     // @ camxes_postproc.js
+	/* Postprocessing — if mode == 0, the below function won't modify camxes' output */
+	result_str = camxes_postprocessing(result_str, mode);  // @camxes_postproc.js
 	/* Retrieve the result */
-    $('#parse_result').text(result);
+    $('#parse_result').text( result_str );
 }
 </script>
 

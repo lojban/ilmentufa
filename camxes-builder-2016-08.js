@@ -2,7 +2,7 @@
 var fs = require("fs")
 var PEG = require("pegjs")
 // // read peg and build a parser
-var camxes_peg = fs.readFileSync("camxes.pegjs").toString();
+var camxes_peg = fs.readFileSync("camxes.js.peg").toString();
 try {
 	var camxes = PEG.buildParser(camxes_peg, {
 		cache: true,
@@ -15,7 +15,7 @@ try {
 	throw e;
 }
 // // write to a file
-var fd = fs.openSync("camxes2.js", 'w+');
+var fd = fs.openSync("camxes-2016-08.js", 'w+');
 var buffer = new Buffer('var camxes = ');
 fs.writeSync(fd, buffer, 0, buffer.length);
 buffer = new Buffer(camxes);

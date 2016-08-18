@@ -2,7 +2,7 @@
 var fs = require("fs")
 var PEG = require("pegjs")
 // // read peg and build a parser
-var camxes_peg = fs.readFileSync("camxes.js.peg").toString();
+var camxes_peg = fs.readFileSync("camxes.pegjs").toString();
 try {
 	var camxes = PEG.buildParser(camxes_peg, {
 		cache: true,
