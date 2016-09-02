@@ -48,7 +48,6 @@
 
 <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="camxes.js"></script>
-<script type="text/javascript" src="process_parse_tree.js"></script>
 <script type="text/javascript" src="camxes_preproc.js"></script>
 <script type="text/javascript" src="camxes_postproc.js"></script>
 
@@ -75,15 +74,13 @@ function run_camxes() {
 	/* We get the output mode selected in the combobox */
 	var mode = document.getElementById("optlist").selectedIndex;
     /* Get the parse tree processing selected in the second combobox  */
-    var parse_tree_proc;
     if (0 == document.getElementById("morpho-mode").selectedIndex)
-        parse_tree_proc = process_parse_tree; // @ process_parse_tree.js
-    else parse_tree_proc = null;
+        mode |= 16;
     var postproc_id = document.getElementById("postproc-cb").selectedIndex;
     var b_display_spaces = !document.getElementById("spaces-display-mode").selectedIndex;
     if (b_display_spaces) mode |= 8;
 	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
-	result = camxes_postprocessing(result, mode, parse_tree_proc, postproc_id);
+	result = camxes_postprocessing(result, mode, postproc_id);
                      // @ camxes_postproc.js
 	/* Retrieve the result */
     $('#parse_result').text(result);
