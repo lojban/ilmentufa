@@ -58,11 +58,10 @@ function run_camxes() {
       $('#parse_result').text( e.toString() );
       return;
     }
-    var result_str = JSON.stringify(result, undefined, 2);
 	/* We get the output mode selected in the combobox */
 	var mode = document.getElementById("optlist").selectedIndex;
 	/* Postprocessing — if mode == 0, the below function won't modify camxes' output */
-	result_str = camxes_postprocessing(result_str, mode);  // @camxes_postproc.js
+	var result_str = camxes_postprocessing(result, mode);  // @camxes_postproc.js
 	/* Retrieve the result */
     $('#parse_result').text( result_str );
 }
