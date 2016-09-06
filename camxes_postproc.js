@@ -3,7 +3,7 @@
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
  * Last change: 2016-09-06.
  * 
- * Entry point: camxes_postprocessing(input, mode, ptproc, postproc_id)
+ * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
  *    -- input:  [string] camxes' stringified output
  *            OR [array] camxes' parse tree output
@@ -26,7 +26,7 @@
 
 /*
  * Function list:
- *   -- camxes_postprocessing(text, mode, ptproc, postproc_id)
+ *   -- camxes_postprocessing(text, mode)
  *   -- new_postprocessor(input, no_morpho, with_selmaho, with_terminator)
  *   -- prune_unwanted_nodes(tree, is_wanted_node)
  *   -- prefix_wordclass(tree, replacements)
