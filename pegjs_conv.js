@@ -230,11 +230,12 @@ function process_peg_code(peg) {
 }
 
 function remove_superfluous_parentheses(s) {
+    var p = 0;
     var i = null;
     var j, k;
     /* Removing superfluous nested parentheses, as in "((expr))". */
     while (true) {
-        k = s.search(/\(\s*\(.*\)\s*\)/gm);
+        k = s.substring(p).search(/\(\s*\(.*\)\s*\)/gm);
         if (k < 0) break;
         i = k;
         j = i + 1;
@@ -243,6 +244,7 @@ function remove_superfluous_parentheses(s) {
         var post_k = s.substring(k + 1);
         if (post_k.search(/^\s*\)/gm) == 0)
             s = s.substring(0, j) + s.substring(j + 1, k) + post_k;
+        else p = j;
     }
     /* Removing unnecessary parentheses enclosing the whole PEG expression. */
     while (true) {
