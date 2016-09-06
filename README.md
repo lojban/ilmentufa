@@ -21,10 +21,13 @@ However, as the necessary `node_modules` are already included in this project, I
 After having entered the ilmentufa directory, run the following command:
 
 ```
-nodejs [builder-filename]
+nodejs build-camxes.js [pegjs-grammar-filename]
 ```
 
-For example, `nodejs camxes-builder` for building the standard grammar engine or `nodejs camxes-exp-builder` for experimental grammar.
+For example, `nodejs build-camxes.js camxes.pegjs` for building the standard grammar engine or `nodejs build-camxes.js camxes-exp.js.peg` for the experimental grammar.
+The standard grammar is chosen by default if no grammar filename is provided.
+
+Building the parser can take several dozen seconds.
 
 Now, the grammar engine should have been created/updated, and be ready for use. :)
 
