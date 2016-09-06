@@ -25,8 +25,8 @@
     <option>Keep morphology</option>
   </select>
   <select id="spaces-display-mode" onChange="run_camxes()">
+    <option>Hide spaces</option>      
     <option>Display spaces as '_'</option>
-    <option>Hide spaces</option>
   </select>
   <select id="postproc-cb" onChange="run_camxes()">
     <option>New postprocessor</option>
@@ -77,7 +77,7 @@ function run_camxes() {
     if (0 == document.getElementById("morpho-mode").selectedIndex)
         mode |= 16;
     var postproc_id = document.getElementById("postproc-cb").selectedIndex;
-    var b_display_spaces = !document.getElementById("spaces-display-mode").selectedIndex;
+    var b_display_spaces = (1 == document.getElementById("spaces-display-mode").selectedIndex);
     if (b_display_spaces) mode |= 8;
 	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
 	result = camxes_postprocessing(result, mode, postproc_id);
