@@ -56,7 +56,11 @@ if (typeof alert !== 'function')
  */
 function camxes_postprocessing(input, mode) {
     if (!is_array(input))
-        return "Postprocessor error: invalid input type.";
+        return "Postprocessor error: invalid input type for the first argument. "
+             + "It should be of type 'array', but the argument given is of type '" + typeof input + "'."
+             + (is_string(input) ? "\n\nThe new postprocessor doesn't allow anymore string inputs. "
+             + "Please check the parse tree produced by the parser hasn't been converted to string "
+             + "before being passed to the postprocessor." : "");
     var with_spaces = mode & 8;
     var without_morphology = !(mode & 16);
     mode = mode % 8;
