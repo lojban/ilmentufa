@@ -14,6 +14,7 @@ function parse() {
         var parse = camxes.parse(textToParse);
         var end = new Date().getTime();
         $("#time-label").html("(parsing took " + (end - start) + " ms)");
+        parse = remove_morphology(parse);
         var simplified = simplifyTree(parse);
         numberSumti(simplified);
         

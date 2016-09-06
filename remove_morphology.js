@@ -1,12 +1,12 @@
 var IS_NODEJS_ENV = new Function("try {return this===global;} catch(e) {return false;}");
 
 if (IS_NODEJS_ENV()) {
-    module.exports = process_parse_tree;
+    module.exports = remove_morphology;
 
     /* Just for testing the program from the terminal. */
     var test_input = ["text",["text_part_2",[["free",["vocative",[["COI_clause",["COI_pre",["COI",[["c","c"],["o","o"],["i","i"]]],["spaces",["initial_spaces"]]]]]],["sumti",["sumti_1",["sumti_2",["sumti_3",["sumti_4",["sumti_5",["quantifier",["number",["PA_clause",["PA_pre",["PA",[["r","r"],["o","o"]]],["spaces",["initial_spaces"]]]]],["BOI"]],["sumti_6",["KOhA_clause",["KOhA_pre",["KOhA",[["d","d"],["o","o"]]]]]]]]]]]],["DOhU"]]]]];
 
-    console.log(JSON.stringify(process_parse_tree(test_input)));
+    console.log(JSON.stringify(remove_morphology(test_input)));
     process.exit();
 }
 
@@ -15,7 +15,7 @@ if (IS_NODEJS_ENV()) {
 /*
  * EXAMPLE OF PARSE TREE PRUNING PROCEDURE
  * 
- * process_parse_tree(parse_tree)
+ * remove_morphology(parse_tree)
  * 
  * This function takes a parse tree, and joins the expressions of the following
  * nodes:
@@ -24,7 +24,7 @@ if (IS_NODEJS_ENV()) {
  * 
  */
  
-function process_parse_tree(pt) {
+function remove_morphology(pt) {
     if (pt.length < 1) return [];
     var i;
     /* Sometimes nodes have no label and have instead an array as their first
@@ -47,7 +47,7 @@ function process_parse_tree(pt) {
     /* If we've reached here, then this node is not a target for pruning, so let's
        do recursion into its child nodes. */
     while (i < pt.length) {
-        process_parse_tree(pt[i]);
+        remove_morphology(pt[i]);
         i++;
     }
     return pt;

@@ -58,7 +58,7 @@ function camxes_postprocessing(input, mode) {
     if (!is_array(input))
         return "Postprocessor error: invalid input type.";
     var with_spaces = mode & 8;
-    var without_morphology = mode & 16;
+    var without_morphology = !(mode & 16);
     mode = mode % 8;
     var with_selmaho = (mode != 2 && mode != 5);
     var with_nodes_labels = (mode == 4 || mode == 7);
