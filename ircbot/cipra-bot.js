@@ -69,7 +69,7 @@ function run_camxes(input, mode) {
 		syntax_error = true;
 	}
 	if (!syntax_error) {
-		result = JSON.stringify(result, undefined, 2);
+		// result = JSON.stringify(result, undefined, 2);
 		result = camxes_post.postprocessing(result, mode);
 	}
 	return result;

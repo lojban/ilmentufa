@@ -439,11 +439,13 @@ function js_initializer() {
   }
 
   function is_string(v) {
-    return $.type(v) === "string";
+    // return $.type(v) === "string";
+    return Object.prototype.toString.call(v) === '[object String]';
   }
 
   function is_array(v) {
-    return $.type(v) === "array";
+    // return $.type(v) === "array";
+    return Object.prototype.toString.call(v) === '[object Array]';
   }
 }
 

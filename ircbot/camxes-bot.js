@@ -1,7 +1,7 @@
 var config = {
   server: 'irc.freenode.net',
 //  nick: ['camxes', 'mikykibykarni'],
-  nick: 'camxes',
+  nick: 'camxes-test',
   options: {
     channels: ['#lojban', '#ckule', '#balningau'],
     debug: false
@@ -102,7 +102,7 @@ function run_camxes(input, mode, engine) {
 		syntax_error = true;
 	}
 	if (!syntax_error) {
-		result = JSON.stringify(result, undefined, 2);
+		//result = JSON.stringify(result, undefined, 2);
 		result = camxes_post.postprocessing(result, mode);
 	}
 	return result;
