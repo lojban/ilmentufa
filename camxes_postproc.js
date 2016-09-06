@@ -5,8 +5,7 @@
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
- *    -- input:  [string] camxes' stringified output
- *            OR [array] camxes' parse tree output
+ *    -- input: [array] camxes' parse tree output
  *    -- mode:  [number] output mode flag
  *         If mode > 7, displaying spaces is enabled and mode's value is
  *         truncated so mode <= 7. Then, depending on the value of mode,
