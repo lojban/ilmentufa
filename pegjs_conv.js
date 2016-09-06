@@ -22,7 +22,7 @@
 
 /* TODO: Let's just remove this and completely remove PEGJS predicates
    alltogether. */
-var EXTERN_PREDICATE_SYMBOL = "__EXTERN_PREDICATE_SYMBOL__";
+//var EXTERN_PREDICATE_SYMBOL = "__EXTERN_PREDICATE_SYMBOL__";
 
 main(process.argv, require("fs"));
 process.exit();
@@ -101,7 +101,8 @@ function remove_pegjs_javascript(peg) {
             }
             var replacement = "";
             if (i > 0) if (peg[i - 1] == '&' || peg[i - 1] == '!')
-                replacement = EXTERN_PREDICATE_SYMBOL;
+                //replacement = EXTERN_PREDICATE_SYMBOL;
+                i--;
             if (j < 0) return peg.substring(0, i) + replacement;
             else {
                 peg = peg.substring(0, i) + replacement + peg.substring(j + 1);
@@ -141,7 +142,8 @@ function pegjs_to_peg(peg) {
         speg[i] = process_pegjs_code(speg[i]);
         i += 2;
     }
-    return speg.join("") + "\n" + EXTERN_PREDICATE_SYMBOL + " = (.*)\n";
+    return speg.join("");
+    //return speg.join("") + "\n" + EXTERN_PREDICATE_SYMBOL + " = (.*)\n";
 }
 
 function peg_to_pegjs(peg) {
@@ -220,8 +222,8 @@ function process_pegjs_code(peg) {
 }
 
 function process_peg_code(peg) {
-    var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
-    peg = peg.replace(re, "");
+//    var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
+//    peg = peg.replace(re, "");
     peg = peg.replace(/<-/g, "=");
     peg = peg.replace(/-/g, "_");
     peg = peg.replace(/ {2,}/g, " ");
