@@ -28,11 +28,6 @@
     <option>Hide spaces</option>      
     <option>Display spaces as '_'</option>
   </select>
-  <select id="postproc-cb" onChange="run_camxes()">
-    <option>New postprocessor</option>
-    <option>Old postprocessor</option>
-    <option>Both</option>
-  </select>
   <span style="padding-left: 32px; text-align: right; font-size: 12px;">
     <a href="camxes.pegjs" target="_blank">[ Grammar file ]</a>
   </span>
@@ -76,11 +71,10 @@ function run_camxes() {
     /* Get the parse tree processing selected in the second combobox  */
     if (0 == document.getElementById("morpho-mode").selectedIndex)
         mode |= 16;
-    var postproc_id = document.getElementById("postproc-cb").selectedIndex;
     var b_display_spaces = (1 == document.getElementById("spaces-display-mode").selectedIndex);
     if (b_display_spaces) mode |= 8;
 	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
-	result = camxes_postprocessing(result, mode, postproc_id);
+	result = camxes_postprocessing(result, mode);
                      // @ camxes_postproc.js
 	/* Retrieve the result */
     $('#parse_result').text(result);
