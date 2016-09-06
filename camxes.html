@@ -20,19 +20,33 @@
     <option>Prettified --fm + selmaho</option>
     <option>Prettified --fm + sm ext</option>
   </select>
-  <select id="morpho-mode" onChange="run_camxes()">
+  <select id="morpho-mode" onChange="run_camxes();">
     <option>Remove morphology</option>
     <option>Keep morphology</option>
   </select>
-  <select id="spaces-display-mode" onChange="run_camxes()">
+  <select id="spaces-display-mode" onChange="run_camxes();">
     <option>Hide spaces</option>      
     <option>Display spaces as '_'</option>
   </select>
-  <span style="padding-left: 32px; text-align: right; font-size: 12px;">
-    <a href="camxes.pegjs" target="_blank">[ Grammar file ]</a>
-  </span>
+  <span style="padding-left: 24px; text-align: right; font: 15px arial, sans-serif;">Parser: </span>
+  <select id="parser" onChange="load_parser();">
+    <option>Camxes: standard</option>      
+    <option>Camxes: experimental</option>
+    <option>Zantufa</option>
+    <option>Spagetufa</option>
+    <option>Camxes: Hagiwara</option>
+  </select>
+  <script>
+    var parser_list = [
+      ["camxes.js", "camxes.peg"],
+      ["camxes-exp.js", "camxes-exp.js.peg"],
+      ["http://guskant.github.io/gerna_cipra/js/zantufa-1.js", "http://guskant.github.io/gerna_cipra/zantufa-1.js.peg"],
+      ["https://github.com/mezohe/ilmentufa/camxes-exp.js", "https://github.com/mezohe/ilmentufa/camxes-exp.js.peg"],
+      ["camxes-mh.js", "camxes-mh.js.peg"]
+      ];
+  </script>
   <span style="padding-left: 24px; text-align: right; font-size: 12px;">
-    <a href="camxes-exp.html">[ Switch to experimental grammar ]</a>
+    <a href="camxes.pegjs" target="_blank" id="peg-link">[ Grammar file ]</a>
   </span>
 </form>
 
@@ -42,12 +56,34 @@
 </div>
 
 <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+<!--
 <script type="text/javascript" src="camxes.js"></script>
+-->
 <script type="text/javascript" src="camxes_preproc.js"></script>
 <script type="text/javascript" src="camxes_postproc.js"></script>
 
 <script>
 document.getElementById("default").defaultSelected = true;
+
+window.onload = load_parser;
+
+var has_first_parser_been_loaded = false;
+
+function load_parser() {
+    var i = document.getElementById("parser").selectedIndex;
+    document.getElementById("peg-link").href = parser_list[i][0];
+    var getscript_callback = function( data, textStatus, jqxhr ) {
+        if ( textStatus === "success" ) run_camxes();
+    };
+    $.getScript( parser_list[i][0], getscript_callback )
+      .done(function( script, textStatus ) {
+        if ( textStatus === "success" ) has_first_parser_been_loaded = true;
+      })
+      .fail(function( jqxhr, settings, exception ) {
+        alert( "load_parser(): " + exception );
+      });
+    run_camxes();
+}
 
 /*
  *  Binding the function run_camxes() to keyup event on input_textarea by using jQuery
@@ -58,6 +94,7 @@ $('#input_textarea').bind( "keyup",
   } );
 
 function run_camxes() {
+    if (!has_first_parser_been_loaded) return;
 	try {
 	  var input = $('#input_textarea').val();
 	  input = camxes_preprocessing(input);
@@ -68,14 +105,14 @@ function run_camxes() {
     }
 	/* We get the output mode selected in the combobox */
 	var mode = document.getElementById("optlist").selectedIndex;
-    /* Get the parse tree processing selected in the second combobox  */
+    /* Get the parse tree processing selected in the second combobox */
     if (1 == document.getElementById("morpho-mode").selectedIndex)
         mode |= 16;
     var b_display_spaces = (1 == document.getElementById("spaces-display-mode").selectedIndex);
     if (b_display_spaces) mode |= 8;
 	/* Postprocessing: if mode == 0, the below function won't modify camxes' output */
 	result = camxes_postprocessing(result, mode);
-                     // @ camxes_postproc.js
+             // @ camxes_postproc.js
 	/* Retrieve the result */
     $('#parse_result').text(result);
 }
