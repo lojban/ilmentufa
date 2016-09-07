@@ -325,7 +325,7 @@ joik_ek_1 <- joik_jek
 joik_ek_sa <- joik_ek_1 (!joik_ek_1 (sa_word / SA_clause !joik_ek_1 ) )* SA_clause &joik_ek
 
 # BETA: A/JA/JOI/VUhU Merger
-joik_jek <- joik free* / jek free* / VUhU_clause free*
+joik_jek <- ek free* / joik free* / jek free* / VUhU_clause free*
 
 # BETA: gaJA
 gek <- gak SE_clause? joik_jek / SE_clause? GA_clause free* / joik GI_clause free* / stag gik
