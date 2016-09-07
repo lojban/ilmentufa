@@ -201,7 +201,7 @@ function remove_morphology(pt) {
 
 /* Checks whether the argument node is a target for pruning. */
 function is_target_node(n) {
-    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "initial_spaces"])
+    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "initial_spaces", "ga_clause", "gu_clause"])
             || is_selmaho(n[0]));
 }
 
