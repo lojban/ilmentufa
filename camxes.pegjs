@@ -248,7 +248,7 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-term_1 = expr:(sumti / ( !gek (tag !selbri / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
+term_1 = expr:(sumti / ( !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*) {return _node("term_1", expr);}
 
 nonabs_term = expr:(term_sa* (sumti / ( !gek (tag / FA_clause free*) (sumti / KU_elidible free*) ) / termset / NA_clause KU_clause free*)) {return _node("nonabs_term", expr);}
 

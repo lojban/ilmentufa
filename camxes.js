@@ -4197,7 +4197,7 @@ var camxes = (function() {
     }
 
     function peg$parseterm_1() {
-      var s0, s1, s2, s3, s4, s5, s6, s7;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
       var key    = peg$currPos * 776 + 32,
           cached = peg$resultsCache[key];
@@ -4228,7 +4228,30 @@ var camxes = (function() {
           if (s4 !== peg$FAILED) {
             s5 = peg$currPos;
             peg$silentFails++;
-            s6 = peg$parseselbri();
+            s6 = peg$currPos;
+            s7 = peg$currPos;
+            peg$silentFails++;
+            s8 = peg$parsetag();
+            peg$silentFails--;
+            if (s8 === peg$FAILED) {
+              s7 = void 0;
+            } else {
+              peg$currPos = s7;
+              s7 = peg$FAILED;
+            }
+            if (s7 !== peg$FAILED) {
+              s8 = peg$parseselbri();
+              if (s8 !== peg$FAILED) {
+                s7 = [s7, s8];
+                s6 = s7;
+              } else {
+                peg$currPos = s6;
+                s6 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s6;
+              s6 = peg$FAILED;
+            }
             peg$silentFails--;
             if (s6 === peg$FAILED) {
               s5 = void 0;
