@@ -164,7 +164,7 @@ gek_termset <- gek terms_gik_terms
 
 terms_gik_terms <- nonabs_term (gik / terms_gik_terms) nonabs_term
 
-# BETA: Improved VUhO
+# BETA: Enhanced VUhO
 sumti <- sumti_1 (VUhO_clause free* (relative_clauses (joik_ek sumti)?)?)?
 
 sumti_1 <- sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?
@@ -325,7 +325,7 @@ joik_ek_1 <- joik_jek
 joik_ek_sa <- joik_ek_1 (!joik_ek_1 (sa_word / SA_clause !joik_ek_1 ) )* SA_clause &joik_ek
 
 # BETA: A/JA/JOI/VUhU Merger
-joik_jek <- ek free* / joik free* / jek free* / VUhU_clause free*
+joik_jek <- joik free* / ek free* / jek free* / VUhU_clause free*
 
 # BETA: gaJA
 gek <- gak SE_clause? joik_jek / SE_clause? GA_clause free* / joik GI_clause free* / stag gik

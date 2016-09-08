@@ -450,7 +450,7 @@ joik_ek_1 = expr:(joik_jek) {return _node("joik_ek_1", expr);}
 joik_ek_sa = expr:(joik_ek_1 (!joik_ek_1 (sa_word / SA_clause !joik_ek_1 ) )* SA_clause &joik_ek) {return _node("joik_ek_sa", expr);}
 
 // BETA: A/JA/JOI/VUhU Merger
-joik_jek = expr:(ek free* / joik free* / jek free* / VUhU_clause free*) {return _node("joik_jek", expr);}
+joik_jek = expr:(joik free* / ek free* / jek free* / VUhU_clause free*) {return _node("joik_jek", expr);}
 
 // BETA: gaJA
 gek = expr:(gak SE_clause? joik_jek / SE_clause? GA_clause free* / joik GI_clause free* / stag gik) {return _node("gek", expr);}
