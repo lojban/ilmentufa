@@ -29,9 +29,11 @@ function std_to_cbm(peg) {
     peg = peg.replace(/(\nsumti_6 <- [^\n]*)LA_clause (free\* )?relative_clauses\? CMEVLA_clause\+ (free\* )?\/ \(LA_clause \/ LE_clause\)/gm, "$1LE_clause");
     peg = peg.replace(/(\nfree <- [^\n]*) vocative relative_clauses\? CMEVLA_clause\+ (free\* )?relative_clauses\? DOhU_elidible \//gm, "$1");
     peg = peg.replace(/(\nany_word_SA_handling <- [^\n]*) \/ CMEVLA_pre/gm, "$1");
+    peg = peg.replace(/(\nknown_cmavo_SA <- [^\n]*) \/ LA_pre/gm, "$1");
     peg = peg.replace(/\nCMEVLA_clause <- (?:\r|\n|.)+\nCMEVLA_post <- post_clause/gm, "");
     peg = peg.replace(/\nLA_clause <- (?:\r|\n|.)+\nLA_post <- post_clause/gm, "");
     peg = peg.replace(/(\nBRIVLA <- [^\r\n]+)/gm, "$1 / CMEVLA");
+    peg = peg.replace(/(\nCMAVO <- [^\n]* )\/ LA /gm, "$1");
     peg = peg.replace(/(\n# BETA:.*)?\nLA <- [^\r\n]+/gm, "");
     peg = peg.replace(/(\nLE <- &cmavo \( )/gm, "$1l a i / l a h i / l a / ");
     return peg;
