@@ -289,7 +289,7 @@ gek_termset = expr:(gek terms_gik_terms) {return _node("gek_termset", expr);}
 
 terms_gik_terms = expr:(nonabs_term (gik / terms_gik_terms) nonabs_term) {return _node("terms_gik_terms", expr);}
 
-// BETA: Improved VUhO
+// BETA: Enhanced VUhO
 sumti = expr:(sumti_1 (VUhO_clause free* (relative_clauses (joik_ek sumti)?)?)?) {return _node("sumti", expr);}
 
 sumti_1 = expr:(sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?) {return _node("sumti_1", expr);}
@@ -2011,7 +2011,7 @@ KUhAU = expr:(&cmavo ( k u h a u ) &post_word) {return _node("KUhAU", expr);}
 LEhAI = expr:(&cmavo ( l e h a i ) &post_word) {return _node("LEhAI", expr);}
 LOhAI = expr:(&cmavo ( l o h a i / s a h a i ) &post_word) {return _node("LOhAI", expr);}
 LOhOI = expr:(&cmavo ( l o h o i / x u h u ) &post_word) {return _node("LOhOI", expr);}
-NOIhA = expr:(&cmavo ( n o i h a / p o i h a / s o i h a ) &post_word) {return _node("NOIhA", expr);}
+NOIhA = expr:(&cmavo ( n o i h o h a / p o i h o h a / n o i h a / p o i h a / s o i h a ) &post_word) {return _node("NOIhA", expr);}
 ZOhOI = expr:(&cmavo ( z o h o i / l a h o i / r a h o i ) &post_word) {return _node("ZOhOI", expr);}
 MEhOI = expr:(&cmavo ( m e h o i ) &post_word) {return _node("MEhOI", expr);}
 XOI = expr:(&cmavo ( x o i ) &post_word) {return _node("XOI", expr);}

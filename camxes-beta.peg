@@ -1886,7 +1886,7 @@ KUhAU <- &cmavo ( k u h a u ) &post_word
 LEhAI <- &cmavo ( l e h a i ) &post_word
 LOhAI <- &cmavo ( l o h a i / s a h a i ) &post_word
 LOhOI <- &cmavo ( l o h o i / x u h u ) &post_word
-NOIhA <- &cmavo ( n o i h a / p o i h a / s o i h a ) &post_word
+NOIhA <- &cmavo ( n o i h o h a / p o i h o h a / n o i h a / p o i h a / s o i h a ) &post_word
 ZOhOI <- &cmavo ( z o h o i / l a h o i / r a h o i ) &post_word
 MEhOI <- &cmavo ( m e h o i ) &post_word
 XOI <- &cmavo ( x o i ) &post_word
