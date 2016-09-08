@@ -1783,7 +1783,7 @@ DOhU = expr:(&cmavo ( d o h u ) &post_word) {return _node("DOhU", expr);}
 
 FA = expr:(&cmavo ( f a i / f a / f e / f o / f u / f i h a / f i ) &post_word) {return _node("FA", expr);}
 
-FAhA = expr:(&cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a / b u h u ) &post_word &post_word) {return _node("FAhA", expr);}
+FAhA = expr:(&cmavo ( d u h a / b e h a / n e h u / v u h a / g a h u / t i h a / n i h a / c a h u / z u h a / r i h u / r u h u / r e h o / t e h e / b u h u / n e h a / p a h o / n e h i / t o h o / z o h i / z e h o / z o h a / f a h a / z a i ) &post_word &post_word) {return _node("FAhA", expr);}
 
 FAhO = expr:(&cmavo ( f a h o ) &post_word) {return _node("FAhO", expr);}
 

@@ -47106,20 +47106,14 @@ var camxes = (function() {
                                                   }
                                                   if (s3 === peg$FAILED) {
                                                     s3 = peg$currPos;
-                                                    s4 = peg$parseb();
+                                                    s4 = peg$parsez();
                                                     if (s4 !== peg$FAILED) {
-                                                      s5 = peg$parseu();
+                                                      s5 = peg$parsea();
                                                       if (s5 !== peg$FAILED) {
-                                                        s6 = peg$parseh();
+                                                        s6 = peg$parsei();
                                                         if (s6 !== peg$FAILED) {
-                                                          s7 = peg$parseu();
-                                                          if (s7 !== peg$FAILED) {
-                                                            s4 = [s4, s5, s6, s7];
-                                                            s3 = s4;
-                                                          } else {
-                                                            peg$currPos = s3;
-                                                            s3 = peg$FAILED;
-                                                          }
+                                                          s4 = [s4, s5, s6];
+                                                          s3 = s4;
                                                         } else {
                                                           peg$currPos = s3;
                                                           s3 = peg$FAILED;

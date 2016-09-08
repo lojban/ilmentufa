@@ -44,7 +44,7 @@ function make_ctk(peg) {
     peg = peg.replace(/(\nPA <- &cmavo \([^\n]*)\)/gm, "$1/ s u )");
     // zai → bu'u
     peg = peg.replace(/(\nLAU <- &cmavo \( [^\n]*)\/ z a i (?=\/|\))/gm, "$1");
-    peg = peg.replace(/(\nFAhA <- &cmavo \([^\n]*)\)/gm, "$1/ b u h u )");
+    peg = peg.replace(/(\nFAhA <- &cmavo \([^\n]*)\)/gm, "$1/ z a i )");
     // koi → ko'oi
     peg = peg.replace(/(\nBAI <- &cmavo \( [^\n]*)\/ k o i (?=\/|\))/gm, "$1");
     peg = peg.replace(/(\nUI <- &cmavo \([^\n]*)\)/gm, "$1/ k o i )");
