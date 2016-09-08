@@ -33,7 +33,6 @@ var processor = function(client, from, to, text, message) {
   if (sendTo == to) {  // Public
     console.log("T: " + text);
     if (text.match(/^<(.*?)>: /, '') !== null) { // Dealing with Slack
-      console.log("M: " + text.match(/^<(.*?)>: /,'')[1]);
       from = text.match(/^<(.*?)>: /,'')[1];
       text = text.replace(/^<.*?>: /,"");
     }
