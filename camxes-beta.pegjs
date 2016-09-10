@@ -275,8 +275,8 @@ nonabs_term = expr:(term_sa* (sumti / nonabs_tag_term / termset)) {return _node(
 
 nonabs_tag_term = expr:((!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*) {return _node("nonabs_tag_term", expr);}
 
-// BETA: NOIhA, XOI
-nontag_adverbial = expr:(NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / XOI_clause free* subsentence SEhU_elidible free*) {return _node("nontag_adverbial", expr);}
+// BETA: NOIhA, New-SOI
+nontag_adverbial = expr:(NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("nontag_adverbial", expr);}
 // END BETA: TAG-KU JA TAG-KU
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
@@ -477,8 +477,8 @@ stag = expr:(tense_modal (joik_jek tense_modal)*) {return _node("stag", expr);}
 // FIXME: Cannot use bare MEX with ROI.
 tense_modal = expr:(((NAhE_clause? SE_clause? (BAI_clause / CAhA_clause / CUhE_clause / KI_clause / ZI_clause / PU_clause / VA_clause / MOhI_clause? FAhA_clause / ZEhA_clause / VEhA_clause / VIhA_clause / FEhE_clause? (VEI_clause free* mex VEhO_elidible free* / number) ROI_clause / FEhE_clause? TAhE_clause / FEhE_clause? ZAhO_clause / FIhO_clause free* selbri FEhU_elidible free* / FA_clause) free*)+)) {return _node("tense_modal", expr);}
 
-// BETA: Bare MEX
-free = expr:(SEI_clause free* (terms CU_elidible free*)? selbri SEhU_elidible / SOI_clause free* sumti sumti? SEhU_elidible / vocative relative_clauses? selbri relative_clauses? DOhU_elidible / vocative relative_clauses? CMEVLA_clause+ free* relative_clauses? DOhU_elidible / vocative sumti? DOhU_elidible / mex_2 MAI_clause free* / TO_clause text TOI_elidible / xi_clause) {return _node("free", expr);}
+// BETA: Bare MEX, LOhAI, Removal of Old-SOI
+free = expr:(SEI_clause free* (terms CU_elidible free*)? selbri SEhU_elidible / vocative relative_clauses? selbri relative_clauses? DOhU_elidible / vocative relative_clauses? CMEVLA_clause+ free* relative_clauses? DOhU_elidible / vocative sumti? DOhU_elidible / mex_2 MAI_clause free* / TO_clause text TOI_elidible / xi_clause / LOhAI_clause) {return _node("free", expr);}
 
 // BETA: Bare MEX
 xi_clause = expr:(XI_clause free* mex_2 / XI_clause free* VEI_clause free* mex VEhO_elidible) {return _node("xi_clause", expr);}
@@ -1187,7 +1187,7 @@ SEhU_post = expr:(post_clause) {return _node("SEhU_post", expr);}
 //         metalinguistic single word eraser
 SI_clause = expr:(spaces? SI spaces?) {return _node("SI_clause", expr);}
 
-//         reciprocal sumti marker
+// BETA: bridi relative clause
 SOI_clause = expr:(SOI_pre SOI_post) {return _node("SOI_clause", expr);}
 SOI_pre = expr:(pre_clause SOI spaces?) {return _node("SOI_pre", expr);}
 SOI_post = expr:(post_clause) {return _node("SOI_post", expr);}
@@ -1410,10 +1410,6 @@ ZOhOI_clause = expr:(ZOhOI_pre ZOhOI_post) {return _node("ZOhOI_clause", expr);}
 ZOhOI_pre = expr:(pre_clause ZOhOI spaces? zohoi_word spaces?) {return _node("ZOhOI_pre", expr);}
 ZOhOI_post = expr:(post_clause) {return _node("ZOhOI_post", expr);}
 
-XOI_clause = expr:(XOI_pre XOI_post) {return _node("XOI_clause", expr);}
-XOI_pre = expr:(pre_clause XOI spaces?) {return _node("XOI_pre", expr);}
-XOI_post = expr:(post_clause) {return _node("XOI_post", expr);}
-
 // END BETA: Experimental selmaho
 
 
@@ -1422,8 +1418,8 @@ XOI_post = expr:(post_clause) {return _node("XOI_post", expr);}
 CMEVLA = expr:(cmevla) {return _node("CMEVLA", expr);}
 BRIVLA = expr:(gismu / lujvo / fuhivla) {return _node("BRIVLA", expr);}
 
-// BETA: LOhAI, LEhAI
-CMAVO = expr:(A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo) {return _node("CMAVO", expr);}
+// BETA: GOhOI / KUhAU / LEhAI / LOhAI / LOhOI / NOIhA / ZOhOI / MEhOI / IAU
+CMAVO = expr:(A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GOhOI / GUhA / I / IAU / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhAU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhOI / LOhU / LU / LUhU / MAhO / MAI / ME / MEhOI / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NOIhA / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhOI / ZOhU / cmavo) {return _node("CMAVO", expr);}
 
 // This is a Parsing Expression Grammar for the morphology of Lojban.
 // See http://www.pdos.lcs.mit.edu/~baford/packrat/
@@ -1943,7 +1939,8 @@ SEhU = expr:(&cmavo ( s e h u ) &post_word) {return _node("SEhU", expr);}
 // BETA: ze'ei
 SI = expr:(&cmavo ( z e h e i / s i ) &post_word) {return _node("SI", expr);}
 
-SOI = expr:(&cmavo ( s o i ) &post_word) {return _node("SOI", expr);}
+// BETA: New-SOI, soi, xoi
+SOI = expr:(&cmavo ( s o i / x o i ) &post_word) {return _node("SOI", expr);}
 
 SU = expr:(&cmavo ( s u ) &post_word) {return _node("SU", expr);}
 
@@ -2014,7 +2011,6 @@ LOhOI = expr:(&cmavo ( l o h o i / x u h u ) &post_word) {return _node("LOhOI", 
 NOIhA = expr:(&cmavo ( n o i h o h a / p o i h o h a / n o i h a / p o i h a / s o i h a ) &post_word) {return _node("NOIhA", expr);}
 ZOhOI = expr:(&cmavo ( z o h o i / l a h o i / r a h o i ) &post_word) {return _node("ZOhOI", expr);}
 MEhOI = expr:(&cmavo ( m e h o i ) &post_word) {return _node("MEhOI", expr);}
-XOI = expr:(&cmavo ( x o i ) &post_word) {return _node("XOI", expr);}
 
 // END BETA: Experimental selmaho
 

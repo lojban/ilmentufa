@@ -149,8 +149,8 @@ nonabs_term <- term_sa* (sumti / nonabs_tag_term / termset)
 
 nonabs_tag_term <- (!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*
 
-# BETA: NOIhA, XOI
-nontag_adverbial <- NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / XOI_clause free* subsentence SEhU_elidible free*
+# BETA: NOIhA, New-SOI
+nontag_adverbial <- NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*
 # END BETA: TAG-KU JA TAG-KU
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
@@ -351,8 +351,8 @@ stag <- tense_modal (joik_jek tense_modal)*
 # FIXME: Cannot use bare MEX with ROI.
 tense_modal <- ((NAhE_clause? SE_clause? (BAI_clause / CAhA_clause / CUhE_clause / KI_clause / ZI_clause / PU_clause / VA_clause / MOhI_clause? FAhA_clause / ZEhA_clause / VEhA_clause / VIhA_clause / FEhE_clause? (VEI_clause free* mex VEhO_elidible free* / number) ROI_clause / FEhE_clause? TAhE_clause / FEhE_clause? ZAhO_clause / FIhO_clause free* selbri FEhU_elidible free* / FA_clause) free*)+)
 
-# BETA: Bare MEX
-free <- SEI_clause free* (terms CU_elidible free*)? selbri SEhU_elidible / SOI_clause free* sumti sumti? SEhU_elidible / vocative relative_clauses? selbri relative_clauses? DOhU_elidible / vocative sumti? DOhU_elidible / mex_2 MAI_clause free* / TO_clause text TOI_elidible / xi_clause
+# BETA: Bare MEX, LOhAI, Removal of Old-SOI
+free <- SEI_clause free* (terms CU_elidible free*)? selbri SEhU_elidible / vocative relative_clauses? selbri relative_clauses? DOhU_elidible / vocative sumti? DOhU_elidible / mex_2 MAI_clause free* / TO_clause text TOI_elidible / xi_clause / LOhAI_clause
 
 # BETA: Bare MEX
 xi_clause <- XI_clause free* mex_2 / XI_clause free* VEI_clause free* mex VEhO_elidible
@@ -1055,7 +1055,7 @@ SEhU_post <- post_clause
 #         metalinguistic single word eraser
 SI_clause <- spaces? SI spaces?
 
-#         reciprocal sumti marker
+# BETA: bridi relative clause
 SOI_clause <- SOI_pre SOI_post
 SOI_pre <- pre_clause SOI spaces?
 SOI_post <- post_clause
@@ -1278,10 +1278,6 @@ ZOhOI_clause <- ZOhOI_pre ZOhOI_post
 ZOhOI_pre <- pre_clause ZOhOI spaces? zohoi_word spaces?
 ZOhOI_post <- post_clause
 
-XOI_clause <- XOI_pre XOI_post
-XOI_pre <- pre_clause XOI spaces?
-XOI_post <- post_clause
-
 # END BETA: Experimental selmaho
 
 
@@ -1290,8 +1286,8 @@ XOI_post <- post_clause
 CMEVLA <- cmevla
 BRIVLA <- gismu / lujvo / fuhivla / CMEVLA
 
-# BETA: LOhAI, LEhAI
-CMAVO <- A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo
+# BETA: GOhOI / KUhAU / LEhAI / LOhAI / LOhOI / NOIhA / ZOhOI / MEhOI / IAU
+CMAVO <- A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GOhOI / GUhA / I / IAU / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhAU / KUhE / KUhO / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhOI / LOhU / LU / LUhU / MAhO / MAI / ME / MEhOI / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NOIhA / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhOI / ZOhU / cmavo
 
 # This is a Parsing Expression Grammar for the morphology of Lojban.
 # See http://www.pdos.lcs.mit.edu/~baford/packrat/
@@ -1809,7 +1805,8 @@ SEhU <- &cmavo ( s e h u ) &post_word
 # BETA: ze'ei
 SI <- &cmavo ( z e h e i / s i ) &post_word
 
-SOI <- &cmavo ( s o i ) &post_word
+# BETA: New-SOI, soi, xoi
+SOI <- &cmavo ( s o i / x o i ) &post_word
 
 SU <- &cmavo ( s u h u ) &post_word
 
@@ -1880,7 +1877,6 @@ LOhOI <- &cmavo ( l o h o i / x u h u ) &post_word
 NOIhA <- &cmavo ( n o i h o h a / p o i h o h a / n o i h a / p o i h a / s o i h a ) &post_word
 ZOhOI <- &cmavo ( z o h o i / l a h o i / r a h o i ) &post_word
 MEhOI <- &cmavo ( m e h o i ) &post_word
-XOI <- &cmavo ( x o i ) &post_word
 
 # END BETA: Experimental selmaho
 
