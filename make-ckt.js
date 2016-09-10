@@ -7,7 +7,7 @@ function main(argv, fs) {
         return;
     }
     var srcpath = argv[2];
-    var dstpath = srcpath.replace(/^(.*?)(\.[^\\\/]+)?$/g, "$1-ctk$2");
+    var dstpath = srcpath.replace(/^(.*?)(\.[^\\\/]+)?$/g, "$1-ckt$2");
     var peg;
     var df;
     try {
@@ -18,13 +18,13 @@ function main(argv, fs) {
     } catch(e) {
         console.log("Error: " + e);
     }
-    peg = make_ctk(peg);
+    peg = make_ckt(peg);
     fs.writeSync(df, peg, 0, peg.length);
     return;
 }
 
 
-function make_ctk(peg) {
+function make_ckt(peg) {
     // ce → ce'u
     peg = peg.replace(/(\nJOI <- &cmavo \( [^\n]*)\/ c e (?=\/|\))/gm, "$1");
     peg = peg.replace(/(\nKOhA <- &cmavo \([^\n]*)\)/gm, "$1/ c e )");
