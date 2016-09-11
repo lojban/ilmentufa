@@ -36,18 +36,22 @@
     <option>Camxes: Beta CBM CKT</option>
     <option>Camxes: Experimental</option>
     <option>Zantufa</option>
+<!--    <option>Altatufa</option>
+    <option>Spagetufa</option> -->
     <option>Camxes: Hagiwara</option>
   </select>
   <script>
     var parser_list = [
-      {p: undefined, g: "camxes.peg"},
-      {p: undefined, g: "camxes-beta.peg"},
-      {p: undefined, g: "camxes-beta-cbm.peg"},
-      {p: undefined, g: "camxes-beta-cbm-ckt.peg"},
-      {p: undefined, g: "camxes-exp.js.peg"},
-      {p: undefined, g: "http://guskant.github.io/gerna_cipra/zantufa-1.js.peg"},
-      {p: undefined, g: "camxes-mh.js.peg"}
-    ];
+      ["camxes.js", "camxes.peg"],
+      ["camxes-beta.js", "camxes-beta.peg"],
+      ["camxes-beta-cbm.js", "camxes-beta-cbm.peg"],
+      ["camxes-beta-cbm-ckt.js", "camxes-beta-cbm-ckt.peg"],
+      ["camxes-exp.js", "camxes-exp.js.peg"],
+      ["http://guskant.github.io/gerna_cipra/js/zantufa-1.js", "http://guskant.github.io/gerna_cipra/zantufa-1.js.peg"],
+//      ["https://github.com/lagleki/glekitufa/mahantufa/altatufa.js", "https://github.com/lagleki/glekitufa/mahantufa/altatufa.js.peg"],
+//      ["https://github.com/mezohe/ilmentufa/camxes-exp.js", "https://github.com/mezohe/ilmentufa/camxes-exp.js.peg"],
+      ["camxes-mh.js", "camxes-mh.js.peg"]
+      ];
   </script>
   <span style="padding-left: 24px; text-align: right; font-size: 12px;">
     <a href="camxes.pegjs" target="_blank" id="peg-link">[ Grammar file ]</a>
@@ -60,20 +64,9 @@
 </div>
 
 <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+<!--
 <script type="text/javascript" src="camxes.js"></script>
-<script>parser_list[0].p = camxes;</script>
-<script type="text/javascript" src="camxes-beta.js"></script>
-<script>parser_list[1].p = camxes;</script>
-<script type="text/javascript" src="camxes-beta-cbm.js"></script>
-<script>parser_list[2].p = camxes;</script>
-<script type="text/javascript" src="camxes-beta-cbm-ckt.js"></script>
-<script>parser_list[3].p = camxes;</script>
-<script type="text/javascript" src="camxes-exp.js"></script>
-<script>parser_list[4].p = camxes;</script>
-<script type="text/javascript" src="http://guskant.github.io/gerna_cipra/js/zantufa-1.js"></script>
-<script>parser_list[5].p = camxes;</script>
-<script type="text/javascript" src="camxes-mh.js"></script>
-<script>parser_list[6].p = camxes;</script>
+-->
 <script type="text/javascript" src="camxes_preproc.js"></script>
 <script type="text/javascript" src="camxes_postproc.js"></script>
 
@@ -82,10 +75,21 @@ document.getElementById("default").defaultSelected = true;
 
 window.onload = load_parser;
 
+var has_first_parser_been_loaded = false;
+
 function load_parser() {
     var i = document.getElementById("parser").selectedIndex;
-    document.getElementById("peg-link").href = parser_list[i].g;
-    camxes = parser_list[i].p;
+    document.getElementById("peg-link").href = parser_list[i][1];
+    var getscript_callback = function( data, textStatus, jqxhr ) {
+        if ( textStatus === "success" ) run_camxes();
+    };
+    $.getScript( parser_list[i][0], getscript_callback )
+      .done(function( script, textStatus ) {
+        if ( textStatus === "success" ) has_first_parser_been_loaded = true;
+      })
+      .fail(function( jqxhr, settings, exception ) {
+        alert( "load_parser(): " + exception );
+      });
     run_camxes();
 }
 
@@ -98,6 +102,7 @@ $('#input_textarea').bind( "keyup",
   } );
 
 function run_camxes() {
+    if (!has_first_parser_been_loaded) return;
 	try {
 	  var input = $('#input_textarea').val();
 	  input = camxes_preprocessing(input);
