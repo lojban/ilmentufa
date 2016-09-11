@@ -79,7 +79,7 @@ var has_first_parser_been_loaded = false;
 
 function load_parser() {
     var i = document.getElementById("parser").selectedIndex;
-    document.getElementById("peg-link").href = parser_list[i][0];
+    document.getElementById("peg-link").href = parser_list[i][1];
     var getscript_callback = function( data, textStatus, jqxhr ) {
         if ( textStatus === "success" ) run_camxes();
     };
