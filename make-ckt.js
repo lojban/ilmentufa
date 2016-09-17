@@ -49,8 +49,11 @@ function make_ckt(peg) {
     peg = peg.replace(/(\nBAI <- &cmavo \( [^\n]*)\/ k o i (?=\/|\))/gm, "$1");
     peg = peg.replace(/(\nUI <- &cmavo \([^\n]*)\)/gm, "$1/ k o i )");
     // voi → poi'i
-    peg = peg.replace(/(\nNOI <- &cmavo \( [^\n]*)\/ v o i (?=\/|\))/gm, "$1");
+    peg = peg.replace(/(\nNOI <- &cmavo \() v o i \//gm, "$1");
     peg = peg.replace(/(\nNU <- &cmavo \([^\n]*)\)/gm, "$1/ v o i )");
+    // se'e → zu'ai
+    peg = peg.replace(/(\nBY <- &cmavo \( [^\n]*)\/ s e h e (?=\/|\))/gm, "$1");
+    peg = peg.replace(/(\nKOhA <- &cmavo \([^\n]*)\)/gm, "$1/ s e h e )");
     return peg;
 }
 

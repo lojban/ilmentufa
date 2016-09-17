@@ -1637,7 +1637,7 @@ BOI <- &cmavo ( b o i ) &post_word
 
 BU <- &cmavo ( b u ) &post_word
 
-BY <- &cmavo (ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word
+BY <- &cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word
 
 # BETA: bi'ai
 CAhA <- &cmavo ( b i h a i / c a h a / p u h i / n u h o / k a h e ) &post_word
@@ -1717,8 +1717,8 @@ KEI <- &cmavo ( k e i ) &post_word
 
 KI <- &cmavo ( k i ) &post_word
 
-# BETA: xai
-KOhA <- &cmavo ( d a h u / d a h e / d i h u / d i h e / d e h u / d e h e / d e i / d o h i / m i h o / m a h a / m i h a / d o h o / k o h a / f o h u / k o h e / k o h i / k o h o / k o h u / f o h a / f o h e / f o h i / f o h o / v o h a / v o h e / v o h i / v o h o / v o h u / r u / r i / r a / t a / t u / t i / z i h o / k e h a / m a / z u h i / z o h e / c e h u / x a i / d a / d e / d i / k o / m i / d o ) &post_word
+# BETA: xai, zu'ai
+KOhA <- &cmavo ( z u h a i / d a h u / d a h e / d i h u / d i h e / d e h u / d e h e / d e i / d o h i / m i h o / m a h a / m i h a / d o h o / k o h a / f o h u / k o h e / k o h i / k o h o / k o h u / f o h a / f o h e / f o h i / f o h o / v o h a / v o h e / v o h i / v o h o / v o h u / r u / r i / r a / t a / t u / t i / z i h o / k e h a / m a / z u h i / z o h e / c e h u / x a i / d a / d e / d i / k o / m i / d o ) &post_word
 
 KU <- &cmavo ( k u ) &post_word
 
@@ -1783,7 +1783,7 @@ NIhO <- &cmavo ( n i h o / n o h i ) &post_word
 NOI <- &cmavo ( v o i / n o i / p o i ) &post_word
 
 # BETA: poi'i, kai'u
-NU <- &cmavo (p o i h i / k a i h u / n i / d u h u / s i h o / n u / l i h i / k a / j e i / s u h u / z u h o / m u h e / p u h u / z a h i ) &post_word
+NU <- &cmavo ( p o i h i / k a i h u / n i / d u h u / s i h o / n u / l i h i / k a / j e i / s u h u / z u h o / m u h e / p u h u / z a h i ) &post_word
 
 NUhA <- &cmavo ( n u h a ) &post_word
 
