@@ -265,24 +265,35 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-term_1 = expr:(sumti / tag_term / termset) {return _node("term_1", expr);}
+// BEGIN BETA: TERM JA TERM
+term_1 = expr:(term_2 (joik_ek term_2)*) {return _node("term_1", expr);}
 
-// BEGIN BETA: TAG-KU JA TAG-KU
-tag_term = expr:((!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*) {return _node("tag_term", expr);}
+term_2 = expr:(term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("term_2", expr);}
 
-nonabs_term = expr:(term_sa* (sumti / nonabs_tag_term / termset)) {return _node("nonabs_term", expr);}
+term_3 = expr:(sumti / tag_term / termset) {return _node("term_3", expr);}
 
-nonabs_tag_term = expr:((!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*) {return _node("nonabs_tag_term", expr);}
+tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("tag_term", expr);}
+
+nonabs_term = expr:(term_sa* nonabs_term_1) {return _node("nonabs_term", expr);}
+
+nonabs_term_1 = expr:(nonabs_term_2 (joik_ek term_2)*) {return _node("nonabs_term_1", expr);}
+
+nonabs_term_2 = expr:(nonabs_term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("nonabs_term_2", expr);}
+
+nonabs_term_3 = expr:(sumti / nonabs_tag_term / termset) {return _node("nonabs_term_3", expr);}
+
+nonabs_tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("nonabs_tag_term", expr);}
 
 // BETA: NOIhA, New-SOI
 nontag_adverbial = expr:(NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("nontag_adverbial", expr);}
-// END BETA: TAG-KU JA TAG-KU
+// END BETA: TERM JA TERM
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
 
 term_start = expr:(term_1 / LE_clause / LI_clause / LU_clause / LAhE_clause / quantifier term_start / gek sumti gik / FA_clause / tag term_start) {return _node("term_start", expr);}
 
-termset = expr:(gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free*) {return _node("termset", expr);}
+// BETA: KE-termset
+termset = expr:(gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free* / KE_clause terms KEhE_elidible) {return _node("termset", expr);}
 
 gek_termset = expr:(gek terms_gik_terms) {return _node("gek_termset", expr);}
 

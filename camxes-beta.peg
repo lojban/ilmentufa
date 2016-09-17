@@ -141,24 +141,35 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 
 term <- term_sa* term_1
 
-term_1 <- sumti / tag_term / termset
+# BEGIN BETA: TERM JA TERM
+term_1 <- term_2 (joik_ek term_2)*
 
-# BEGIN BETA: TAG-KU JA TAG-KU
-tag_term <- (!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*
+term_2 <- term_3 (joik_ek? stag? BO_clause term_3)*
 
-nonabs_term <- term_sa* (sumti / nonabs_tag_term / termset)
+term_3 <- sumti / tag_term / termset
 
-nonabs_tag_term <- (!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) (joik_jek tag_term)*
+tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
+
+nonabs_term <- term_sa* nonabs_term_1
+
+nonabs_term_1 <- nonabs_term_2 (joik_ek term_2)*
+
+nonabs_term_2 <- nonabs_term_3 (joik_ek? stag? BO_clause term_3)*
+
+nonabs_term_3 <- sumti / nonabs_tag_term / termset
+
+nonabs_tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
 
 # BETA: NOIhA, New-SOI
 nontag_adverbial <- NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*
-# END BETA: TAG-KU JA TAG-KU
+# END BETA: TERM JA TERM
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
 
 term_start <- term_1 / LA_clause / LE_clause / LI_clause / LU_clause / LAhE_clause / quantifier term_start / gek sumti gik / FA_clause / tag term_start
 
-termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free*
+# BETA: KE-termset
+termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free* / KE_clause terms KEhE_elidible
 
 gek_termset <- gek terms_gik_terms
 
