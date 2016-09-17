@@ -6933,28 +6933,39 @@ var camxes = (function() {
                     }
                   }
                   if (s2 !== peg$FAILED) {
-                    s3 = peg$parserelative_clauses();
+                    s3 = peg$currPos;
+                    s4 = peg$parserelative_clauses();
+                    if (s4 === peg$FAILED) {
+                      s4 = null;
+                    }
+                    if (s4 !== peg$FAILED) {
+                      s5 = peg$parsesumti();
+                      if (s5 !== peg$FAILED) {
+                        s4 = [s4, s5];
+                        s3 = s4;
+                      } else {
+                        peg$currPos = s3;
+                        s3 = peg$FAILED;
+                      }
+                    } else {
+                      peg$currPos = s3;
+                      s3 = peg$FAILED;
+                    }
                     if (s3 === peg$FAILED) {
-                      s3 = null;
+                      s3 = peg$parseterm();
                     }
                     if (s3 !== peg$FAILED) {
-                      s4 = peg$parsesumti();
+                      s4 = peg$parseLUhU_elidible();
                       if (s4 !== peg$FAILED) {
-                        s5 = peg$parseLUhU_elidible();
+                        s5 = [];
+                        s6 = peg$parsefree();
+                        while (s6 !== peg$FAILED) {
+                          s5.push(s6);
+                          s6 = peg$parsefree();
+                        }
                         if (s5 !== peg$FAILED) {
-                          s6 = [];
-                          s7 = peg$parsefree();
-                          while (s7 !== peg$FAILED) {
-                            s6.push(s7);
-                            s7 = peg$parsefree();
-                          }
-                          if (s6 !== peg$FAILED) {
-                            s2 = [s2, s3, s4, s5, s6];
-                            s1 = s2;
-                          } else {
-                            peg$currPos = s1;
-                            s1 = peg$FAILED;
-                          }
+                          s2 = [s2, s3, s4, s5];
+                          s1 = s2;
                         } else {
                           peg$currPos = s1;
                           s1 = peg$FAILED;
