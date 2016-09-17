@@ -55,6 +55,7 @@ if (typeof alert !== 'function')
  * will be entirely removed.
  */
 function camxes_postprocessing(input, mode) {
+    if (is_string(input)) input = JSON.parse(input);
     if (!is_array(input))
         return "Postprocessor error: invalid input type for the first argument. "
              + "It should be of type 'array', but the argument given is of type '" + typeof input + "'."
