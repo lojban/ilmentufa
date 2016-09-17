@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-09-06.
+ * Last change: 2016-09-17.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
