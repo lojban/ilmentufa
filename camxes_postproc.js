@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-09-17.
+ * Last change: 2016-09-19.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
@@ -75,13 +75,20 @@ function camxes_postprocessing(input, mode) {
         output = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
     } else {
         input = new_postprocessor(input, without_morphology, with_spaces,
-                                  with_selmaho, !without_terminator);
+                                  with_selmaho, !without_terminator,
+                                  with_nodes_labels);
         output = JSON.stringify(input);
         output = output.replace(/\"/gm, "");
         output = output.replace(/,/gm, " ");
     }
     // Replacing "spaces" with "_":
     output = output.replace(/([ \[\],])(initial_)?spaces(?=[ \[\],])/gm, "$1_");
+    if (with_nodes_labels) {
+        output = output.replace(/\[prenex /g, "[PRENEX: ");
+        output = output.replace(/\[sentence /g, "[BRIDI: ");
+        output = output.replace(/\[selbri /g, "[SELBRI: ");
+        output = output.replace(/\[sumti /g, "[SUMTI: ");
+    }
     // Bracket prettification:
     output = prettify_brackets(output);
 	return output;
@@ -90,9 +97,18 @@ function camxes_postprocessing(input, mode) {
 
 // ====== NEW POSTPROCESSOR ====== //
 
-function new_postprocessor(input, no_morpho, with_spaces, with_selmaho, with_terminator) {
+function new_postprocessor(
+    input,
+    no_morpho,
+    with_spaces,
+    with_selmaho,
+    with_terminator,
+    with_nodes_labels
+) {
     var filter;
     var wanted_nodes = with_spaces ? ["initial_spaces", "dot_star"] : ["dot_star"];
+    if (with_nodes_labels)
+        wanted_nodes = wanted_nodes.concat(["prenex", "sentence", "selbri", "sumti"]);
     if (no_morpho) {
         filter = function (v,b) { return (with_selmaho ?
                   among(v, wanted_nodes.concat(["cmevla", "gismu", "lujvo", "fuhivla"]))
@@ -108,7 +124,7 @@ function new_postprocessor(input, no_morpho, with_spaces, with_selmaho, with_ter
     if (input === null) return [];
     if (with_selmaho && no_morpho) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
-                            ["lujvo", "L"], ["fuhivla", "Z"]];
+            ["lujvo", "L"], ["fuhivla", "Z"]];
         input = prefix_wordclass(input, replacements);
         if (is_string(input)) input = [input];
     }
