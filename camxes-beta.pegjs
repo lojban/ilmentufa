@@ -271,9 +271,9 @@ term_1 = expr:(term_2 (joik_ek term_2)*) {return _node("term_1", expr);}
 
 term_2 = expr:(term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("term_2", expr);}
 
-term_3 = expr:(sumti / tag_term / termset) {return _node("term_3", expr);}
+term_3 = expr:(sumti / tag_term / nontag_adverbial / termset) {return _node("term_3", expr);}
 
-tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("tag_term", expr);}
+tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)) {return _node("tag_term", expr);}
 
 nonabs_term = expr:(term_sa* nonabs_term_1) {return _node("nonabs_term", expr);}
 
@@ -281,9 +281,9 @@ nonabs_term_1 = expr:(nonabs_term_2 (joik_ek term_2)*) {return _node("nonabs_ter
 
 nonabs_term_2 = expr:(nonabs_term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("nonabs_term_2", expr);}
 
-nonabs_term_3 = expr:(sumti / nonabs_tag_term / termset) {return _node("nonabs_term_3", expr);}
+nonabs_term_3 = expr:(sumti / nonabs_tag_term / nontag_adverbial / termset) {return _node("nonabs_term_3", expr);}
 
-nonabs_tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("nonabs_tag_term", expr);}
+nonabs_tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)) {return _node("nonabs_tag_term", expr);}
 
 // BETA: NOIhA, New-SOI
 nontag_adverbial = expr:(NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("nontag_adverbial", expr);}

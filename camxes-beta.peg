@@ -146,9 +146,9 @@ term_1 <- term_2 (joik_ek term_2)*
 
 term_2 <- term_3 (joik_ek? stag? BO_clause term_3)*
 
-term_3 <- sumti / tag_term / termset
+term_3 <- sumti / tag_term / nontag_adverbial / termset
 
-tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
+tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)
 
 nonabs_term <- term_sa* nonabs_term_1
 
@@ -156,9 +156,9 @@ nonabs_term_1 <- nonabs_term_2 (joik_ek term_2)*
 
 nonabs_term_2 <- nonabs_term_3 (joik_ek? stag? BO_clause term_3)*
 
-nonabs_term_3 <- sumti / nonabs_tag_term / termset
+nonabs_term_3 <- sumti / nonabs_tag_term / nontag_adverbial / termset
 
-nonabs_tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
+nonabs_tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)
 
 # BETA: NOIhA, New-SOI
 nontag_adverbial <- NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*

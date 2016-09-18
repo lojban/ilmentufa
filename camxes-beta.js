@@ -4969,7 +4969,10 @@ var camxes = (function() {
       if (s1 === peg$FAILED) {
         s1 = peg$parsetag_term();
         if (s1 === peg$FAILED) {
-          s1 = peg$parsetermset();
+          s1 = peg$parsenontag_adverbial();
+          if (s1 === peg$FAILED) {
+            s1 = peg$parsetermset();
+          }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -5115,9 +5118,6 @@ var camxes = (function() {
       } else {
         peg$currPos = s1;
         s1 = peg$FAILED;
-      }
-      if (s1 === peg$FAILED) {
-        s1 = peg$parsenontag_adverbial();
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
@@ -5371,7 +5371,10 @@ var camxes = (function() {
       if (s1 === peg$FAILED) {
         s1 = peg$parsenonabs_tag_term();
         if (s1 === peg$FAILED) {
-          s1 = peg$parsetermset();
+          s1 = peg$parsenontag_adverbial();
+          if (s1 === peg$FAILED) {
+            s1 = peg$parsetermset();
+          }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -5517,9 +5520,6 @@ var camxes = (function() {
       } else {
         peg$currPos = s1;
         s1 = peg$FAILED;
-      }
-      if (s1 === peg$FAILED) {
-        s1 = peg$parsenontag_adverbial();
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
