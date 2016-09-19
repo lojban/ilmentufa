@@ -1,7 +1,6 @@
 var config = {
   server: 'irc.freenode.net',
-//  nick: ['camxes', 'mikykibykarni'],
-  nick: 'camxes',
+  nick: 'camxesjs',
   options: {
     channels: ['#lojban', '#ckule', '#balningau'],
     debug: false
@@ -16,6 +15,9 @@ client.addListener('message', function(from, to, text, message) {
 });
 
 var camxes = require('../camxes.js');
+var camxes_beta = require('../camxes-beta.js');
+var camxes_cbm = require('../camxes-beta-cbm.js');
+var camxes_ckt = require('../camxes-beta-cbm-ckt.js');
 var camxes_exp = require('../camxes-exp.js');
 var camxes_pre = require('../camxes_preproc.js');
 var camxes_post = require('../camxes_postproc.js');
@@ -62,11 +64,24 @@ function extract_mode(input) {
     flags = match[1].match(new RegExp(flag_pattern, "g"))
     for (var i = 0; i < flags.length; ++i) {
       switch (flags[i]) {
+        case "+se":
+          ret[1] = ret[1] == 5 ? 7 : 4;
+          break;
         case "+s":
           ret[1] = ret[1] == 5 ? 6 : 3;
           break;
         case "-f":
-          ret[1] = ret[1] == 3 ? 6 : 5;
+          // ret[1] = ret[1] == 3 ? 6 : 5;
+          switch (ret[1]) {
+              case 3:
+                ret[1] = 6;
+                break;
+              case 4:
+                ret[1] = 7;
+                break;
+              default:
+                ret[1] = 5;
+          }
           break;
         case "+exp":
         case "-std":
@@ -75,6 +90,15 @@ function extract_mode(input) {
         case "-exp":
         case "+std":
           ret[2] = "std";
+          break;
+        case "+beta":
+          ret[2] = "beta";
+          break;
+        case "+cbm":
+          ret[2] = "cbm";
+          break;
+        case "+ckt":
+          ret[2] = "ckt";
           break;
       }
     }
@@ -93,6 +117,15 @@ function run_camxes(input, mode, engine) {
         break;
       case "exp":
         result = camxes_exp.parse(result);
+        break;
+      case "beta":
+        result = camxes_beta.parse(result);
+        break;
+      case "cbm":
+        result = camxes_cbm.parse(result);
+        break;
+      case "ckt":
+        result = camxes_ckt.parse(result);
         break;
       default:
         throw "Unrecognized parser";
