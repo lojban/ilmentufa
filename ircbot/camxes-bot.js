@@ -1,6 +1,6 @@
 var config = {
   server: 'irc.freenode.net',
-  nick: 'camxesjs',
+  nick: 'camxes',
   options: {
     channels: ['#lojban', '#ckule', '#balningau'],
     debug: false
