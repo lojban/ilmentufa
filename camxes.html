@@ -103,7 +103,9 @@ function run_camxes() {
 	  input = camxes_preprocessing(input);
       var result = camxes.parse(input);
     } catch (e) {
-      $('#parse_result').text(e.toString());
+      var location_info = '\nLocation: [' + e.location.start.offset + ', ' + e.location.end.offset + ']';
+      location_info += '\n…' + input.substring(e.location.start.offset, e.location.start.offset + 12) + '…';
+      $('#parse_result').text(e.toString() + location_info);
       return;
     }
 	/* We get the output mode selected in the combobox */
