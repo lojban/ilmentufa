@@ -131,7 +131,9 @@ function run_camxes(input, mode, engine) {
         throw "Unrecognized parser";
     }
 	} catch (e) {
-		result = e;
+        var location_info = ' Location: [' + e.location.start.offset + ', ' + e.location.end.offset + ']';
+        location_info += ' …' + input.substring(e.location.start.offset, e.location.start.offset + 12) + '…';
+		result = e.toString() + location_info;
 		syntax_error = true;
 	}
 	if (!syntax_error) {
