@@ -1,8 +1,8 @@
 /*
  * USAGE:
- * $ nodejs this.js -p PARSER_ID -m MODE TEXT
+ * $ nodejs run_camxes.js -p PARSER_ID -m MODE TEXT
  * or
- * $ nodejs this.js -p PARSER_ID -m MODE -t TEXT
+ * $ nodejs run_camxes.js -p PARSER_ID -m MODE -t TEXT
  * 
  * Possible values for PARSER_ID:
  *    "std", "beta", "cbm", "ckt", "exp"
