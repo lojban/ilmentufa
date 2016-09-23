@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-09-19.
+ * Last change: 2016-09-23.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
@@ -62,20 +62,34 @@ function camxes_postprocessing(input, mode) {
              + (is_string(input) ? "\n\nThe new postprocessor doesn't allow anymore string inputs. "
              + "Please check the parse tree produced by the parser hasn't been converted to string "
              + "before being passed to the postprocessor." : "");
-    var with_spaces = mode & 8;
-    var without_morphology = !(mode & 16);
-    mode = mode % 8;
-    var with_selmaho = (mode != 2 && mode != 5);
-    var with_nodes_labels = (mode == 4 || mode == 7);
-    var without_terminator = (mode >= 5);
-    if (without_morphology)
+    if (is_string(mode)) {
+        var with_spaces = among('S', mode);
+        var with_morphology = among('M', mode);
+        var with_nodes_labels = among('N', mode);
+        var with_selmaho = among('C', mode);
+        var with_terminators = among('T', mode);
+        // var is_raw_output = among('R', mode);
+        // var with_bracket_prettification = among('P', mode);
+        if (among('R', mode)) mode = 1;
+        else mode = 2;
+    } else {
+        if (!is_number(mode)) mode = 0;
+        var with_spaces = mode & 8;
+        var with_morphology = (mode & 16);
+        mode = mode % 8;
+        var with_selmaho = (mode != 2 && mode != 5);
+        var with_nodes_labels = (mode == 4 || mode == 7);
+        var with_terminators = (mode < 5);
+        // var with_bracket_prettification = true;
+    }
+    if (!with_morphology)
         input = remove_morphology(input); // Deleting morphology nodes.
     var output;
     if (mode <= 1) {
         output = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
     } else {
-        input = new_postprocessor(input, without_morphology, with_spaces,
-                                  with_selmaho, !without_terminator,
+        input = new_postprocessor(input, with_morphology, with_spaces,
+                                  with_selmaho, with_terminators,
                                   with_nodes_labels);
         output = JSON.stringify(input);
         output = output.replace(/\"/gm, "");
@@ -99,30 +113,30 @@ function camxes_postprocessing(input, mode) {
 
 function new_postprocessor(
     input,
-    no_morpho,
+    with_morphology,
     with_spaces,
     with_selmaho,
-    with_terminator,
+    with_terminators,
     with_nodes_labels
 ) {
     var filter;
     var wanted_nodes = with_spaces ? ["initial_spaces", "dot_star"] : ["dot_star"];
     if (with_nodes_labels)
         wanted_nodes = wanted_nodes.concat(["prenex", "sentence", "selbri", "sumti"]);
-    if (no_morpho) {
+    if (!with_morphology) {
         filter = function (v,b) { return (with_selmaho ?
                   among(v, wanted_nodes.concat(["cmevla", "gismu", "lujvo", "fuhivla"]))
-                  || (is_selmaho(v) && (with_terminator || !b))
+                  || (is_selmaho(v) && (with_terminators || !b))
                   : among(v, wanted_nodes)
-                  || (is_selmaho(v) && b && with_terminator)); };
+                  || (is_selmaho(v) && b && with_terminators)); };
     } else {
         filter = function (v,b) { return among(v, wanted_nodes) ||
-                  (with_selmaho ? (is_selmaho(v) && (with_terminator || !b))
-                  : is_selmaho(v) && b && with_terminator); };
+                  (with_selmaho ? (is_selmaho(v) && (with_terminators || !b))
+                  : is_selmaho(v) && b && with_terminators); };
     }
     input = prune_unwanted_nodes(input, filter);
     if (input === null) return [];
-    if (with_selmaho && no_morpho) {
+    if (with_selmaho && !with_morphology) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
             ["lujvo", "L"], ["fuhivla", "Z"]];
         input = prefix_wordclass(input, replacements);
@@ -307,13 +321,15 @@ function chr_check(chr, list) {
 } // Currently unused.
 
 function is_string(v) {
-    // return $.type(v) === "string";
     return Object.prototype.toString.call(v) === '[object String]';
 }
 
 function is_array(v) {
-    // return $.type(v) === "array";
     return Object.prototype.toString.call(v) === '[object Array]';
+}
+
+function is_number(v) {
+    return Object.prototype.toString.call(v) === '[object Number]';
 }
 
 if (typeof module !== 'undefined')
