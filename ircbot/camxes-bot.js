@@ -37,6 +37,10 @@ var processor = function(client, from, to, text, message) {
     sendTo = to; // send publicly
   }
   if (sendTo == to) {  // Public
+    if (text.match(/^<(.*?)>: /, '') !== null) { // Dealing with Slack
+      from = text.match(/^<(.*?)>: /,'')[1];
+      text = text.replace(/^<.*?>: /,"");
+    }
     var regexps = make_regexps(config.nick);
     if (text.indexOf(config.nick + ": ") == '0') {
       text = text.substr(config.nick.length + 2);
