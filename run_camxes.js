@@ -57,9 +57,6 @@ for (var i = 2; i < process.argv.length; i++) {
 // if (!among(parser_id, ["std", "beta", "cbm", "ckt", "exp"]))
 //    parser_id = "std";
 
-console.log("Parser: " + parser_id);
-console.log("Mode:   " + mode);
-console.log("Text:   " + text);
 process.stdout.write(run_camxes(text, mode, "std") + '\n');
 
 function run_camxes(input, mode, engine) {
