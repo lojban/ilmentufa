@@ -56,17 +56,17 @@ The standard grammar parser is used by default, but another grammar engine can b
 * The `-cbm` flag selects the Cmevla-Brivla Merger grammar engine.
 * The `-ckt` flag selects the Ce-Ki-Tau grammar engine.
 * The `-exp` flag selects the experimental or sandbox grammar engine.
-* `-p PATH` can be used for select a parser by giving its file path as a command line argument.
+* `-p PATH` can be used for selecting a parser by giving its file path as a command line argument.
 
 Additionally, `-m MODE` can be used to specify output postprocessing options.
-Here, MODE can be any letter string, each letter stands for a specific option.
+Here, MODE can be any letter string, each letter standing for a specific option.
 Here is the list of possible letters and their associated meaning:
-* 'M' -> Keep morphology
-* 'S' -> Show spaces
-* 'C' -> Show word classes (selmaho)
-* 'T' -> Show terminators
-* 'N' -> Show main node labels
-* 'R' -> Raw output, do not prune the tree, except the morphology if 'M' not present.
+* M -> Keep morphology
+* S -> Show spaces
+* C -> Show word classes (selmaho)
+* T -> Show terminators
+* N -> Show main node labels
+* R -> Raw output, do not prune the tree, except the morphology if 'M' not present.
 
 Example:
 ```
