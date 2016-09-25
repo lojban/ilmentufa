@@ -1,0 +1,53 @@
+# BETA Grammar feature list, differences with the standard grammar:
+
+IAU
+NA sequence fragments
+JACU
+JE.I
+TERM JA TERM
+NOIhA
+New-SOI, bridi relative clause
+KE-termset
+Enhanced VUhO
+NAhE+SUMTI
+LAhE+TERM
+ZOhOI
+JAPOI
+Bare MEX
+NUhA+opeator
+GOhOI
+MEhOI
+MEX simplification
+NAhU included in jek
+A/JA/JOI/VUhU Merger
+gaJA
+guJA
+Tag simplification
+LOhAI
+Removal of Old-SOI
+NAI ∈ indicator
+LOhOI
+GOhOI / KUhAU / LEhAI / LOhAI / LOhOI / NOIhA / ZOhOI / MEhOI / IAU
+a'y, e'y, i'y, o'y, u'y, iy, uy
+bi'ai
+di'ai, jo'au, co'oi, da'oi, ki'ai, sa'ei
+xai, zu'ai
+la'ei
+zo'ei
+me'ei, mo'oi, ri'oi
+la'au
+ju'ai
+me'au
+ja'ai
+ji'oi
+poi'i, kai'u
+xo'e
+mu'ei
+ze'ei
+soi, xoi
+ko'oi, si'au, o'ai, xe'e, xo'o
+xa'o
+ma'oi
+ce'ai
+
+
