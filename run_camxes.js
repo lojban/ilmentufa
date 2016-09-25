@@ -67,6 +67,9 @@ for (var i = 2; i < process.argv.length; i++) {
     }
 }
 
+if (engine_path.length > 0 && !(engine_path[0] == '/' || engine_path.substring(0, 2) == './'))
+    engine_path = './' + engine_path;
+
 try {
     var engine = require(engine_path);
 } catch (err) {
