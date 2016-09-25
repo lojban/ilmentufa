@@ -1,3 +1,4 @@
+var start_t = process.hrtime();
 var fs = require("fs")
 var pegjs = require("pegjs")
 var src = (process.argv.length >= 3) ? process.argv[2] : "camxes.pegjs";
@@ -34,4 +35,6 @@ if (typeof module !== 'undefined') {
 `);
 fs.writeSync(fd, buffer, 0, buffer.length);
 fs.close(fd);
+var diff_t = process.hrtime(start_t);
+console.log(`Duration: ${diff_t[0] + diff_t[1] / 1e9} seconds`);
 
