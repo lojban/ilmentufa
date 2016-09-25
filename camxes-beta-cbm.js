@@ -4950,7 +4950,10 @@ var camxes = (function() {
       if (s1 === peg$FAILED) {
         s1 = peg$parsetag_term();
         if (s1 === peg$FAILED) {
-          s1 = peg$parsetermset();
+          s1 = peg$parsenontag_adverbial();
+          if (s1 === peg$FAILED) {
+            s1 = peg$parsetermset();
+          }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -5096,9 +5099,6 @@ var camxes = (function() {
       } else {
         peg$currPos = s1;
         s1 = peg$FAILED;
-      }
-      if (s1 === peg$FAILED) {
-        s1 = peg$parsenontag_adverbial();
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
@@ -5352,7 +5352,10 @@ var camxes = (function() {
       if (s1 === peg$FAILED) {
         s1 = peg$parsenonabs_tag_term();
         if (s1 === peg$FAILED) {
-          s1 = peg$parsetermset();
+          s1 = peg$parsenontag_adverbial();
+          if (s1 === peg$FAILED) {
+            s1 = peg$parsetermset();
+          }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -5498,9 +5501,6 @@ var camxes = (function() {
       } else {
         peg$currPos = s1;
         s1 = peg$FAILED;
-      }
-      if (s1 === peg$FAILED) {
-        s1 = peg$parsenontag_adverbial();
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
@@ -44355,12 +44355,18 @@ var camxes = (function() {
                             }
                             if (s3 === peg$FAILED) {
                               s3 = peg$currPos;
-                              s4 = peg$parseb();
+                              s4 = peg$parsea();
                               if (s4 !== peg$FAILED) {
-                                s5 = peg$parsey();
+                                s5 = peg$parseh();
                                 if (s5 !== peg$FAILED) {
-                                  s4 = [s4, s5];
-                                  s3 = s4;
+                                  s6 = peg$parsey();
+                                  if (s6 !== peg$FAILED) {
+                                    s4 = [s4, s5, s6];
+                                    s3 = s4;
+                                  } else {
+                                    peg$currPos = s3;
+                                    s3 = peg$FAILED;
+                                  }
                                 } else {
                                   peg$currPos = s3;
                                   s3 = peg$FAILED;
@@ -44371,12 +44377,18 @@ var camxes = (function() {
                               }
                               if (s3 === peg$FAILED) {
                                 s3 = peg$currPos;
-                                s4 = peg$parsec();
+                                s4 = peg$parsee();
                                 if (s4 !== peg$FAILED) {
-                                  s5 = peg$parsey();
+                                  s5 = peg$parseh();
                                   if (s5 !== peg$FAILED) {
-                                    s4 = [s4, s5];
-                                    s3 = s4;
+                                    s6 = peg$parsey();
+                                    if (s6 !== peg$FAILED) {
+                                      s4 = [s4, s5, s6];
+                                      s3 = s4;
+                                    } else {
+                                      peg$currPos = s3;
+                                      s3 = peg$FAILED;
+                                    }
                                   } else {
                                     peg$currPos = s3;
                                     s3 = peg$FAILED;
@@ -44387,12 +44399,18 @@ var camxes = (function() {
                                 }
                                 if (s3 === peg$FAILED) {
                                   s3 = peg$currPos;
-                                  s4 = peg$parsed();
+                                  s4 = peg$parsei();
                                   if (s4 !== peg$FAILED) {
-                                    s5 = peg$parsey();
+                                    s5 = peg$parseh();
                                     if (s5 !== peg$FAILED) {
-                                      s4 = [s4, s5];
-                                      s3 = s4;
+                                      s6 = peg$parsey();
+                                      if (s6 !== peg$FAILED) {
+                                        s4 = [s4, s5, s6];
+                                        s3 = s4;
+                                      } else {
+                                        peg$currPos = s3;
+                                        s3 = peg$FAILED;
+                                      }
                                     } else {
                                       peg$currPos = s3;
                                       s3 = peg$FAILED;
@@ -44403,12 +44421,18 @@ var camxes = (function() {
                                   }
                                   if (s3 === peg$FAILED) {
                                     s3 = peg$currPos;
-                                    s4 = peg$parsef();
+                                    s4 = peg$parseo();
                                     if (s4 !== peg$FAILED) {
-                                      s5 = peg$parsey();
+                                      s5 = peg$parseh();
                                       if (s5 !== peg$FAILED) {
-                                        s4 = [s4, s5];
-                                        s3 = s4;
+                                        s6 = peg$parsey();
+                                        if (s6 !== peg$FAILED) {
+                                          s4 = [s4, s5, s6];
+                                          s3 = s4;
+                                        } else {
+                                          peg$currPos = s3;
+                                          s3 = peg$FAILED;
+                                        }
                                       } else {
                                         peg$currPos = s3;
                                         s3 = peg$FAILED;
@@ -44419,12 +44443,18 @@ var camxes = (function() {
                                     }
                                     if (s3 === peg$FAILED) {
                                       s3 = peg$currPos;
-                                      s4 = peg$parseg();
+                                      s4 = peg$parseu();
                                       if (s4 !== peg$FAILED) {
-                                        s5 = peg$parsey();
+                                        s5 = peg$parseh();
                                         if (s5 !== peg$FAILED) {
-                                          s4 = [s4, s5];
-                                          s3 = s4;
+                                          s6 = peg$parsey();
+                                          if (s6 !== peg$FAILED) {
+                                            s4 = [s4, s5, s6];
+                                            s3 = s4;
+                                          } else {
+                                            peg$currPos = s3;
+                                            s3 = peg$FAILED;
+                                          }
                                         } else {
                                           peg$currPos = s3;
                                           s3 = peg$FAILED;
@@ -44435,7 +44465,7 @@ var camxes = (function() {
                                       }
                                       if (s3 === peg$FAILED) {
                                         s3 = peg$currPos;
-                                        s4 = peg$parsej();
+                                        s4 = peg$parsei();
                                         if (s4 !== peg$FAILED) {
                                           s5 = peg$parsey();
                                           if (s5 !== peg$FAILED) {
@@ -44451,7 +44481,7 @@ var camxes = (function() {
                                         }
                                         if (s3 === peg$FAILED) {
                                           s3 = peg$currPos;
-                                          s4 = peg$parsek();
+                                          s4 = peg$parseu();
                                           if (s4 !== peg$FAILED) {
                                             s5 = peg$parsey();
                                             if (s5 !== peg$FAILED) {
@@ -44467,7 +44497,7 @@ var camxes = (function() {
                                           }
                                           if (s3 === peg$FAILED) {
                                             s3 = peg$currPos;
-                                            s4 = peg$parsel();
+                                            s4 = peg$parseb();
                                             if (s4 !== peg$FAILED) {
                                               s5 = peg$parsey();
                                               if (s5 !== peg$FAILED) {
@@ -44483,7 +44513,7 @@ var camxes = (function() {
                                             }
                                             if (s3 === peg$FAILED) {
                                               s3 = peg$currPos;
-                                              s4 = peg$parsem();
+                                              s4 = peg$parsec();
                                               if (s4 !== peg$FAILED) {
                                                 s5 = peg$parsey();
                                                 if (s5 !== peg$FAILED) {
@@ -44499,7 +44529,7 @@ var camxes = (function() {
                                               }
                                               if (s3 === peg$FAILED) {
                                                 s3 = peg$currPos;
-                                                s4 = peg$parsen();
+                                                s4 = peg$parsed();
                                                 if (s4 !== peg$FAILED) {
                                                   s5 = peg$parsey();
                                                   if (s5 !== peg$FAILED) {
@@ -44515,7 +44545,7 @@ var camxes = (function() {
                                                 }
                                                 if (s3 === peg$FAILED) {
                                                   s3 = peg$currPos;
-                                                  s4 = peg$parsep();
+                                                  s4 = peg$parsef();
                                                   if (s4 !== peg$FAILED) {
                                                     s5 = peg$parsey();
                                                     if (s5 !== peg$FAILED) {
@@ -44531,7 +44561,7 @@ var camxes = (function() {
                                                   }
                                                   if (s3 === peg$FAILED) {
                                                     s3 = peg$currPos;
-                                                    s4 = peg$parser();
+                                                    s4 = peg$parseg();
                                                     if (s4 !== peg$FAILED) {
                                                       s5 = peg$parsey();
                                                       if (s5 !== peg$FAILED) {
@@ -44547,7 +44577,7 @@ var camxes = (function() {
                                                     }
                                                     if (s3 === peg$FAILED) {
                                                       s3 = peg$currPos;
-                                                      s4 = peg$parses();
+                                                      s4 = peg$parsej();
                                                       if (s4 !== peg$FAILED) {
                                                         s5 = peg$parsey();
                                                         if (s5 !== peg$FAILED) {
@@ -44563,7 +44593,7 @@ var camxes = (function() {
                                                       }
                                                       if (s3 === peg$FAILED) {
                                                         s3 = peg$currPos;
-                                                        s4 = peg$parset();
+                                                        s4 = peg$parsek();
                                                         if (s4 !== peg$FAILED) {
                                                           s5 = peg$parsey();
                                                           if (s5 !== peg$FAILED) {
@@ -44579,7 +44609,7 @@ var camxes = (function() {
                                                         }
                                                         if (s3 === peg$FAILED) {
                                                           s3 = peg$currPos;
-                                                          s4 = peg$parsev();
+                                                          s4 = peg$parsel();
                                                           if (s4 !== peg$FAILED) {
                                                             s5 = peg$parsey();
                                                             if (s5 !== peg$FAILED) {
@@ -44595,7 +44625,7 @@ var camxes = (function() {
                                                           }
                                                           if (s3 === peg$FAILED) {
                                                             s3 = peg$currPos;
-                                                            s4 = peg$parsex();
+                                                            s4 = peg$parsem();
                                                             if (s4 !== peg$FAILED) {
                                                               s5 = peg$parsey();
                                                               if (s5 !== peg$FAILED) {
@@ -44611,7 +44641,7 @@ var camxes = (function() {
                                                             }
                                                             if (s3 === peg$FAILED) {
                                                               s3 = peg$currPos;
-                                                              s4 = peg$parsez();
+                                                              s4 = peg$parsen();
                                                               if (s4 !== peg$FAILED) {
                                                                 s5 = peg$parsey();
                                                                 if (s5 !== peg$FAILED) {
@@ -44624,6 +44654,125 @@ var camxes = (function() {
                                                               } else {
                                                                 peg$currPos = s3;
                                                                 s3 = peg$FAILED;
+                                                              }
+                                                              if (s3 === peg$FAILED) {
+                                                                s3 = peg$currPos;
+                                                                s4 = peg$parsep();
+                                                                if (s4 !== peg$FAILED) {
+                                                                  s5 = peg$parsey();
+                                                                  if (s5 !== peg$FAILED) {
+                                                                    s4 = [s4, s5];
+                                                                    s3 = s4;
+                                                                  } else {
+                                                                    peg$currPos = s3;
+                                                                    s3 = peg$FAILED;
+                                                                  }
+                                                                } else {
+                                                                  peg$currPos = s3;
+                                                                  s3 = peg$FAILED;
+                                                                }
+                                                                if (s3 === peg$FAILED) {
+                                                                  s3 = peg$currPos;
+                                                                  s4 = peg$parser();
+                                                                  if (s4 !== peg$FAILED) {
+                                                                    s5 = peg$parsey();
+                                                                    if (s5 !== peg$FAILED) {
+                                                                      s4 = [s4, s5];
+                                                                      s3 = s4;
+                                                                    } else {
+                                                                      peg$currPos = s3;
+                                                                      s3 = peg$FAILED;
+                                                                    }
+                                                                  } else {
+                                                                    peg$currPos = s3;
+                                                                    s3 = peg$FAILED;
+                                                                  }
+                                                                  if (s3 === peg$FAILED) {
+                                                                    s3 = peg$currPos;
+                                                                    s4 = peg$parses();
+                                                                    if (s4 !== peg$FAILED) {
+                                                                      s5 = peg$parsey();
+                                                                      if (s5 !== peg$FAILED) {
+                                                                        s4 = [s4, s5];
+                                                                        s3 = s4;
+                                                                      } else {
+                                                                        peg$currPos = s3;
+                                                                        s3 = peg$FAILED;
+                                                                      }
+                                                                    } else {
+                                                                      peg$currPos = s3;
+                                                                      s3 = peg$FAILED;
+                                                                    }
+                                                                    if (s3 === peg$FAILED) {
+                                                                      s3 = peg$currPos;
+                                                                      s4 = peg$parset();
+                                                                      if (s4 !== peg$FAILED) {
+                                                                        s5 = peg$parsey();
+                                                                        if (s5 !== peg$FAILED) {
+                                                                          s4 = [s4, s5];
+                                                                          s3 = s4;
+                                                                        } else {
+                                                                          peg$currPos = s3;
+                                                                          s3 = peg$FAILED;
+                                                                        }
+                                                                      } else {
+                                                                        peg$currPos = s3;
+                                                                        s3 = peg$FAILED;
+                                                                      }
+                                                                      if (s3 === peg$FAILED) {
+                                                                        s3 = peg$currPos;
+                                                                        s4 = peg$parsev();
+                                                                        if (s4 !== peg$FAILED) {
+                                                                          s5 = peg$parsey();
+                                                                          if (s5 !== peg$FAILED) {
+                                                                            s4 = [s4, s5];
+                                                                            s3 = s4;
+                                                                          } else {
+                                                                            peg$currPos = s3;
+                                                                            s3 = peg$FAILED;
+                                                                          }
+                                                                        } else {
+                                                                          peg$currPos = s3;
+                                                                          s3 = peg$FAILED;
+                                                                        }
+                                                                        if (s3 === peg$FAILED) {
+                                                                          s3 = peg$currPos;
+                                                                          s4 = peg$parsex();
+                                                                          if (s4 !== peg$FAILED) {
+                                                                            s5 = peg$parsey();
+                                                                            if (s5 !== peg$FAILED) {
+                                                                              s4 = [s4, s5];
+                                                                              s3 = s4;
+                                                                            } else {
+                                                                              peg$currPos = s3;
+                                                                              s3 = peg$FAILED;
+                                                                            }
+                                                                          } else {
+                                                                            peg$currPos = s3;
+                                                                            s3 = peg$FAILED;
+                                                                          }
+                                                                          if (s3 === peg$FAILED) {
+                                                                            s3 = peg$currPos;
+                                                                            s4 = peg$parsez();
+                                                                            if (s4 !== peg$FAILED) {
+                                                                              s5 = peg$parsey();
+                                                                              if (s5 !== peg$FAILED) {
+                                                                                s4 = [s4, s5];
+                                                                                s3 = s4;
+                                                                              } else {
+                                                                                peg$currPos = s3;
+                                                                                s3 = peg$FAILED;
+                                                                              }
+                                                                            } else {
+                                                                              peg$currPos = s3;
+                                                                              s3 = peg$FAILED;
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
                                                               }
                                                             }
                                                           }
@@ -66182,10 +66331,12 @@ var camxes = (function() {
   };
 })()
 
-if (typeof module !== 'undefined') module.exports = camxes;
-if (typeof process !== 'undefined' && require !== 'undefined' && require.main === module) {
-  var input = process.argv[2];
-  if (Object.prototype.toString.call(input) === '[object String]')
-    console.log(JSON.stringify(camxes.parse(input)));
+if (typeof module !== 'undefined') {
+    module.exports = camxes;
+    if (typeof process !== 'undefined' && require !== 'undefined' && require.main === module) {
+      var input = process.argv[2];
+      if (Object.prototype.toString.call(input) === '[object String]')
+        console.log(JSON.stringify(camxes.parse(input)));
+    }
 }
 

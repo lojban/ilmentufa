@@ -270,9 +270,9 @@ term_1 = expr:(term_2 (joik_ek term_2)*) {return _node("term_1", expr);}
 
 term_2 = expr:(term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("term_2", expr);}
 
-term_3 = expr:(sumti / tag_term / termset) {return _node("term_3", expr);}
+term_3 = expr:(sumti / tag_term / nontag_adverbial / termset) {return _node("term_3", expr);}
 
-tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("tag_term", expr);}
+tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)) {return _node("tag_term", expr);}
 
 nonabs_term = expr:(term_sa* nonabs_term_1) {return _node("nonabs_term", expr);}
 
@@ -280,9 +280,9 @@ nonabs_term_1 = expr:(nonabs_term_2 (joik_ek term_2)*) {return _node("nonabs_ter
 
 nonabs_term_2 = expr:(nonabs_term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("nonabs_term_2", expr);}
 
-nonabs_term_3 = expr:(sumti / nonabs_tag_term / termset) {return _node("nonabs_term_3", expr);}
+nonabs_term_3 = expr:(sumti / nonabs_tag_term / nontag_adverbial / termset) {return _node("nonabs_term_3", expr);}
 
-nonabs_tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial) {return _node("nonabs_tag_term", expr);}
+nonabs_tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)) {return _node("nonabs_tag_term", expr);}
 
 // BETA: NOIhA, New-SOI
 nontag_adverbial = expr:(NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("nontag_adverbial", expr);}
@@ -1762,7 +1762,8 @@ BOI = expr:(&cmavo ( b o i ) &post_word) {return _node("BOI", expr);}
 
 BU = expr:(&cmavo ( b u ) &post_word) {return _node("BU", expr);}
 
-BY = expr:(&cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word) {return _node("BY", expr);}
+// BETA: a'y, e'y, i'y, o'y, u'y, iy, uy
+BY = expr:(&cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / a h y / e h y / i h y / o h y / u h y / i y / u y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word) {return _node("BY", expr);}
 
 // BETA: bi'ai
 CAhA = expr:(&cmavo ( b i h a i / c a h a / p u h i / n u h o / k a h e ) &post_word) {return _node("CAhA", expr);}

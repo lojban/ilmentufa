@@ -145,9 +145,9 @@ term_1 <- term_2 (joik_ek term_2)*
 
 term_2 <- term_3 (joik_ek? stag? BO_clause term_3)*
 
-term_3 <- sumti / tag_term / termset
+term_3 <- sumti / tag_term / nontag_adverbial / termset
 
-tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
+tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)
 
 nonabs_term <- term_sa* nonabs_term_1
 
@@ -155,9 +155,9 @@ nonabs_term_1 <- nonabs_term_2 (joik_ek term_2)*
 
 nonabs_term_2 <- nonabs_term_3 (joik_ek? stag? BO_clause term_3)*
 
-nonabs_term_3 <- sumti / nonabs_tag_term / termset
+nonabs_term_3 <- sumti / nonabs_tag_term / nontag_adverbial / termset
 
-nonabs_tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*) / nontag_adverbial
+nonabs_tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible free*)
 
 # BETA: NOIhA, New-SOI
 nontag_adverbial <- NA_clause free* KU_clause free* / NOIhA_clause free* sumti_tail SEhU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*
@@ -1637,7 +1637,8 @@ BOI <- &cmavo ( b o i ) &post_word
 
 BU <- &cmavo ( b u ) &post_word
 
-BY <- &cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word
+# BETA: a'y, e'y, i'y, o'y, u'y, iy, uy
+BY <- &cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / a h y / e h y / i h y / o h y / u h y / i y / u y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word
 
 # BETA: bi'ai
 CAhA <- &cmavo ( b i h a i / c a h a / p u h i / n u h o / k a h e ) &post_word
