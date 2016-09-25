@@ -188,8 +188,8 @@ sumti_4 <- sumti_5 / gek sumti gik sumti_4
 
 sumti_5 <- quantifier? sumti_6 relative_clauses? / quantifier selbri KU_elidible free* relative_clauses?
 
-# BETA: NAhE+SUMTI, LAhE+TERM, ZOhOI
-sumti_6 <- ZO_clause free* / ZOI_clause free* / ZOhOI_clause free* / LOhU_clause free* / lerfu_string !MOI_clause BOI_elidible free* / LU_clause text LIhU_elidible free* / (LAhE_clause free* / NAhE_clause BO_clause? free*) (relative_clauses? sumti / term) LUhU_elidible free* / KOhA_clause free* / LA_clause free* relative_clauses? CMEVLA_clause+ free* / (LA_clause / LE_clause) free* sumti_tail KU_elidible free* / li_clause
+# BETA: NAhE+SUMTI, LAhE+TERM, ZOhOI, LOhOI
+sumti_6 <- ZO_clause free* / ZOI_clause free* / ZOhOI_clause free* / LOhU_clause free* / lerfu_string !MOI_clause BOI_elidible free* / LU_clause text LIhU_elidible free* / (LAhE_clause free* / NAhE_clause BO_clause? free*) (relative_clauses? sumti / term) LUhU_elidible free* / KOhA_clause free* / LA_clause free* relative_clauses? CMEVLA_clause+ free* / (LA_clause / LE_clause) free* sumti_tail KU_elidible free* / li_clause / LOhOI_clause free* subsentence KUhAU_clause free*
 
 li_clause <- LI_clause free* mex LOhO_elidible free*
 

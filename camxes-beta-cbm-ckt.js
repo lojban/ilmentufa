@@ -7027,6 +7027,51 @@ var camxes = (function() {
                       }
                       if (s1 === peg$FAILED) {
                         s1 = peg$parseli_clause();
+                        if (s1 === peg$FAILED) {
+                          s1 = peg$currPos;
+                          s2 = peg$parseLOhOI_clause();
+                          if (s2 !== peg$FAILED) {
+                            s3 = [];
+                            s4 = peg$parsefree();
+                            while (s4 !== peg$FAILED) {
+                              s3.push(s4);
+                              s4 = peg$parsefree();
+                            }
+                            if (s3 !== peg$FAILED) {
+                              s4 = peg$parsesubsentence();
+                              if (s4 !== peg$FAILED) {
+                                s5 = peg$parseKUhAU_clause();
+                                if (s5 !== peg$FAILED) {
+                                  s6 = [];
+                                  s7 = peg$parsefree();
+                                  while (s7 !== peg$FAILED) {
+                                    s6.push(s7);
+                                    s7 = peg$parsefree();
+                                  }
+                                  if (s6 !== peg$FAILED) {
+                                    s2 = [s2, s3, s4, s5, s6];
+                                    s1 = s2;
+                                  } else {
+                                    peg$currPos = s1;
+                                    s1 = peg$FAILED;
+                                  }
+                                } else {
+                                  peg$currPos = s1;
+                                  s1 = peg$FAILED;
+                                }
+                              } else {
+                                peg$currPos = s1;
+                                s1 = peg$FAILED;
+                              }
+                            } else {
+                              peg$currPos = s1;
+                              s1 = peg$FAILED;
+                            }
+                          } else {
+                            peg$currPos = s1;
+                            s1 = peg$FAILED;
+                          }
+                        }
                       }
                     }
                   }
