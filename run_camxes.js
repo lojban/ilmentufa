@@ -1,8 +1,15 @@
 /*
  * USAGE:
- * $ nodejs run_camxes.js -p PARSER_ID -m MODE TEXT
- * or
- * $ nodejs run_camxes.js -p PARSER_ID -m MODE -t TEXT
+ *   $ nodejs run_camxes -PARSER_ID -m MODE TEXT
+ * OR
+ *   $ nodejs run_camxes -PARSER_ID -m MODE -t TEXT
+ * OR
+ *   $ nodejs run_camxes -p PARSER_PATH -m MODE TEXT
+ * OR
+ *   $ nodejs run_camxes -p PARSER_PATH -m MODE -t TEXT
+ * 
+ * PARSER_PATH and TEXT being the path of the desired parser engine, and the Lojban text to be
+ * parsed, respectively.
  * 
  * Possible values for PARSER_ID:
  *    "std", "beta", "cbm", "ckt", "exp"
@@ -20,31 +27,37 @@
  *    This will show terminators, selmaho and main node labels.
  */
 
-var camxes = require('./camxes.js');
-var camxes_beta = require('./camxes-beta.js');
-var camxes_cbm = require('./camxes-beta-cbm.js');
-var camxes_ckt = require('./camxes-beta-cbm-ckt.js');
-var camxes_exp = require('./camxes-exp.js');
-var camxes_pre = require('./camxes_preproc.js');
-var camxes_post = require('./camxes_postproc.js');
+var camxes_preproc = require('./camxes_preproc.js');
+var camxes_postproc = require('./camxes_postproc.js');
 
-var parser_id = "";
+var engine_path = "./camxes.js";
 var mode = "";
 var text = "";
 
 var target = '-t';
+var p = [["-std","./camxes.js"],["-beta","./camxes-beta.js"],["-cbm","./camxes-beta-cbm.js"],
+          ["-ckt","./camxes-beta-cbm-ckt.js"],["-exp","./camxes-exp.js"]];
+
 for (var i = 2; i < process.argv.length; i++) {
     if (process.argv[i].length > 0) {
         var a = process.argv[i];
         if (a[0] == '-') {
-            target = a;
+            for (j = 0; j < p.length; j++) {
+                if (p[j][0] == a) {
+                    engine_path = p[j][1];
+                    target = '-t';
+                    break;
+                }
+            }
+            if (j == p.length)
+                target = a;
         } else {
             switch (target) {
                 case '-t':
                     text = a;
                     break;
                 case '-p':
-                    parser_id = a;
+                    engine_path = a;
                     break;
                 case '-m':
                     mode = a;
@@ -54,50 +67,32 @@ for (var i = 2; i < process.argv.length; i++) {
     }
 }
 
-// if (!among(parser_id, ["std", "beta", "cbm", "ckt", "exp"]))
-//    parser_id = "std";
+try {
+    var engine = require(engine_path);
+} catch (err) {
+    process.stdout.write(err.toString() + '\n');
+    process.exit();
+}
+process.stdout.write(run_camxes(text, mode, engine) + '\n');
+process.exit();
 
-process.stdout.write(run_camxes(text, mode, "std") + '\n');
+// ================================ //
 
 function run_camxes(input, mode, engine) {
 	var result;
 	var syntax_error = false;
-	result = camxes_pre.preprocessing(input);
+	result = camxes_preproc.preprocessing(input);
 	try {
-    switch (engine) {
-      case "std":
-        result = camxes.parse(result);
-        break;
-      case "exp":
-        result = camxes_exp.parse(result);
-        break;
-      case "beta":
-        result = camxes_beta.parse(result);
-        break;
-      case "cbm":
-        result = camxes_cbm.parse(result);
-        break;
-      case "ckt":
-        result = camxes_ckt.parse(result);
-        break;
-      default:
-        throw "Unrecognized parser";
-    }
+        result = engine.parse(result);
 	} catch (e) {
         var location_info = ' Location: [' + e.location.start.offset + ', ' + e.location.end.offset + ']';
         location_info += ' …' + input.substring(e.location.start.offset, e.location.start.offset + 12) + '…';
 		result = e.toString() + location_info;
 		syntax_error = true;
-	}
-	if (!syntax_error) {
-		result = camxes_post.postprocessing(result, mode);
-	}
-	return result;
-}
-
-function among(v, s) {
-    var i = 0;
-    while (i < s.length) if (s[i++] == v) return true;
-    return false;
+	} finally {
+        if (!syntax_error)
+            result = camxes_postproc.postprocessing(result, mode);
+        return result;
+    }
 }
 
