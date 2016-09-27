@@ -1917,8 +1917,8 @@ NUhI = expr:(&cmavo ( n u h i ) &post_word) {return _node("NUhI", expr);}
 
 NUhU = expr:(&cmavo ( n u h u ) &post_word) {return _node("NUhU", expr);}
 
-// BETA: xo'e
-PA = expr:(&cmavo ( x o h e / d a u / f e i / g a i / j a u / r e i / v a i / p i h e / p i / f i h u / z a h u / m e h i / n i h u / k i h o / c e h i / m a h u / r a h e / d a h a / s o h a / j i h i / s u h o / s u h e / r o / r a u / s o h u / s o h i / s o h e / s o h o / m o h a / d u h e / t e h o / k a h o / c i h i / t u h o / x o / p a i / n o h o / n o / p a / r e / c i / v o / m u / x a / z e / b i / s o / digit ) &post_word) {return _node("PA", expr);}
+// BETA: xo'e, su'oi, ro'oi
+PA = expr:(&cmavo ( s u h o i / r o h o i / x o h e / d a u / f e i / g a i / j a u / r e i / v a i / p i h e / p i / f i h u / z a h u / m e h i / n i h u / k i h o / c e h i / m a h u / r a h e / d a h a / s o h a / j i h i / s u h o / s u h e / r o / r a u / s o h u / s o h i / s o h e / s o h o / m o h a / d u h e / t e h o / k a h o / c i h i / t u h o / x o / p a i / n o h o / n o / p a / r e / c i / v o / m u / x a / z e / b i / s o / digit ) &post_word) {return _node("PA", expr);}
 
 PEhE = expr:(&cmavo ( p e h e ) &post_word) {return _node("PEhE", expr);}
 
