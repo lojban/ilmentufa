@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<body>
+<meta charset='utf-8' />
+
+<span style="font: 15px arial, sans-serif;">Type any Lojban text in the following textarea. The result will be parsed as you type:</span>
+<br /><br />
+
+<form id="form1" name="form1" method="post" action="" style="width:100%">
+  <textarea id="input_textarea" style="width:100%" rows="8" autofocus></textarea>
+  <br /><br />
+</form>
+
+<div style="display:block; overflow: scroll; max-height:24em; border: solid 1px; padding: 10px; background-color: #DDDDFF;"
+     height="24em">
+  <pre style="white-space: pre-wrap;"><code id="parse_result" width="100%" height="100%"> </code></pre>
+</div>
+
+<script type="text/javascript" src="../jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../camxes-beta.js"></script>
+<script type="text/javascript" src="../camxes_preproc.js"></script>
+<script type="text/javascript" src="marking_game_postproc.js"></script>
+
+<script>
+/*
+ *  Binding the function run_camxes() to keyup event on input_textarea by using jQuery
+ */
+$('#input_textarea').bind( "keyup",
+  function(e) {
+    run_camxes();
+  } );
+
+function run_camxes() {
+	try {
+	  var input = $('#input_textarea').val();
+	  input = camxes_preprocessing(input);
+      var result = camxes.parse(input);
+    } catch (e) {
+      $('#parse_result').text(e.toString());
+      return;
+    }
+	result = camxes_postprocessing(result);
+             // @ marking_game_postproc.js
+	/* Retrieve the result */
+    $('#parse_result').text(result);
+}
+</script>
+
+</body>
+</html>
+
