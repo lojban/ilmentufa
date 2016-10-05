@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-09-23.
+ * Last change: 2016-10-05.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
@@ -68,8 +68,8 @@ function camxes_postprocessing(input, mode) {
         var with_nodes_labels = among('N', mode);
         var with_selmaho = among('C', mode);
         var with_terminators = among('T', mode);
+        var with_bracket_prettification = !among('X', mode);
         // var is_raw_output = among('R', mode);
-        // var with_bracket_prettification = among('P', mode);
         if (among('R', mode)) mode = 1;
         else mode = 2;
     } else {
@@ -80,20 +80,19 @@ function camxes_postprocessing(input, mode) {
         var with_selmaho = (mode != 2 && mode != 5);
         var with_nodes_labels = (mode == 4 || mode == 7);
         var with_terminators = (mode < 5);
-        // var with_bracket_prettification = true;
+        var with_bracket_prettification = true;
     }
     if (!with_morphology)
         input = remove_morphology(input); // Deleting morphology nodes.
-    var output;
     if (mode <= 1) {
-        output = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
+        var output = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
     } else {
         input = new_postprocessor(input, with_morphology, with_spaces,
                                   with_selmaho, with_terminators,
                                   with_nodes_labels);
-        output = JSON.stringify(input);
+        var output = JSON.stringify(input);
     }
-    if (mode <= 1 || among('R', mode))
+    if (mode <= 1 || !with_bracket_prettification)
         return output;
     output = output.replace(/\"/gm, "");
     output = output.replace(/,/gm, " ");
