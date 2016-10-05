@@ -92,9 +92,11 @@ function camxes_postprocessing(input, mode) {
                                   with_selmaho, with_terminators,
                                   with_nodes_labels);
         output = JSON.stringify(input);
-        output = output.replace(/\"/gm, "");
-        output = output.replace(/,/gm, " ");
     }
+    if (mode <= 1 || among('R', mode))
+        return output;
+    output = output.replace(/\"/gm, "");
+    output = output.replace(/,/gm, " ");
     // Replacing "spaces" with "_":
     output = output.replace(/([ \[\],])(initial_)?spaces(?=[ \[\],])/gm, "$1_");
     if (with_nodes_labels) {
