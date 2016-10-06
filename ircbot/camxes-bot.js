@@ -116,24 +116,24 @@ function run_camxes(input, mode, engine) {
 	result = camxes_pre.preprocessing(input);
 	try {
     switch (engine) {
-      case "std":
-        result = camxes.parse(result);
-        break;
-      case "exp":
-        result = camxes_exp.parse(result);
-        break;
-      case "beta":
-        result = camxes_beta.parse(result);
-        break;
-      case "cbm":
-        result = camxes_cbm.parse(result);
-        break;
-      case "ckt":
-        result = camxes_ckt.parse(result);
-        break;
-      default:
-        throw "Unrecognized parser";
-    }
+          case "std":
+            result = camxes.parse(result);
+            break;
+          case "exp":
+            result = camxes_exp.parse(result);
+            break;
+          case "beta":
+            result = camxes_beta.parse(result);
+            break;
+          case "cbm":
+            result = camxes_cbm.parse(result);
+            break;
+          case "ckt":
+            result = camxes_ckt.parse(result);
+            break;
+          default:
+            throw "Unrecognized parser";
+        }
 	} catch (e) {
         var location_info = ' Location: [' + e.location.start.offset + ', ' + e.location.end.offset + ']';
         location_info += ' …' + input.substring(e.location.start.offset, e.location.start.offset + 12) + '…';
