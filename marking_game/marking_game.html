@@ -37,7 +37,9 @@ function run_camxes() {
 	result = camxes_postprocessing(result);
              // @ marking_game_postproc.js
 	/* Retrieve the result */
-    result = result.replace("<", "&lt;").replace(">", "&gt;");
+    alert(result);
+    result = result.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    alert(result);
     document.getElementById('parse_result').innerHTML = result;
 }
 
