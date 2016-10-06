@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-10-05.
+ * Last change: 2016-10-06.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
@@ -63,13 +63,13 @@ function camxes_postprocessing(input, mode) {
              + "Please check the parse tree produced by the parser hasn't been converted to string "
              + "before being passed to the postprocessor." : "");
     if (is_string(mode)) {
-        var with_spaces = among('S', mode);
-        var with_morphology = among('M', mode);
+        var with_spaces       = among('S', mode);
+        var with_morphology   = among('M', mode);
         var with_nodes_labels = among('N', mode);
-        var with_selmaho = among('C', mode);
-        var with_terminators = among('T', mode);
-        var with_bracket_prettification = !among('X', mode);
-        // var is_raw_output = among('R', mode);
+        var with_selmaho      = among('C', mode);
+        var with_terminators  = among('T', mode);
+        var with_json_format  = among('J', mode);
+     // var is_raw_output     = among('R', mode);
         if (among('R', mode)) mode = 1;
         else mode = 2;
     } else {
@@ -80,7 +80,7 @@ function camxes_postprocessing(input, mode) {
         var with_selmaho = (mode != 2 && mode != 5);
         var with_nodes_labels = (mode == 4 || mode == 7);
         var with_terminators = (mode < 5);
-        var with_bracket_prettification = true;
+        var with_json_format = false;
     }
     if (!with_morphology)
         input = remove_morphology(input); // Deleting morphology nodes.
@@ -92,7 +92,7 @@ function camxes_postprocessing(input, mode) {
                                   with_nodes_labels);
         var output = JSON.stringify(input);
     }
-    if (mode <= 1 || !with_bracket_prettification)
+    if (mode <= 1 || with_json_format)
         return output;
     output = output.replace(/\"/gm, "");
     output = output.replace(/,/gm, " ");
