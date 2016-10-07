@@ -122,7 +122,7 @@ function run_camxes(lojban_text) {
     // `result` is a string representation of the trimmed parse tree.
     DISPLAY(result);
 }
-<script>
+</script>
 ```
 
 The postproc options are the sames as those of run_camxes.js described earlier in this file; please refer to the section `Running a parser from command line` above for more details.
