@@ -1,6 +1,6 @@
 var config = {
   server: 'irc.freenode.net',
-  nick: 'camxes',
+  nick: 'gentufa',
   options: {
     channels: ['#lojban', '#ckule', '#balningau'],
     debug: false
@@ -60,13 +60,19 @@ var processor = function(client, from, to, text, message) {
 };
 
 function extract_mode(input) {
-  ret = [input, 2, "std"];
+  ret = [input, "", "std"];
   flag_pattern = "[+-]\\w+"
   match = input.match(new RegExp("^\\s*((?:" + flag_pattern + ")+)(.*)"))
   if (match != null) {
     ret[0] = match[2];
+    if (ret[0].length > 0 && ret[0][0] == " ")
+        ret[0] = ret[0].substring(1);
     flags = match[1].match(new RegExp(flag_pattern, "g"))
     for (var i = 0; i < flags.length; ++i) {
+      if (/^[A-Z]/.test(flags[i][1])) {
+          ret[1] = flags[i].substring(1);
+          continue;
+      }
       switch (flags[i]) {
         case "+se":
           ret[1] = ret[1] == 5 ? 7 : 4;
