@@ -119,6 +119,7 @@ function run_camxes(lojban_text) {
     // We postprocess (if desired) the parse tree using the function provided in camxes_postproc.js:
     var postproc_options = "CTN"; // Those are the same options as those used by run_camxes.js
     var result = camxes_postprocessing(parse_tree, postproc_options);
+    // `result` is a string representation of the trimmed parse tree.
     DISPLAY(result);
 }
 <script>
