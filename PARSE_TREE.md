@@ -68,7 +68,7 @@ Some terminal nodes (nodes containing no sub-array) only contains a selmaho name
 
 The existence of anonymous (nameless) nodes in the parse tree is due to the fact that parentheses in the PEG grammar generate anonymous nodes, so with a PEG rule like `selbri_2 <- selbri_3 (CO_clause free* selbri_2)?` and "broda co brode" as the input, the PEG rule with generate `["selbri_2",["selbri_3",...],[["CO_clause",...]["selbri_2",...]]]`, with an anonymous node containing the "co brode" part.
 
-Finally, if a nodes is of the form `["string","string"]`, for example `["gismu","melbi"]`, then it is a terminal node whose first element is its name, and whose second element is the terminal Lojban text element (letter, word…).
+Finally, if a node is of the form `["string","string"]`, for example `["gismu","melbi"]`, then it is a terminal node whose first element is its name, and whose second element is the terminal Lojban text element (letter, word…).
 
 Here is an example of how to interpret the following piece of nested list notation (with morphological information kept), corresponding to the Lojban "ro ti" (with a whitespace and an elided terminator BOI):
 
