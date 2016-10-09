@@ -61696,6 +61696,10 @@ var camxes = (function() {
       function _is_zoi_delim(w) {
         if (is_array(w)) w = join_expr(w);
         else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+        /* Keeping spaces in the parse tree seems to result in the absorbtion of
+           spaces into the closing delimiter candidate, so we'll remove any space
+           character from our input. */
+        w = w.replace(/[.\t\n\r?!\u0020]/g, "");
         w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
         return w === _g_zoi_delim;
       }

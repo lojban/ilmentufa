@@ -147,6 +147,10 @@
   function _is_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
     else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    /* Keeping spaces in the parse tree seems to result in the absorbtion of
+       spaces into the closing delimiter candidate, so we'll remove any space
+       character from our input. */
+    w = w.replace(/[.\t\n\r?!\u0020]/g, "");
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     return w === _g_zoi_delim;
   }
@@ -1490,7 +1494,7 @@ any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
 // Non-PEG: Remember the value matched by this zoi_open.
 
-zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return _node("zoi_word", [join_expr(expr)]); }
+zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return ["zoi_word", join_expr(expr)]; }
 // Non-PEG: Match successfully only if different from the most recent zoi_open.
 
 zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
@@ -1726,7 +1730,7 @@ comma = expr:([,]) {return ",";}
 // This is an orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
 
-non_space = expr:(!space_char .) {return _join(expr);}
+non_space = expr:(!space_char .) {return _node("non_space", expr);}
 
 //Unicode_style and escaped chars not compatible with cl_peg
 space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
