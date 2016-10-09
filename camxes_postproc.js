@@ -1,7 +1,7 @@
 /*
  * CAMXES.JS POSTPROCESSOR
  * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-10-06.
+ * Last change: 2016-10-09.
  * 
  * Entry point: camxes_postprocessing(input, mode)
  * Arguments:
@@ -94,6 +94,8 @@ function camxes_postprocessing(input, mode) {
     }
     if (mode <= 1 || with_json_format)
         return output;
+    //alert(output);
+    //output = output.replace(/( +\"|\" +)/gm, "__");
     output = output.replace(/\"/gm, "");
     output = output.replace(/,/gm, " ");
     // Replacing "spaces" with "_":
@@ -121,7 +123,7 @@ function new_postprocessor(
     with_nodes_labels
 ) {
     var filter;
-    var wanted_nodes = with_spaces ? ["initial_spaces", "dot_star"] : ["dot_star"];
+    var wanted_nodes = [];
     if (with_nodes_labels)
         wanted_nodes = wanted_nodes.concat(["prenex", "sentence", "selbri", "sumti"]);
     if (!with_morphology) {
@@ -135,7 +137,7 @@ function new_postprocessor(
                   (with_selmaho ? (is_selmaho(v) && (with_terminators || !b))
                   : is_selmaho(v) && b && with_terminators); };
     }
-    input = prune_unwanted_nodes(input, filter);
+    input = prune_unwanted_nodes(input, filter, with_spaces);
     if (input === null) return [];
     if (with_selmaho && !with_morphology) {
         var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
@@ -146,15 +148,19 @@ function new_postprocessor(
     return input;
 }
 
-function prune_unwanted_nodes(tree, is_wanted_node) {
+function prune_unwanted_nodes(tree, is_wanted_node, with_spaces) {
     if (is_string(tree)) return tree;
     if (!is_array(tree)) throw "ERR";
     if (tree.length == 0) return null;
+    if (tree[0] == "spaces" && tree.length > 0) {
+        if (with_spaces) tree[1] = "_";
+        else return null;
+    }
     var no_label = is_array(tree[0]);
     var k = 0;
     var i = no_label ? 0 : 1;
     while (i < tree.length) {
-        tree[i] = prune_unwanted_nodes(tree[i], is_wanted_node);
+        tree[i] = prune_unwanted_nodes(tree[i], is_wanted_node, with_spaces);
         if (tree[i]) {
             k++;
             i++;
@@ -189,6 +195,19 @@ function prefix_wordclass(tree, replacements) {
     return tree;
 }
 
+function remove_spaces(tree) { // Unused
+    if (tree.length > 0 && tree[0] == "spaces") return null;
+    var i = 0;
+    while (i < tree.length) {
+        if (is_array(tree[i])) {
+            tree[i] = remove_spaces(tree[i]);
+            if (tree[i] === null) tree.splice(i, 1);
+        }
+        i++;
+    }
+    return tree;
+}
+
 // ====== MORPHOLOGY REMOVAL ====== //
 
 /*
@@ -196,10 +215,10 @@ function prefix_wordclass(tree, replacements) {
  * 
  * This function takes a parse tree, and joins the expressions of the following
  * nodes:
- * "cmevla", "gismu_2", "lujvo", "fuhivla", "spaces"
+ * "cmevla", "gismu", "lujvo", "fuhivla", "spaces"
  * as well as any selmaho node (e.g. "KOhA").
  * 
- * (This is essentially a copy of process_parse_tree.js.)
+ * (This is essentially a copy of remove_morphology.js.)
  */
  
 function remove_morphology(pt) {
@@ -233,12 +252,13 @@ function remove_morphology(pt) {
 
 /* Checks whether the argument node is a target for pruning. */
 function is_target_node(n) {
-    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "initial_spaces", "ga_clause", "gu_clause"])
+    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "spaces", "ga_clause", "gu_clause"])
             || is_selmaho(n[0]));
 }
 
 /* This function returns the string resulting from the recursive concatenation of
  * all the leaf elements of the parse tree argument (except node names). */
+// "join_leaves" or "flatten_tree" might be better names.
 function join_expr(n) {
     if (n.length < 1) return "";
     var s = "";

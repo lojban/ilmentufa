@@ -15,6 +15,7 @@ function parse() {
         var end = new Date().getTime();
         $("#time-label").html("(parsing took " + (end - start) + " ms)");
         parse = remove_morphology(parse);
+        parse = remove_spaces(parse);
         var simplified = simplifyTree(parse);
         numberSumti(simplified);
         

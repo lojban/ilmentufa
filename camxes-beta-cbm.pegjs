@@ -520,7 +520,7 @@ pre_zei_bu = expr:(!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_c
 // LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
 // pre_zei_bu_no_SA = LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word si_clause?
 
-dot_star = expr:(.*) {return ["dot_star"];}
+dot_star = expr:(.*) {return _join(expr);}
 
 // __ General Morphology Issues
 //
@@ -1714,15 +1714,15 @@ pause = expr:(comma* space_char+ / EOF) {return _node("pause", expr);}
 
 EOF = expr:(comma* !.) {return _node("EOF", expr);}
 
-comma = expr:([,]) {return _node("comma", expr);}
+comma = expr:([,]) {return ",";}
 
 // This is an orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
 
-non_space = expr:(!space_char .) {return _node("non_space", expr);}
+non_space = expr:(!space_char .) {return _join(expr);}
 
 //Unicode_style and escaped chars not compatible with cl_peg
-space_char = expr:([.\t\n\r?!\u0020]) {return _node("space_char", expr);}
+space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
 
 // space_char = [.?! ] / space_char1 / space_char2
 // space_char1 = '    '
@@ -1732,7 +1732,7 @@ space_char = expr:([.\t\n\r?!\u0020]) {return _node("space_char", expr);}
 
 spaces = expr:(!Y initial_spaces) {return _node("spaces", expr);}
 
-initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _node("initial_spaces", expr);}
+initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _join(expr);}
 
 ybu = expr:(Y space_char* BU) {return _node("ybu", expr);}
 

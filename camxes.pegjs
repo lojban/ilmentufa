@@ -489,7 +489,7 @@ pre_zei_bu = expr:(!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_c
 // LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
 // pre_zei_bu_no_SA = LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word si_clause?
 
-dot_star = expr:(.*) {return ["dot_star"];}
+dot_star = expr:(.*) {return _join(expr);}
 
 // __ General Morphology Issues
 //
@@ -1344,7 +1344,7 @@ ZOhU_post = expr:(post_clause) {return _node("ZOhU_post", expr);}
 
 CMEVLA = expr:(cmevla) {return _node("CMEVLA", expr);}
 BRIVLA = expr:(gismu / lujvo / fuhivla) {return _node("BRIVLA", expr);}
-// gismu_2 = expr:(gismu) {return ["gismu", expr];}
+
 CMAVO = expr:(A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GUhA / I / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhU / LI / LIhU / LOhO / LOhU / LU / LUhU / MAhO / MAI / ME / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhU / cmavo) {return _node("CMAVO", expr);}
 
 // This is a Parsing Expression Grammar for the morphology of Lojban.
@@ -1405,7 +1405,7 @@ any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
 // Non-PEG: Remember the value matched by this zoi_open.
 
-zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return _node("zoi_word", [join_expr(expr)]); }
+zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return ["zoi_word", join_expr(expr)]; }
 // Non-PEG: Match successfully only if different from the most recent zoi_open.
 
 zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
@@ -1633,7 +1633,7 @@ pause = expr:(comma* space_char+ / EOF) {return _node("pause", expr);}
 
 EOF = expr:(comma* !.) {return _node("EOF", expr);}
 
-comma = expr:([,]) {return _node("comma", expr);}
+comma = expr:([,]) {return ",";}
 
 // This is an orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
@@ -1641,7 +1641,7 @@ non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word"
 non_space = expr:(!space_char .) {return _node("non_space", expr);}
 
 //Unicode_style and escaped chars not compatible with cl_peg
-space_char = expr:([.\t\n\r?!\u0020]) {return _node("space_char", expr);}
+space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
 
 // space_char = [.?! ] / space_char1 / space_char2
 // space_char1 = '    '
@@ -1651,7 +1651,7 @@ space_char = expr:([.\t\n\r?!\u0020]) {return _node("space_char", expr);}
 
 spaces = expr:(!Y initial_spaces) {return _node("spaces", expr);}
 
-initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _node("initial_spaces", expr);}
+initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _join(expr);}
 
 ybu = expr:(Y space_char* BU) {return _node("ybu", expr);}
 
@@ -1681,7 +1681,7 @@ BOI = expr:(&cmavo ( b o i ) &post_word) {return _node("BOI", expr);}
 
 BU = expr:(&cmavo ( b u ) &post_word) {return _node("BU", expr);}
 
-BY = expr:(&cmavo (ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word) {return _node("BY", expr);}
+BY = expr:(&cmavo ( ybu / j o h o / r u h o / g e h o / j e h o / l o h a / n a h a / s e h e / t o h a / g a h e / y h y / b y / c y / d y / f y / g y / j y / k y / l y / m y / n y / p y / r y / s y / t y / v y / x y / z y ) &post_word) {return _node("BY", expr);}
 
 CAhA = expr:(&cmavo ( c a h a / p u h i / n u h o / k a h e ) &post_word) {return _node("CAhA", expr);}
 

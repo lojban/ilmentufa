@@ -3,12 +3,26 @@
 function camxes_postprocessing(parse_tree) {
     /* Pruning morphology nodes. */
     parse_tree = remove_morphology(parse_tree);
+    parse_tree = remove_spaces(parse_tree);
     /* Removing every nodes except for those in the following whitelist. */
     var wanted_nodes = ["text", "dot_star", "sentence", "selbri", "sumti", "prenex"];
     // We included "text" so the outermost array also begins with a node name.
     parse_tree = simplify_parse_tree(parse_tree, wanted_nodes);
     /* Building and retreiving the marking game string. */
     return marking_game_format(parse_tree);
+}
+
+function remove_spaces(tree) {
+    if (tree.length > 0 && tree[0] == "spaces") return null;
+    var i = 0;
+    while (i < tree.length) {
+        if (is_array(tree[i])) {
+            tree[i] = remove_spaces(tree[i]);
+            if (tree[i] === null) tree.splice(i, 1);
+        }
+        i++;
+    }
+    return tree;
 }
 
 function simplify_parse_tree(pt, nl) {

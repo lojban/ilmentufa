@@ -305,7 +305,7 @@ function peg_add_js_parser_actions(peg) {
                       + ' return _node("$1", expr); }');
     peg = peg.replace(/^(zoi[-_]word) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) !{ return _is_zoi_delim(expr); } '
-                      + '{ return _node("$1", [join_expr(expr)]); }');
+                      + '{ return ["$1", join_expr(expr)]; }');
     peg = peg.split("((non_space+))").join("(non_space+)");
     peg = peg.replace(/^(zoi[-_]close) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
@@ -315,8 +315,10 @@ function peg_add_js_parser_actions(peg) {
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
     /* Others */
-    peg = peg.replace(/^(dot[-_]star) *= *([^\r\n]+)/gm,
-                      '$1 = expr:($2) {return ["$1"];}');
+    peg = peg.replace(/^(initial[-_]spaces|space[-_]char|dot[-_]star) *= *([^\r\n]+)/gm,
+                      '$1 = expr:($2) {return _join(expr);}');
+    peg = peg.replace(/^(comma) *= *([^\r\n]+)/gm,
+                      '$1 = expr:($2) {return ",";}');
     /* Default parser action */
     peg = peg.replace(/([0-9a-zA-Z_-]+) *= *(([^: \r\n]+ )*[^: \r\n]+)( *)(?=\r|\n|$)/gm,
                     '$1 = expr:($2) {return _node("$1", expr);}$4');

@@ -12,6 +12,19 @@ if (IS_NODEJS_ENV()) {
 
 // =========================================================================== //
 
+function remove_spaces(tree) {
+    if (tree.length > 0 && tree[0] == "spaces") return null;
+    var i = 0;
+    while (i < tree.length) {
+        if (is_array(tree[i])) {
+            tree[i] = remove_spaces(tree[i]);
+            if (tree[i] === null) tree.splice(i, 1);
+        }
+        i++;
+    }
+    return tree;
+}
+
 /*
  * EXAMPLE OF PARSE TREE PRUNING PROCEDURE
  * 
