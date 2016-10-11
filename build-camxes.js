@@ -6,12 +6,17 @@ var dst = src.replace(/.js.peg$/g, ".pegjs").replace(/^(.*?)(\.[^\\\/]+)?$/g, "$
 console.log("-> " + dst);
 var peg = fs.readFileSync(src).toString();
 try {
-	var camxes = pegjs.buildParser(peg, {
+    var param = {
 		cache: true,
 		trace: false,
 		output: "source",
 		allowedStartRules: ["text"],
-	});
+	}
+    if (typeof pegjs.generate === 'function')
+        var camxes = pegjs.generate(peg, param);
+    else if (typeof pegjs.buildParser === 'function')
+        var camxes = pegjs.buildParser(peg, param);
+    else throw "ERROR: No parser generator method found in the PEGJS module.";
 } catch (e) {
 	console.log(JSON.stringify(e));
 	throw e;
