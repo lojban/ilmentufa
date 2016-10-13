@@ -256,6 +256,7 @@ function is_target_node(n) {
             || is_selmaho(n[0]));
 }
 
+
 /* This function returns the string resulting from the recursive concatenation of
  * all the leaf elements of the parse tree argument (except node names). */
 // "join_leaves" or "flatten_tree" might be better names.

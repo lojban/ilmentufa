@@ -19,6 +19,7 @@ var camxes_beta = require('../camxes-beta.js');
 var camxes_cbm = require('../camxes-beta-cbm.js');
 var camxes_ckt = require('../camxes-beta-cbm-ckt.js');
 var camxes_exp = require('../camxes-exp.js');
+var camxes_morpho = require('../camxes-morpho.js');
 var camxes_pre = require('../camxes_preproc.js');
 var camxes_post = require('../camxes_postproc.js');
 
@@ -110,6 +111,9 @@ function extract_mode(input) {
         case "+ckt":
           ret[2] = "ckt";
           break;
+        case "+morpho":
+          ret[2] = "morpho";
+          break;
       }
     }
   }
@@ -136,6 +140,9 @@ function run_camxes(input, mode, engine) {
             break;
           case "ckt":
             result = camxes_ckt.parse(result);
+            break;
+          case "morpho":
+            result = camxes_morpho.parse(result);
             break;
           default:
             throw "Unrecognized parser";
