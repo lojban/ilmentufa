@@ -12,7 +12,7 @@
  * parsed, respectively.
  * 
  * Possible values for PARSER_ID:
- *    "std", "beta", "cbm", "ckt", "exp"
+ *    "std", "beta", "cbm", "ckt", "exp", "morpho"
  * 
  * MODE can be any letter string, each letter stands for a specific option.
  * Here is the list of possible letters and their associated meaning:
@@ -36,7 +36,7 @@ var text = "";
 
 var target = '-t';
 var p = [["-std","./camxes.js"],["-beta","./camxes-beta.js"],["-cbm","./camxes-beta-cbm.js"],
-          ["-ckt","./camxes-beta-cbm-ckt.js"],["-exp","./camxes-exp.js"]];
+          ["-ckt","./camxes-beta-cbm-ckt.js"],["-exp","./camxes-exp.js"],["-morpho","./camxes-morpho.js"]];
 
 for (var i = 2; i < process.argv.length; i++) {
     if (process.argv[i].length > 0) {
