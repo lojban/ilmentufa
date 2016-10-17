@@ -1803,8 +1803,8 @@ PU <- &cmavo ( b a / p u / c a ) &post_word
 
 RAhO <- &cmavo ( r a h o ) &post_word
 
-# BETA: mu'ei
-ROI <- &cmavo ( r e h u / r o i / m u h e i ) &post_word
+# BETA: va'ei, mu'ei
+ROI <- &cmavo ( r e h u / r o i / v a h e i / m u h e i ) &post_word
 
 SA <- &cmavo ( s a ) &post_word
 

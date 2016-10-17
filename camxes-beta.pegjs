@@ -1941,8 +1941,8 @@ PU = expr:(&cmavo ( b a / p u / c a ) &post_word) {return _node("PU", expr);}
 
 RAhO = expr:(&cmavo ( r a h o ) &post_word) {return _node("RAhO", expr);}
 
-// BETA: mu'ei
-ROI = expr:(&cmavo ( r e h u / r o i / m u h e i ) &post_word) {return _node("ROI", expr);}
+// BETA: va'ei, mu'ei
+ROI = expr:(&cmavo ( r e h u / r o i / v a h e i / m u h e i ) &post_word) {return _node("ROI", expr);}
 
 SA = expr:(&cmavo ( s a ) &post_word) {return _node("SA", expr);}
 
