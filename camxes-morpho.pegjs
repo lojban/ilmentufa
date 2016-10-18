@@ -177,7 +177,9 @@
   }
 }
 
-text = e:(spaces? ((foreign_characters / lojban_word)+ spaces?)* EOF?) {return _node("text", e);}
+text = expr:(spaces? ((foreign_word / foreign_characters / lojban_word)+ spaces?)* EOF?) {return _node("text", expr);}
+
+foreign_word = !(lojban_word+) expr:([a-zA-Z']+) {return ["foreign_word", _join(expr)];}
 
 foreign_characters = expr:(foreign_character+) {return ["foreign_characters", _join(expr)];}
 
