@@ -1,45 +1,50 @@
 /*
  * CAMXES.JS POSTPROCESSOR
- * Created by Ilmen (ilmen.pokebip <at> gmail.com) on 2013-08-16.
- * Last change: 2016-10-09.
  * 
  * Entry point: camxes_postprocessing(input, mode)
+ * 
  * Arguments:
- *    -- input: [array] camxes' parse tree output
- *    -- mode:  [number] output mode flag
- *         If mode > 7, displaying spaces is enabled and mode's value is
- *         truncated so mode <= 7. Then, depending on the value of mode,
- *         the following options are set:
- *         0 = Raw output (no change)
- *         1 = Condensed
- *         2 = Prettified
- *         3 = Prettified + selma'o
- *         4 = Prettified + selma'o + bridi parts
- *         5 = Prettified - famyma'o
- *         6 = Prettified - famyma'o + selma'o
- *         7 = Prettified - famyma'o + selma'o + bridi parts
- *         
+ *    • input: [array]  Camxes' parse tree output.
+ *          OR [string] JSON stringified parse tree.
+ *    • mode:  [string] Parse tree processing option list (each option is
+ *                      symbolized by a letter). See below for details.
+ *          OR [number] (Deprecated) Older options representation encoded as
+ *                      bit flags on a number.
+ * 
  * Return value:
  *       [string] postprocessed version of camxes' output
+ * 
+ * Details for the `mode´ arguent's values:
+ * 
+ * The mode argument can be any letter string, each letter stands for a specific
+ * option. Here is the list of possible letters and their associated meaning:
+ *    'M' -> Keep morphology
+ *    'S' -> Show spaces
+ *    'T' -> Show terminators
+ *    'C' -> Show word classes (selmaho)
+ *    'R' -> Raw output, do not trim the parse tree. If this option isn't set,
+ *           all the nodes (with the exception of those saved if the 'N' option
+ *           is set) are pruned from the tree.
+ *    'N' -> Show main node labels
  */
 
 /*
  * Function list:
  *   -- camxes_postprocessing(text, mode)
- *   -- new_postprocessor(input, no_morpho, with_selmaho, with_terminator)
- *   -- prune_unwanted_nodes(tree, is_wanted_node)
- *   -- prefix_wordclass(tree, replacements)
- *   -- remove_morphology(pt)
- *   -- is_target_node(n)
- *   -- join_expr(n)
+ *   -- newer_postprocessor(parse_tree, with_morphology, with_spaces,
+ *                          with_terminators, with_trimming, with_selmaho,
+ *                          with_nodes_labels)
+ *   -- process_parse_tree(parse_tree, value_substitution_map,
+ *                         name_substitution_map, node_action_for,
+ *                         must_prefix_leaf_labels)
  *   -- among(v, s)
  *   -- is_selmaho(v)
  *   -- prettify_brackets(str)
  *   -- str_print_uint(val, charset)
  *   -- str_replace(str, pos, len, sub)
- *   -- chr_check(chr, list)
  *   -- is_string(v)
  *   -- is_array(v)
+ *   -- is_number(v)
  */
 
 
@@ -47,218 +52,236 @@ if (typeof alert !== 'function')
     alert = console.log; // For Node.js
 
 /*
- * Version of transition between the older string processing and the newer
- * parse tree processing.
- * The below function's content is temporary and allows choosing which of the
- * two postprocessor (the older, the newer or even both) to use.
- * If the new postprocessor proves satisfactory, the older postprocessor's code
- * will be entirely removed.
+ * Main function.
  */
 function camxes_postprocessing(input, mode) {
+    /* Checking the input */
     if (is_string(input)) input = JSON.parse(input);
     if (!is_array(input))
         return "Postprocessor error: invalid input type for the first argument. "
-             + "It should be of type 'array', but the argument given is of type '" + typeof input + "'."
-             + (is_string(input) ? "\n\nThe new postprocessor doesn't allow anymore string inputs. "
-             + "Please check the parse tree produced by the parser hasn't been converted to string "
-             + "before being passed to the postprocessor." : "");
+             + "It should be either an array or a JSON stringified array, but "
+             + "the argument given is of type '" + typeof input + "'.";
+    /* Reading the options */
+    if (is_number(mode)) mode = mode_from_number_code(mode);
     if (is_string(mode)) {
         var with_spaces       = among('S', mode);
         var with_morphology   = among('M', mode);
-        var with_nodes_labels = among('N', mode);
-        var with_selmaho      = among('C', mode);
         var with_terminators  = among('T', mode);
+        var with_trimming     = !among('R', mode);
+        var with_selmaho      = among('C', mode);
+        var with_nodes_labels = among('N', mode);
         var with_json_format  = among('J', mode);
-     // var is_raw_output     = among('R', mode);
-        if (among('R', mode)) mode = 1;
-        else mode = 2;
-    } else {
-        if (!is_number(mode)) mode = 0;
-        var with_spaces = mode & 8;
-        var with_morphology = (mode & 16);
-        mode = mode % 8;
-        var with_selmaho = (mode != 2 && mode != 5);
-        var with_nodes_labels = (mode == 4 || mode == 7);
-        var with_terminators = (mode < 5);
-        var with_json_format = false;
-    }
-    if (!with_morphology)
-        input = remove_morphology(input); // Deleting morphology nodes.
-    if (mode <= 1) {
-        var output = JSON.stringify(input, undefined, mode == 0 ? 2 : 0);
-    } else {
-        input = new_postprocessor(input, with_morphology, with_spaces,
-                                  with_selmaho, with_terminators,
-                                  with_nodes_labels);
-        var output = JSON.stringify(input);
-    }
-    if (mode <= 1 || with_json_format)
-        return output;
-    //alert(output);
-    //output = output.replace(/( +\"|\" +)/gm, "__");
+    } else throw "camxes_postprocessing(): Invalid mode argument type!";
+    /* Calling the postprocessor */
+    var output = newer_postprocessor(input, with_morphology, with_spaces,
+                                     with_terminators, with_trimming,
+                                     with_selmaho, with_nodes_labels);
+    /* Converting the parse tree into JSON format */
+    output = JSON.stringify(output);
+    if (with_json_format) return output;
+    /* Getting rid of ⟨"⟩ and ⟨,⟩ characters */
     output = output.replace(/\"/gm, "");
     output = output.replace(/,/gm, " ");
-    // Replacing "spaces" with "_":
-    output = output.replace(/([ \[\],])(initial_)?spaces(?=[ \[\],])/gm, "$1_");
-    if (with_nodes_labels) {
-        output = output.replace(/\[prenex /g, "[PRENEX: ");
-        output = output.replace(/\[sentence /g, "[BRIDI: ");
-        output = output.replace(/\[selbri /g, "[SELBRI: ");
-        output = output.replace(/\[sumti /g, "[SUMTI: ");
-    }
-    // Bracket prettification:
-    output = prettify_brackets(output);
-	return output;
+    /* Bracket prettification */
+	return prettify_brackets(output);
 }
 
-
-// ====== NEW POSTPROCESSOR ====== //
-
-function new_postprocessor(
-    input,
-    with_morphology,
-    with_spaces,
-    with_selmaho,
-    with_terminators,
-    with_nodes_labels
-) {
-    var filter;
-    var wanted_nodes = [];
-    if (with_nodes_labels)
-        wanted_nodes = wanted_nodes.concat(["prenex", "sentence", "selbri", "sumti"]);
-    if (!with_morphology) {
-        filter = function (v,b) { return (with_selmaho ?
-                  among(v, wanted_nodes.concat(["cmevla", "gismu", "lujvo", "fuhivla"]))
-                  || (is_selmaho(v) && (with_terminators || !b))
-                  : among(v, wanted_nodes)
-                  || (is_selmaho(v) && b && with_terminators)); };
-    } else {
-        filter = function (v,b) { return among(v, wanted_nodes) ||
-                  (with_selmaho ? (is_selmaho(v) && (with_terminators || !b))
-                  : is_selmaho(v) && b && with_terminators); };
-    }
-    input = prune_unwanted_nodes(input, filter, with_spaces);
-    if (input === null) return [];
-    if (with_selmaho && !with_morphology) {
-        var replacements = [["cmene", "C"], ["cmevla", "C"], ["gismu", "G"],
-            ["lujvo", "L"], ["fuhivla", "Z"]];
-        input = prefix_wordclass(input, replacements);
-        if (is_string(input)) input = [input];
-    }
-    return input;
+/* Function for translating the legacy option encoding to the new format. */
+/* For backward compatibility. */
+function mode_from_number_code(legacy_mode) {
+    var mode = "";
+    if (legacy_mode & 8) mode += 'S';
+    if (legacy_mode & 16) mode += 'M';
+    legacy_mode = legacy_mode % 8;
+    if (legacy_mode != 2 && legacy_mode != 5) mode += 'C';
+    if (legacy_mode == 4 || legacy_mode == 7) mode += 'N';
+    if (legacy_mode < 5) mode += 'T';
+    return mode;
 }
 
-function prune_unwanted_nodes(tree, is_wanted_node, with_spaces) {
-    if (is_string(tree)) return tree;
-    if (!is_array(tree)) throw "ERR";
-    if (tree.length == 0) return null;
-    if (tree[0] == "spaces" && tree.length > 0) {
-        if (with_spaces) tree[1] = "_";
-        else return null;
-    }
-    var no_label = is_array(tree[0]);
-    var k = 0;
-    var i = no_label ? 0 : 1;
-    while (i < tree.length) {
-        tree[i] = prune_unwanted_nodes(tree[i], is_wanted_node, with_spaces);
-        if (tree[i]) {
-            k++;
-            i++;
-        } else tree.splice(i, 1);
-    }
-    if (!no_label) {
-        if (!is_wanted_node(tree[0], tree.length == 1)) tree.splice(0, 1);
-        else k++;
-    }
-    if (k == 1) return tree[0];
-    else return (k > 0) ? tree : null;
-}
-
-function prefix_wordclass(tree, replacements) {
-    if (tree.length == 2 && is_string(tree[0]) && is_string(tree[1])) {
-        var i = 0;
-        while (i < replacements.length) {
-            if (tree[0] == replacements[i][0]) {
-                tree[0] = replacements[i][1];
-                break;
-            }
-            i++;
-        }
-        return tree[0] + ':' + tree[1];
-    }
-    var i = 0;
-    while (i < tree.length) {
-        if (is_array(tree[i]))
-            tree[i] = prefix_wordclass(tree[i], replacements);
-        i++;
-    }
-    return tree;
-}
-
-function remove_spaces(tree) { // Unused
-    if (tree.length > 0 && tree[0] == "spaces") return null;
-    var i = 0;
-    while (i < tree.length) {
-        if (is_array(tree[i])) {
-            tree[i] = remove_spaces(tree[i]);
-            if (tree[i] === null) tree.splice(i, 1);
-        }
-        i++;
-    }
-    return tree;
-}
-
-// ====== MORPHOLOGY REMOVAL ====== //
+// ========================================================================== //
 
 /*
- * remove_morphology(parse_tree)
- * 
- * This function takes a parse tree, and joins the expressions of the following
- * nodes:
- * "cmevla", "gismu", "lujvo", "fuhivla", "spaces"
- * as well as any selmaho node (e.g. "KOhA").
- * 
- * (This is essentially a copy of remove_morphology.js.)
+ * This function adapts the options passed as arguments into a format adapted
+ * to the more generalized 'process_parse_tree' function, and then calls this
+ * latter.
  */
- 
-function remove_morphology(pt) {
-    if (pt.length < 1) return [];
-    var i;
-    /* Sometimes nodes have no label and have instead an array as their first
-       element. */
-    if (is_array(pt[0])) i = 0;
-    else { // The first element is a label (node name).
-        // Let's check if this node is a candidate for our pruning.
-        if (is_target_node(pt)) {
-            /* We join recursively all the terminal elements (letters) in this
-             * node and its child nodes, and put the resulting string in the #1
-             * slot of the array; afterwards we delete all the remaining elements
-             * (their terminal values have been concatenated into pt[1]). */
-            pt[1] = join_expr(pt);
-            // If pt[1] contains an empty string, let's delete it as well:
-            pt.splice((pt[1] == "") ? 1 : 2);
-            return pt;
+function newer_postprocessor(
+    parse_tree,
+    with_morphology,
+    with_spaces,
+    with_terminators,
+    with_trimming,
+    with_selmaho,
+    with_nodes_labels
+) {
+    if (!is_array(parse_tree)) return null;
+    /* Building a map of node names to node value replacements */
+    if (with_spaces)
+         var value_substitution_map = {"spaces": "_"};
+    else var value_substitution_map = {};
+    /* Building a map of node names to name replacements */
+    var name_substitution_map = {
+        "cmene": "C", "cmevla": "C", "gismu": "G", "lujvo": "L",
+        "fuhivla": "Z", "prenex": "PRENEX", "sentence": "BRIDI",
+        "selbri": "SELBRI", "sumti": "SUMTI"
+    };
+    /** Building a node_action_for() function from the selected options **/
+    if (with_morphology)
+         var is_flattening_target = function (tree) { return false; };
+    else var is_flattening_target = function (tree) {
+        var targets = ["cmevla", "gismu", "lujvo", "fuhivla", "ga_clause",
+                       "gu_clause"];
+        return (among(tree[0], targets) || is_selmaho(tree[0]));
+    };
+    var is_branch_removal_target = function (tree) {
+        if (!with_spaces && tree[0] == "spaces") return true;
+        if (!with_terminators && is_selmaho(tree[0]) && tree.length == 1)
+            return true;
+        return false;
+    };
+    var whitelist = [];
+    if (with_nodes_labels)
+        whitelist = whitelist.concat(["prenex", "sentence", "selbri", "sumti"]);
+    var is_node_trimming_target = function (tree) {
+        if (!with_trimming) return false;
+        if (with_terminators && is_selmaho(tree[0]) && tree.length == 1)
+            return false;
+        return !among(tree[0], whitelist);
+    };
+    var node_action_for = function (node) {
+        if (is_branch_removal_target(node)) return 'DEL';
+        var ft = is_flattening_target(node);
+        var tt = is_node_trimming_target(node);
+        if (ft && tt) return "TRIMFLAT";
+        if (ft)       return 'FLAT';
+        if (tt)       return 'TRIM';
+        if (with_trimming && node.length == 1) return 'UNBOX';
+        return 'PASS';
+    };
+    /* Calling process_parse_tree() with the arguments we've built for it */
+    return process_parse_tree(
+        parse_tree, value_substitution_map, name_substitution_map,
+        node_action_for, with_nodes_labels
+    );
+}
+
+/*
+ * Recursive function for editing a parse tree. Performs a broad range of
+ * editions depending on the given arguments. Returns the edited parse tree.
+ * 
+ * • value_substitution_map [Map]:
+ *     A map of node names to node value replacements. Used to override the
+ *     content of specific leaf nodes.
+ * • name_substitution_map [Map]:
+ *     A map of node names to node name replacements. Used to rename specific
+ *     nodes.
+ * • node_action_for [Function: Array -> String]:
+ *     A function for deriving the appropriate edition action for the argument
+ *     parse tree node; returns an action name, whose possible values are:
+ *     • 'DEL':  Triggers deletion of the current tree branch.
+ *     • 'TRIM': Triggers pruning of the current node; the node name is erased
+ *               and if it has only one child node, this child node replaces it.
+ *     • 'FLAT': Triggers flattening of the current tree branch; all its
+ *               terminal leaves values are concatenated and the concatenation
+ *               results replaces the content of the branch.
+ *     • 'TRIMFLAT': Same as 'FLAT' but also removes the current node.
+ *     • 'UNBOX':    If the current node contains only one element, this element
+ *                   replaces the current node.
+ *     • 'PASS':     Does nothing.
+ * • must_prefix_leaf_labels [Boolean]:
+ *     If true, remaining node names get a colon appended to them, and if they
+ *     contain a single leaf value, they get concatenated with their value, and
+ *     the concatenation result would replace the node itself.
+ *     For example, a terminal node ["UI","ui"] would become "UI:ui" (note that
+ *     the brackets disappeared).
+ */
+function process_parse_tree(
+    parse_tree,
+    value_substitution_map,
+    name_substitution_map,
+    node_action_for,
+    must_prefix_leaf_labels
+) {
+    if (parse_tree.length == 0) return null;
+    var action = node_action_for(parse_tree);
+    if (action == 'DEL') return null;  // Deleting the current branch.
+    var has_name = is_string(parse_tree[0]);
+    // Getting the value replacement for this node, if any.
+    var substitution_value = (has_name) ? value_substitution_map[parse_tree[0]]
+                                        : undefined;
+    if (has_name) {
+        if (action == 'TRIM') {
+            /* The first step of a trim action is to remove the node name. */
+            parse_tree.splice(0, 1);
+            has_name = false;
+        } else {
+            /* No trimming, so let's see if the node name is in the renaming
+               list. If so, let's rename it accordingly. */
+            var v = name_substitution_map[parse_tree[0]];
+            if (typeof v !== 'undefined') parse_tree[0] = v;
         }
-        i = 1;
     }
-    /* If we've reached here, then this node is not a target for pruning, so let's
-       do recursion into its child nodes. */
-    while (i < pt.length) {
-        remove_morphology(pt[i]);
-        i++;
+    if (action == 'FLAT') {
+        /* Flattening action. All the terminal nodes of the branch are
+           concatenated, and the concatenation result replaces the branch's
+           content, alongside the node name if any. If the concatenation
+           result is empty, the branch becomes empty. */
+        var r = join_expr(parse_tree);
+        if (has_name && r != "") {
+            if (must_prefix_leaf_labels) return parse_tree[0] + ':' + r;
+            else return [parse_tree[0], r];
+        } else if (has_name) return parse_tree[0];
+        else return r;
+    } else if (action == 'TRIMFLAT') return join_expr(parse_tree);
+    /* Now we'll iterate over all the other elements of the current node. */
+    var i = has_name ? 1 : 0;
+    while (i < parse_tree.length) {
+        if (is_array(parse_tree[i])) {
+            /* Recursion */
+            parse_tree[i] = process_parse_tree(
+                parse_tree[i],
+                value_substitution_map,
+                name_substitution_map,
+                node_action_for,
+                must_prefix_leaf_labels
+            );
+        } else if (is_string(parse_tree[i])
+                   && typeof substitution_value !== 'undefined') {
+            /* If there's a value replacement for this node, all its string
+               elements (except its name) are substituted with it. */
+            parse_tree[i] = substitution_value;
+        }
+        /* The recursion call on the current element might have set it to null
+           as a request for deletion. */
+        if (parse_tree[i] === null)
+            parse_tree.splice(i, 1);
+        else i++;  // No deletion, so let's go to the next element.
     }
-    return pt;
+    /* Now we've finished iterating over the node elements. Let's proceed to
+       the final steps. */
+    /* If 'must_prefix_leaf_labels' is set and the node has a name and contains
+       at least one other element, we append ':' to its name. */
+    if (has_name && parse_tree.length >= 2 && must_prefix_leaf_labels)
+        parse_tree[0] += ':';
+    /* If the node is empty, we return null as a signal for deletion. */
+    if (i == 0) return null;
+    /* If the node contains only one element and we want to trim the node,
+       it gets replaced by its content. */ 
+    else if (i == 1 && action != 'PASS') return parse_tree[0];
+    /* If 'must_prefix_leaf_labels' is set and the node is a pair of string,
+       we return the concatenation of both strings separated with a colon. */
+    else if (i == 2 && has_name && is_string(parse_tree[1])
+             && must_prefix_leaf_labels) {
+        return parse_tree[0] + parse_tree[1];
+    } else return parse_tree;
 }
 
-/* Checks whether the argument node is a target for pruning. */
-function is_target_node(n) {
-    return (among(n[0], ["cmevla", "gismu", "lujvo", "fuhivla", "spaces", "ga_clause", "gu_clause"])
-            || is_selmaho(n[0]));
-}
+// ========================================================================== //
 
 
-/* This function returns the string resulting from the recursive concatenation of
- * all the leaf elements of the parse tree argument (except node names). */
+/* This function returns the string resulting from the recursive concatenation
+ * of all the leaf elements of the parse tree argument (except node names). */
 // "join_leaves" or "flatten_tree" might be better names.
 function join_expr(n) {
     if (n.length < 1) return "";
@@ -282,11 +305,11 @@ function is_selmaho(v) {
     return (0 == v.search(/^[IUBCDFGJKLMNPRSTVXZ]?([AEIOUY]|(AI|EI|OI|AU))(h([AEIOUY]|(AI|EI|OI|AU)))*$/g));
 }
 
+// ========================================================================== //
 
-/* ================== */
-/* ===  Routines  === */
-/* ================== */
-
+/*
+ * Bracket prettification for textual rendering of parse trees.
+ */
 function prettify_brackets(str) {
 	var open_brackets = ["(", "[", "{", "<"];
 	var close_brackets = [")", "]", "}", ">"];
@@ -315,6 +338,11 @@ function prettify_brackets(str) {
 	return str;
 }
 
+
+/* ================== */
+/* ===  Routines  === */
+/* ================== */
+
 function str_print_uint(val, charset) {
 	// 'charset' must be a character array.
 	var radix = charset.length;
@@ -335,13 +363,6 @@ function str_replace(str, pos, len, sub) {
 	} else return str;
 }
 
-function chr_check(chr, list) {
-	var i = 0;
-	if (!is_string(list)) return false;
-	do if (chr == list[i]) return true; while (i++ < list.length);
-	return false;
-} // Currently unused.
-
 function is_string(v) {
     return Object.prototype.toString.call(v) === '[object String]';
 }
@@ -354,6 +375,9 @@ function is_number(v) {
     return Object.prototype.toString.call(v) === '[object Number]';
 }
 
-if (typeof module !== 'undefined')
+if (typeof module !== 'undefined') {
     module.exports.postprocessing = camxes_postprocessing;
+    module.exports.postprocess = camxes_postprocessing;  // Alias
+    module.exports.prettify_brackets = prettify_brackets;
+}
 

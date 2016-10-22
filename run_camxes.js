@@ -8,8 +8,8 @@
  * OR
  *   $ nodejs run_camxes -p PARSER_PATH -m MODE -t TEXT
  * 
- * PARSER_PATH and TEXT being the path of the desired parser engine, and the Lojban text to be
- * parsed, respectively.
+ * PARSER_PATH and TEXT being the path of the desired parser engine, and the
+ * Lojban text to be parsed, respectively.
  * 
  * Possible values for PARSER_ID:
  *    "std", "beta", "cbm", "ckt", "exp", "morpho"
@@ -18,10 +18,12 @@
  * Here is the list of possible letters and their associated meaning:
  *    'M' -> Keep morphology
  *    'S' -> Show spaces
- *    'C' -> Show word classes (selmaho)
  *    'T' -> Show terminators
+ *    'C' -> Show word classes (selmaho)
+ *    'R' -> Raw output, do not trim the parse tree. If this option isn't set,
+ *           all the nodes (with the exception of those saved if the 'N' option
+ *           is set) are pruned from the tree.
  *    'N' -> Show main node labels
- *    'R' -> Raw output, do not prune the tree, except the morphology if 'M' not present.
  * Example:
  *    -m CTN
  *    This will show terminators, selmaho and main node labels.
