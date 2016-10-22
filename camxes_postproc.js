@@ -76,6 +76,7 @@ function camxes_postprocessing(input, mode) {
     var output = newer_postprocessor(input, with_morphology, with_spaces,
                                      with_terminators, with_trimming,
                                      with_selmaho, with_nodes_labels);
+    if (output === null) output = [];
     /* Converting the parse tree into JSON format */
     output = JSON.stringify(output);
     if (with_json_format) return output;
