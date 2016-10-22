@@ -378,6 +378,7 @@ function is_number(v) {
 if (typeof module !== 'undefined') {
     module.exports.postprocessing = camxes_postprocessing;
     module.exports.postprocess = camxes_postprocessing;  // Alias
+    module.exports.process_parse_tree = process_parse_tree;
     module.exports.prettify_brackets = prettify_brackets;
 }
 
