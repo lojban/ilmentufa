@@ -102,10 +102,12 @@ function run_camxes() {
 	  var input = $('#input_textarea').val();
 	  input = camxes_preprocessing(input);
       var result = camxes.parse(input);
-    } catch (e) {
-      var location_info = '\nLocation: [' + e.location.start.offset + ', ' + e.location.end.offset + ']';
-      location_info += '\n…' + input.substring(e.location.start.offset, e.location.start.offset + 12) + '…';
-      $('#parse_result').text(e.toString() + location_info);
+    } catch (err) {
+      if (err.location !== undefined) {
+        var location_info = '\nLocation: [' + err.location.start.offset + ', ' + err.location.end.offset + ']';
+        location_info += '\n…' + input.substring(err.location.start.offset, err.location.start.offset + 12) + '…';
+      } else var location_info = "";
+      $('#parse_result').text(err.toString() + location_info);
       return;
     }
 	/* We get the output mode selected in the combobox */
