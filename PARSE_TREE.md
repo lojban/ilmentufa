@@ -2,7 +2,7 @@ Javascript Camxes Parser
 ========================
 
 _Javascript Camxes_ is a [Node.js](https://nodejs.org/) parser implementation of the Lojban PEG grammar. There exist several variants of the grammar; the current standard PEG grammar is contained in the file `camxes.peg`, and the corresponding Javascript parser is `camxes.js`. The parser is automatically generated from the PEG grammar using the PEGJS library.
-The main function provided by `camxes.js` is `camxes.parse(lojban_text)`, which takes any Lojban text as input and returns a parse tree thereof if the input Lojban text is grammatical; otherwise it returns a syntax error message.
+The main function provided by `camxes.js` is `camxes.parse(lojban_text)`, which takes any Lojban text as input and returns a parse tree thereof if the input Lojban text is grammatical; otherwise it throws a syntax error exception.
 
 ### Javascript Camxes' parse tree structure ###
 
