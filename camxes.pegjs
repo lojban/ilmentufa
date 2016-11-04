@@ -493,7 +493,7 @@ pre_zei_bu = expr:(!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_c
 // LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
 // pre_zei_bu_no_SA = LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word si_clause?
 
-dot_star = expr:(.*) {return _join(expr);}
+dot_star = expr:(.*) {return ["dot_star", _join(expr)];}
 
 // __ General Morphology Issues
 //
@@ -1655,7 +1655,7 @@ space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
 
 spaces = expr:(!Y initial_spaces) {return _node("spaces", expr);}
 
-initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _join(expr);}
+initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return ["initial_spaces", _join(expr)];}
 
 ybu = expr:(Y space_char* BU) {return _node("ybu", expr);}
 

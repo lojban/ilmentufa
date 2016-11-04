@@ -94,6 +94,8 @@ function mode_from_number_code(legacy_mode) {
     if (legacy_mode & 8) mode += 'S';
     if (legacy_mode & 16) mode += 'M';
     legacy_mode = legacy_mode % 8;
+    if (legacy_mode == 0) mode += 'J';
+    if (legacy_mode <= 1) mode += 'R';
     if (legacy_mode != 2 && legacy_mode != 5) mode += 'C';
     if (legacy_mode == 4 || legacy_mode == 7) mode += 'N';
     if (legacy_mode < 5) mode += 'T';
@@ -119,7 +121,7 @@ function newer_postprocessor(
     if (!is_array(parse_tree)) return null;
     /* Building a map of node names to node value replacements */
     if (with_spaces)
-         var value_substitution_map = {"spaces": "_"};
+         var value_substitution_map = {"spaces": "_", "initial_spaces": "_"};
     else var value_substitution_map = {};
     /* Building a map of node names to name replacements */
     var name_substitution_map = {
@@ -136,10 +138,9 @@ function newer_postprocessor(
         return (among(tree[0], targets) || is_selmaho(tree[0]));
     };
     var is_branch_removal_target = function (tree) {
-        if (!with_spaces && tree[0] == "spaces") return true;
-        if (!with_terminators && is_selmaho(tree[0]) && tree.length == 1)
+        if (!with_spaces && among(tree[0], ["spaces", "initial_spaces"]))
             return true;
-        return false;
+        return (!with_terminators && is_selmaho(tree[0]) && tree.length == 1);
     };
     var whitelist = [];
     if (with_nodes_labels)
@@ -213,7 +214,12 @@ function process_parse_tree(
                                         : undefined;
     if (has_name) {
         if (action == 'TRIM') {
-            /* The first step of a trim action is to remove the node name. */
+            /* If there's a value replacement for this node, we return it
+               instead of the node's content. */
+            if (typeof substitution_value !== 'undefined')
+                return substitution_value;
+            /* Otherwise the first step of a trim action is to remove the node
+               name. */
             parse_tree.splice(0, 1);
             has_name = false;
         } else {
@@ -221,6 +227,10 @@ function process_parse_tree(
                list. If so, let's rename it accordingly. */
             var v = name_substitution_map[parse_tree[0]];
             if (typeof v !== 'undefined') parse_tree[0] = v;
+            /* If there's a value replacement for this node, it becomes the
+               unique value for the node. */
+            if (typeof substitution_value !== 'undefined')
+                return [parse_tree[0], substitution_value];
         }
     }
     if (action == 'FLAT') {
@@ -247,11 +257,6 @@ function process_parse_tree(
                 node_action_for,
                 must_prefix_leaf_labels
             );
-        } else if (is_string(parse_tree[i])
-                   && typeof substitution_value !== 'undefined') {
-            /* If there's a value replacement for this node, all its string
-               elements (except its name) are substituted with it. */
-            parse_tree[i] = substitution_value;
         }
         /* The recursion call on the current element might have set it to null
            as a request for deletion. */

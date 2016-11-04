@@ -36,7 +36,7 @@ function remove_spaces(tree) {
  * as well as any selmaho node (e.g. "KOhA").
  * 
  */
- 
+
 function remove_morphology(pt) {
     if (pt.length < 1) return [];
     var i;
@@ -60,7 +60,7 @@ function remove_morphology(pt) {
     /* If we've reached here, then this node is not a target for pruning, so let's
        do recursion into its child nodes. */
     while (i < pt.length) {
-        remove_morphology(pt[i]);
+        if (is_array(pt[i])) remove_morphology(pt[i]);
         i++;
     }
     return pt;

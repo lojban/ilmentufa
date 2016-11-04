@@ -315,7 +315,9 @@ function peg_add_js_parser_actions(peg) {
                       '$1_elidible = expr:($2) {return (expr == "" || !expr)'
                       + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
     /* Others */
-    peg = peg.replace(/^(initial[-_]spaces|space[-_]char|dot[-_]star) *= *([^\r\n]+)/gm,
+    peg = peg.replace(/^(initial[-_]spaces|dot[-_]star) *= *([^\r\n]+)/gm,
+                      '$1 = expr:($2) {return ["$1", _join(expr)];}');
+    peg = peg.replace(/^(space[-_]char) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) {return _join(expr);}');
     peg = peg.replace(/^(comma) *= *([^\r\n]+)/gm,
                       '$1 = expr:($2) {return ",";}');
