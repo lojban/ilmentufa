@@ -13,12 +13,12 @@ if (IS_NODEJS_ENV()) {
 // =========================================================================== //
 
 function remove_spaces(tree) {
-    if (tree.length > 0 && tree[0] == "spaces") return null;
+    if (tree.length > 0 && among(tree[0], ["spaces", "initial_spaces"])) return null;
     var i = 0;
     while (i < tree.length) {
         if (is_array(tree[i])) {
             tree[i] = remove_spaces(tree[i]);
-            if (tree[i] === null) tree.splice(i, 1);
+            if (tree[i] === null) tree.splice(i--, 1);
         }
         i++;
     }
@@ -97,10 +97,10 @@ function is_selmaho(v) {
 }
 
 function is_string(v) {
-    return $.type(v) === "string";
+    return Object.prototype.toString.call(v) === '[object String]';
 }
 
 function is_array(v) {
-    return $.type(v) === "array";
+    return Object.prototype.toString.call(v) === '[object Array]';
 }
 
