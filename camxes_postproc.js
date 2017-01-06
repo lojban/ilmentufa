@@ -82,6 +82,8 @@ function camxes_postprocessing(input, mode) {
     if (with_json_format) return output;
     /* Getting rid of ⟨"⟩ and ⟨,⟩ characters */
     output = output.replace(/\"/gm, "");
+    if (with_selmaho)
+        output = output.replace(/\[([a-zA-Z0-9_-]+),\[/gm, "[$1: [");
     output = output.replace(/,/gm, " ");
     /* Bracket prettification */
 	return prettify_brackets(output);
@@ -96,7 +98,7 @@ function mode_from_number_code(legacy_mode) {
     legacy_mode = legacy_mode % 8;
     if (legacy_mode == 0) mode += 'J';
     if (legacy_mode <= 1) mode += 'R';
-    if (legacy_mode != 2 && legacy_mode != 5) mode += 'C';
+    if (legacy_mode > 2 && legacy_mode != 5) mode += 'C';
     if (legacy_mode == 4 || legacy_mode == 7) mode += 'N';
     if (legacy_mode < 5) mode += 'T';
     return mode;
@@ -129,12 +131,14 @@ function newer_postprocessor(
         "fuhivla": "Z", "prenex": "PRENEX", "sentence": "BRIDI",
         "selbri": "SELBRI", "sumti": "SUMTI"
     };
+    if (!with_trimming) name_substitution_map = {};
+    var special_selmaho = ["cmevla", "gismu", "lujvo", "fuhivla", "ga_clause",
+                           "gu_clause"];
     /** Building a node_action_for() function from the selected options **/
     if (with_morphology)
          var is_flattening_target = function (tree) { return false; };
     else var is_flattening_target = function (tree) {
-        var targets = ["cmevla", "gismu", "lujvo", "fuhivla", "ga_clause",
-                       "gu_clause"];
+        var targets = special_selmaho;
         return (among(tree[0], targets) || is_selmaho(tree[0]));
     };
     var is_branch_removal_target = function (tree) {
@@ -143,12 +147,15 @@ function newer_postprocessor(
         return (!with_terminators && is_selmaho(tree[0]) && tree.length == 1);
     };
     var whitelist = [];
+    if (with_selmaho)
+        whitelist = whitelist.concat(special_selmaho);
     if (with_nodes_labels)
         whitelist = whitelist.concat(["prenex", "sentence", "selbri", "sumti"]);
     var is_node_trimming_target = function (tree) {
         if (!with_trimming) return false;
         if (with_terminators && is_selmaho(tree[0]) && tree.length == 1)
             return false;
+        if (with_selmaho && is_selmaho(tree[0])) return false;
         return !among(tree[0], whitelist);
     };
     var node_action_for = function (node) {
@@ -164,7 +171,7 @@ function newer_postprocessor(
     /* Calling process_parse_tree() with the arguments we've built for it */
     return process_parse_tree(
         parse_tree, value_substitution_map, name_substitution_map,
-        node_action_for, with_nodes_labels
+        node_action_for, with_nodes_labels || with_selmaho
     );
 }
 
@@ -268,8 +275,9 @@ function process_parse_tree(
        the final steps. */
     /* If 'must_prefix_leaf_labels' is set and the node has a name and contains
        at least one other element, we append ':' to its name. */
-    if (has_name && parse_tree.length >= 2 && must_prefix_leaf_labels)
-        parse_tree[0] += ':';
+//    if (has_name && parse_tree.length >= 2 && must_prefix_leaf_labels) {
+//        parse_tree[0] += ':';
+//    }
     /* If the node is empty, we return null as a signal for deletion. */
     if (i == 0) return null;
     /* If the node contains only one element and we want to trim the node,
@@ -277,10 +285,13 @@ function process_parse_tree(
     else if (i == 1 && action != 'PASS') return parse_tree[0];
     /* If 'must_prefix_leaf_labels' is set and the node is a pair of string,
        we return the concatenation of both strings separated with a colon. */
-    else if (i == 2 && has_name && is_string(parse_tree[1])
-             && must_prefix_leaf_labels) {
-        return parse_tree[0] + parse_tree[1];
-    } else return parse_tree;
+    else if (must_prefix_leaf_labels && i == 2 && has_name
+             && is_string(parse_tree[1])) {
+        if (!parse_tree[1].includes(":"))
+            return parse_tree[0] + ':' + parse_tree[1];
+        else parse_tree[0] += ":";
+    }
+    return parse_tree;
 }
 
 // ========================================================================== //
