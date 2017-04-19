@@ -300,6 +300,8 @@ function boxClassForType(parse) {
     if (parse.type === "sumti x") {
         if (parse.sumtiPlace > 5) {
             return "box box-sumti6";
+        } else if (parse.sumtiPlace == "fai") {
+            return "box box-sumti-fai";
         } else {
             return "box box-sumti" + parse.sumtiPlace;
         }

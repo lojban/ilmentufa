@@ -334,5 +334,9 @@ function placeTagToPlace(tag) {
         return 4;
     } else if (tag.word === "fu") {
         return 5;
+    } else if (tag.word === "fai") {
+        return "fai";
+        /* Ilmen: Yeah that's an ugly lazy handling of "fai", but a cleaner 
+         * handling will require more work. */
     }
 }
