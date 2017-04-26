@@ -64,18 +64,20 @@ function camxes_postprocessing(input, mode) {
     /* Reading the options */
     if (is_number(mode)) mode = mode_from_number_code(mode);
     if (is_string(mode)) {
-        var with_spaces       = among('S', mode);
-        var with_morphology   = among('M', mode);
-        var with_terminators  = among('T', mode);
-        var with_trimming     = !among('R', mode);
-        var with_selmaho      = among('C', mode);
-        var with_nodes_labels = among('N', mode);
-        var with_json_format  = among('J', mode);
+        var with_spaces         = among('S', mode);
+        var with_morphology     = among('M', mode);
+        var with_terminators    = among('T', mode);
+        var with_trimming       = !among('R', mode);
+        var with_selmaho        = among('C', mode);
+        var with_nodes_labels   = among('N', mode);
+        var with_json_format    = among('J', mode);
+        var without_leaf_prefix = among('!', mode);
     } else throw "camxes_postprocessing(): Invalid mode argument type!";
     /* Calling the postprocessor */
     var output = newer_postprocessor(input, with_morphology, with_spaces,
                                      with_terminators, with_trimming,
-                                     with_selmaho, with_nodes_labels);
+                                     with_selmaho, with_nodes_labels,
+                                     without_leaf_prefix);
     if (output === null) output = [];
     /* Converting the parse tree into JSON format */
     output = JSON.stringify(output);
@@ -118,7 +120,8 @@ function newer_postprocessor(
     with_terminators,
     with_trimming,
     with_selmaho,
-    with_nodes_labels
+    with_nodes_labels,
+    without_leaf_prefix
 ) {
     if (!is_array(parse_tree)) return null;
     /* Building a map of node names to node value replacements */
@@ -171,7 +174,8 @@ function newer_postprocessor(
     /* Calling process_parse_tree() with the arguments we've built for it */
     return process_parse_tree(
         parse_tree, value_substitution_map, name_substitution_map,
-        node_action_for, with_nodes_labels || with_selmaho
+        node_action_for,
+        (with_nodes_labels || with_selmaho) && !without_leaf_prefix
     );
 }
 
