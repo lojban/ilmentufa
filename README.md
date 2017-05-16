@@ -12,8 +12,8 @@ It currently includes five main PEG formal grammars along with their correspondi
 * `camxes-exp.peg`: Experimental grammar sandbox.
 
 Main interfaces to the parsers:
-* `camxes.html`: HTML interfaces with various parsing options and allowing selecting the desired parser.
-* `glosser/glosser.htm`: Another HTML interfaces with different features, most prominently nested boxes output and glosses.
+* `camxes.html`: HTML interface with various parsing options and allowing selecting the desired parser.
+* `glosser/glosser.htm`: Another HTML interface with different features, most prominently nested boxes output and glosses.
 * `run_camxes.js`: Command line interface.
 * `ircbot/camxes-bot.js`: IRC bot interface.
 
