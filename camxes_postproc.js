@@ -19,6 +19,7 @@
  * The mode argument can be any letter string, each letter stands for a specific
  * option. Here is the list of possible letters and their associated meaning:
  *    'J' -> JSON output format
+ *    'I' -> Indented JSON output format
  *    'M' -> Keep morphology
  *    'S' -> Show spaces
  *    'T' -> Show terminators
@@ -72,6 +73,7 @@ function camxes_postprocessing(input, mode) {
         var with_selmaho        = among('C', mode);
         var with_nodes_labels   = among('N', mode);
         var with_json_format    = among('J', mode);
+        var with_indented_json  = among('I', mode);        
         var without_leaf_prefix = among('!', mode);
     } else throw "camxes_postprocessing(): Invalid mode argument type!";
     /* Calling the postprocessor */
@@ -81,8 +83,8 @@ function camxes_postprocessing(input, mode) {
                                      without_leaf_prefix);
     if (output === null) output = [];
     /* Converting the parse tree into JSON format */
-    output = JSON.stringify(output);
-    if (with_json_format) return output;
+    output = JSON.stringify(output, undefined, with_indented_json ? 2 : 0);
+    if (with_json_format || with_indented_json) return output;
     /* Getting rid of ⟨"⟩ and ⟨,⟩ characters */
     output = output.replace(/\"/gm, "");
     if (with_selmaho)
