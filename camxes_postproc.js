@@ -101,7 +101,8 @@ function mode_from_number_code(legacy_mode) {
     if (legacy_mode & 8) mode += 'S';
     if (legacy_mode & 16) mode += 'M';
     legacy_mode = legacy_mode % 8;
-    if (legacy_mode == 0) mode += 'J';
+    if (legacy_mode == 0) mode += 'I';
+    if (legacy_mode == 1) mode += 'J';
     if (legacy_mode <= 1) mode += 'R';
     if (legacy_mode > 2 && legacy_mode != 5) mode += 'C';
     if (legacy_mode == 4 || legacy_mode == 7) mode += 'N';
