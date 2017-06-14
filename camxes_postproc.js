@@ -18,6 +18,7 @@
  * 
  * The mode argument can be any letter string, each letter stands for a specific
  * option. Here is the list of possible letters and their associated meaning:
+ *    'J' -> JSON output format
  *    'M' -> Keep morphology
  *    'S' -> Show spaces
  *    'T' -> Show terminators
