@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A  syntactical and not yet semantical parser for the Lojban language",
   "dependencies": {
-    "pegjs": ">=0.7.0"
+    "pegjs": ">=0.7.0 <=0.8.0"
   },
   "repository": { 
     "type" : "git",
