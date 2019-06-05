@@ -30787,12 +30787,16 @@ var camxes = (function() {
         if (s4 === peg$FAILED) {
           s4 = peg$parsedigit();
         }
-        while (s4 !== peg$FAILED) {
-          s3.push(s4);
-          s4 = peg$parseany_syllable();
-          if (s4 === peg$FAILED) {
-            s4 = peg$parsedigit();
+        if (s4 !== peg$FAILED) {
+          while (s4 !== peg$FAILED) {
+            s3.push(s4);
+            s4 = peg$parseany_syllable();
+            if (s4 === peg$FAILED) {
+              s4 = peg$parsedigit();
+            }
           }
+        } else {
+          s3 = peg$c0;
         }
         if (s3 !== peg$FAILED) {
           s4 = peg$currPos;
@@ -60896,7 +60900,7 @@ var camxes = (function() {
 
       function _assign_zoi_delim(w) {
         if (is_array(w)) w = join_expr(w);
-        else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+        else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
         w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
         _g_zoi_delim = w;
         return;
@@ -60904,7 +60908,7 @@ var camxes = (function() {
 
       function _is_zoi_delim(w) {
         if (is_array(w)) w = join_expr(w);
-        else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+        else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
         /* Keeping spaces in the parse tree seems to result in the absorbtion of
            spaces into the closing delimiter candidate, so we'll remove any space
            character from our input. */

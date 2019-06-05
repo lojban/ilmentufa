@@ -138,7 +138,7 @@
 
   function _assign_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     _g_zoi_delim = w;
     return;
@@ -146,7 +146,7 @@
 
   function _is_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     /* Keeping spaces in the parse tree seems to result in the absorbtion of
        spaces into the closing delimiter candidate, so we'll remove any space
        character from our input. */
@@ -432,6 +432,7 @@ operand_2 = expr:(operand_3 (joik_ek stag? BO_clause free* operand_2)?) {return 
 operand_3 = expr:(quantifier / lerfu_string !MOI_clause BOI_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause free* sumti TEhU_elidible free* / JOhI_clause free* mex_2+ TEhU_elidible free* / gek operand gik operand_3 / (LAhE_clause free* / NAhE_clause BO_clause? free*) operand LUhU_elidible free*) {return _node("operand_3", expr);}
 
 // BETA: MEX simplification
+// FIXME: forethought mex not possible anymore without pe'o. BIhE_clause isn't referenced anymore.
 number = expr:((PA_clause / (NIhE_clause free* selbri TEhU_elidible free*) / (MOhE_clause free* sumti TEhU_elidible free*)) (PA_clause / (NIhE_clause free* selbri TEhU_elidible free*) / (MOhE_clause free* sumti TEhU_elidible free*))*) {return _node("number", expr);}
 
 lerfu_string = expr:(lerfu_word (PA_clause / lerfu_word)*) {return _node("lerfu_string", expr);}
@@ -1502,7 +1503,7 @@ cmevla = expr:(jbocme / zifcme) {return _node("cmevla", expr);}
 
 zifcme = expr:(!h (nucleus / glide / h / consonant !pause / digit)* consonant &pause) {return _node("zifcme", expr);}
 
-jbocme = expr:(&zifcme (any_syllable / digit)* &pause) {return _node("jbocme", expr);}
+jbocme = expr:(&zifcme (any_syllable / digit)+ &pause) {return _node("jbocme", expr);}
 
 //cmevla = !h cmevla_syllable* &consonant coda? consonantal_syllable* onset &pause
 

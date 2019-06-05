@@ -362,8 +362,7 @@ tag <- tense_modal (joik_jek tense_modal)*
 stag <- tense_modal (joik_jek tense_modal)*
 
 #// EXP-MODIF: MEX simplification
-tense_modal <- ((NAhE_clause? SE_clause?
-(BAI_clause / CAhA_clause / CUhE_clause / KI_clause / ZI_clause / PU_clause / VA_clause / MOhI_clause? FAhA_clause / ZEhA_clause / VEhA_clause / VIhA_clause / FEhE_clause? ( VEI_clause mex VEhO_elidible / number ) ROI_clause / FEhE_clause? TAhE_clause / FEhE_clause? ZAhO_clause / FIhO_clause free* selbri FEhU_elidible / FA_clause) free*)+)
+tense_modal <- ((NAhE_clause? SE_clause? (BAI_clause / CAhA_clause / CUhE_clause / KI_clause / ZI_clause / PU_clause / VA_clause / MOhI_clause? FAhA_clause / ZEhA_clause / VEhA_clause / VIhA_clause / FEhE_clause? ( VEI_clause mex VEhO_elidible / number ) ROI_clause / FEhE_clause? TAhE_clause / FEhE_clause? ZAhO_clause / FIhO_clause free* selbri FEhU_elidible / FA_clause) free*)+)
 
 #// EXP-MODIF: brivla/cmevla merge; MEX simplification
 # EXP-MODIF: attempt to formalize lo'ai..sa'ai..le'ai replacement expressions
@@ -1369,7 +1368,7 @@ cmevla <- jbocme / zifcme
 
 zifcme <- !h (nucleus / glide / h / consonant !pause / digit)* consonant &pause
 
-jbocme <- &zifcme (any_syllable / digit)* &pause
+jbocme <- &zifcme (any_syllable / digit)+ &pause
 
 #cmevla = !h cmevla_syllable* &consonant coda? consonantal_syllable* onset &pause
 

@@ -138,7 +138,7 @@
 
   function _assign_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     _g_zoi_delim = w;
     return;
@@ -146,7 +146,7 @@
 
   function _is_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     /* Keeping spaces in the parse tree seems to result in the absorbtion of
        spaces into the closing delimiter candidate, so we'll remove any space
        character from our input. */
@@ -1421,7 +1421,7 @@ cmevla = expr:(jbocme / zifcme) {return _node("cmevla", expr);}
 
 zifcme = expr:(!h (nucleus / glide / h / consonant !pause / digit)* consonant &pause) {return _node("zifcme", expr);}
 
-jbocme = expr:(&zifcme (any_syllable / digit)* &pause) {return _node("jbocme", expr);}
+jbocme = expr:(&zifcme (any_syllable / digit)+ &pause) {return _node("jbocme", expr);}
 
 //cmevla = !h cmevla_syllable* &consonant coda? consonantal_syllable* onset &pause
 

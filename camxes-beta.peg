@@ -1381,7 +1381,7 @@ cmevla <- jbocme / zifcme
 
 zifcme <- !h (nucleus / glide / h / consonant !pause / digit)* consonant &pause
 
-jbocme <- &zifcme (any_syllable / digit)* &pause
+jbocme <- &zifcme (any_syllable / digit)+ &pause
 
 #cmevla = !h cmevla_syllable* &consonant coda? consonantal_syllable* onset &pause
 

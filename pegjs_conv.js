@@ -418,7 +418,7 @@ function js_initializer() {
 
   function _assign_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     _g_zoi_delim = w;
     return;
@@ -426,7 +426,7 @@ function js_initializer() {
 
   function _is_zoi_delim(w) {
     if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type" + typeof w;
+    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
     /* Keeping spaces in the parse tree seems to result in the absorbtion of
        spaces into the closing delimiter candidate, so we'll remove any space
        character from our input. */

@@ -22,11 +22,11 @@ try {
 	throw e;
 }
 var fd = fs.openSync(dst, 'w+');
-var buffer = new Buffer('var camxes = ');
+var buffer = new Buffer.from('var camxes = ');
 fs.writeSync(fd, buffer, 0, buffer.length);
-buffer = new Buffer(camxes);
+buffer = new Buffer.from(camxes);
 fs.writeSync(fd, buffer, 0, buffer.length);
-buffer = new Buffer(`
+buffer = new Buffer.from(`
 
 if (typeof module !== 'undefined') {
     module.exports = camxes;
@@ -39,7 +39,7 @@ if (typeof module !== 'undefined') {
 
 `);
 fs.writeSync(fd, buffer, 0, buffer.length);
-fs.close(fd);
+fs.closeSync(fd);
 var diff_t = process.hrtime(start_t);
 console.log(`Duration: ${diff_t[0] + diff_t[1] / 1e9} seconds`);
 
