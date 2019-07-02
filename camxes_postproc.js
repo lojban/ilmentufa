@@ -28,6 +28,7 @@
  *           all the nodes (with the exception of those saved if the 'N' option
  *           is set) are pruned from the tree.
  *    'N' -> Show main node labels
+ *    'G' -> Show glosses instead of Lojban
  */
 
 /*
@@ -49,6 +50,7 @@
  *   -- is_number(v)
  */
 
+var glosser = require('./glosser/gismudata.js')
 
 if (typeof alert !== 'function')
     alert = console.log; // For Node.js
@@ -75,12 +77,13 @@ function camxes_postprocessing(input, mode) {
         var with_json_format    = among('J', mode);
         var with_indented_json  = among('I', mode);        
         var without_leaf_prefix = among('!', mode);
+        var with_glossing       = among('G', mode);
     } else throw "camxes_postprocessing(): Invalid mode argument type!";
     /* Calling the postprocessor */
     var output = newer_postprocessor(input, with_morphology, with_spaces,
                                      with_terminators, with_trimming,
                                      with_selmaho, with_nodes_labels,
-                                     without_leaf_prefix);
+                                     without_leaf_prefix, with_glossing);
     if (output === null) output = [];
     /* Converting the parse tree into JSON format */
     output = JSON.stringify(output, undefined, with_indented_json ? 2 : 0);
@@ -125,7 +128,8 @@ function newer_postprocessor(
     with_trimming,
     with_selmaho,
     with_nodes_labels,
-    without_leaf_prefix
+    without_leaf_prefix,
+    with_glossing
 ) {
     if (!is_array(parse_tree)) return null;
     /* Building a map of node names to node value replacements */
@@ -179,7 +183,8 @@ function newer_postprocessor(
     return process_parse_tree(
         parse_tree, value_substitution_map, name_substitution_map,
         node_action_for,
-        (with_nodes_labels || with_selmaho) && !without_leaf_prefix
+        (with_nodes_labels || with_selmaho) && !without_leaf_prefix,
+        with_glossing
     );
 }
 
@@ -218,7 +223,8 @@ function process_parse_tree(
     value_substitution_map,
     name_substitution_map,
     node_action_for,
-    must_prefix_leaf_labels
+    must_prefix_leaf_labels,
+    with_glossing
 ) {
     if (parse_tree.length == 0) return null;
     var action = node_action_for(parse_tree);
@@ -270,7 +276,8 @@ function process_parse_tree(
                 value_substitution_map,
                 name_substitution_map,
                 node_action_for,
-                must_prefix_leaf_labels
+                must_prefix_leaf_labels,
+                with_glossing
             );
         }
         /* The recursion call on the current element might have set it to null
@@ -290,7 +297,12 @@ function process_parse_tree(
     if (i == 0) return null;
     /* If the node contains only one element and we want to trim the node,
        it gets replaced by its content. */ 
-    else if (i == 1 && action != 'PASS') return parse_tree[0];
+    else if (i == 1 && action != 'PASS') {
+      if (with_glossing && glosser.shortDescriptions[parse_tree[0]]) {
+        parse_tree[0] = "'" + glosser.shortDescriptions[parse_tree[0]] + "'"
+      }
+      return parse_tree[0];
+    }
     /* If 'must_prefix_leaf_labels' is set and the node is a pair of string,
        we return the concatenation of both strings separated with a colon. */
     else if (must_prefix_leaf_labels && i == 2 && has_name

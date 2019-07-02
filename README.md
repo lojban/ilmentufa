@@ -80,6 +80,7 @@ Here is the list of possible letters and their associated meaning:
 * N -> Show main node labels
 * R -> Raw output, do not prune the tree, except the morphology if 'M' not present.
 * J -> JSON output
+* G -> Replace words by glosses
 
 Example:
 ```

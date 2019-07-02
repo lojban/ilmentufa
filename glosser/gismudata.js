@@ -1813,3 +1813,5 @@ shortDescriptions["zunle"] = "left"
 shortDescriptions["zunti"] = "to interfere"
 shortDescriptions["zutse"] = "to sit"
 shortDescriptions["zvati"] = "at"
+
+module.exports.shortDescriptions = shortDescriptions
