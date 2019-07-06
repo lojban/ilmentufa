@@ -81,6 +81,7 @@ Here is the list of possible letters and their associated meaning:
 * R -> Raw output, do not prune the tree, except the morphology if 'M' not present.
 * J -> JSON output
 * G -> Replace words by glosses
+* L -> Run the parser in a loop, consume every input line terminated by a newline and output parsed result
 
 Example:
 ```

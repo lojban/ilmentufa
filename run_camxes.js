@@ -24,6 +24,7 @@
  *           all the nodes (with the exception of those saved if the 'N' option
  *           is set) are pruned from the tree.
  *    'N' -> Show main node labels
+ *    'L' -> Loop
  * Example:
  *    -m CTN
  *    This will show terminators, selmaho and main node labels.
@@ -78,8 +79,35 @@ try {
     process.stdout.write(err.toString() + '\n');
     process.exit();
 }
-process.stdout.write(run_camxes(text, mode, engine) + '\n');
-process.exit();
+var mode_loop = among('L', mode);
+if (mode_loop) {
+    process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    run_camxes_loop(mode, engine);
+} else {
+    process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    process.exit();
+}
+
+// ================================ //
+
+async function run_camxes_loop(mode, engine) {
+    const readline = require('readline')
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: ''
+    });
+    rl.prompt();
+
+    rl.on('line', (line) => {
+        ret = run_camxes(line, mode, engine);
+        process.stdout.write(run_camxes(line, mode, engine)+ "\n");
+        rl.prompt();
+    }).on('close', () => {
+        process.stdout.write("co'o\n");
+        process.exit();
+    });
+}
 
 // ================================ //
 
@@ -99,5 +127,13 @@ function run_camxes(input, mode, engine) {
             result = camxes_postproc.postprocessing(result, mode);
         return result;
     }
+}
+
+// Copied from camxes_postproc
+
+function among(v, s) {
+    var i = 0;
+    while (i < s.length) if (s[i++] == v) return true;
+    return false;
 }
 
