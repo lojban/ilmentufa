@@ -24,6 +24,7 @@
  *           all the nodes (with the exception of those saved if the 'N' option
  *           is set) are pruned from the tree.
  *    'N' -> Show main node labels
+ *    'L' -> Loop. Second 'L' for specifying the mode in the first word.
  * Example:
  *    -m CTN
  *    This will show terminators, selmaho and main node labels.
@@ -78,8 +79,43 @@ try {
     process.stdout.write(err.toString() + '\n');
     process.exit();
 }
-process.stdout.write(run_camxes(text, mode, engine) + '\n');
-process.exit();
+var mode_loop = among_count('L', mode);
+if (mode_loop) {
+    mode = mode.replace('L','');
+    if (text != "") {
+        process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    }
+    run_camxes_loop(mode, engine);
+} else {
+    process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    process.exit();
+}
+
+// ================================ //
+
+async function run_camxes_loop(mode, engine) {
+    const mode_reset = among_count('L', mode);
+    const readline = require('readline')
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: '> '
+    });
+    rl.prompt();
+
+    rl.on('line', (line) => {
+        if (mode_reset) {
+            mode = line.substr(0, line.indexOf(' '));
+            line = line.substr(line.indexOf(' ') + 1);
+        }
+        ret = run_camxes(line, mode, engine);
+        process.stdout.write(run_camxes(line, mode, engine)+ '\n');
+        rl.prompt();
+    }).on('close', () => {
+        process.stdout.write("\nco'o\n");
+        process.exit();
+    });
+}
 
 // ================================ //
 
@@ -99,5 +135,15 @@ function run_camxes(input, mode, engine) {
             result = camxes_postproc.postprocessing(result, mode);
         return result;
     }
+}
+
+
+function among_count(v, s) {
+    var i = 0;
+    var ret = 0;
+    while (i < s.length) {
+        if (s[i++] == v) ret = ret + 1;
+    }
+    return ret;
 }
 

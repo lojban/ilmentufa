@@ -80,6 +80,9 @@ Here is the list of possible letters and their associated meaning:
 * N -> Show main node labels
 * R -> Raw output, do not prune the tree, except the morphology if 'M' not present.
 * J -> JSON output
+* G -> Replace words by glosses
+* L -> Run the parser in a loop, consume every input line terminated by a newline and output parsed result
+* L -> A second 'L' means that run_camxes will expect every input line to begin with a mode string (possibly empty) followed by a space, after which the actual input follows.
 
 Example:
 ```
