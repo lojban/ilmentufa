@@ -24,7 +24,7 @@
  *           all the nodes (with the exception of those saved if the 'N' option
  *           is set) are pruned from the tree.
  *    'N' -> Show main node labels
- *    'L' -> Loop
+ *    'L' -> Loop. Second 'L' for specifying the mode in the first word.
  * Example:
  *    -m CTN
  *    This will show terminators, selmaho and main node labels.
@@ -79,9 +79,12 @@ try {
     process.stdout.write(err.toString() + '\n');
     process.exit();
 }
-var mode_loop = among('L', mode);
+var mode_loop = among_count('L', mode);
 if (mode_loop) {
-    process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    mode = mode.replace('L','');
+    if (text != "") {
+        process.stdout.write(run_camxes(text, mode, engine) + '\n');
+    }
     run_camxes_loop(mode, engine);
 } else {
     process.stdout.write(run_camxes(text, mode, engine) + '\n');
@@ -91,6 +94,7 @@ if (mode_loop) {
 // ================================ //
 
 async function run_camxes_loop(mode, engine) {
+    const mode_reset = among_count('L', mode);
     const readline = require('readline')
     const rl = readline.createInterface({
         input: process.stdin,
@@ -100,11 +104,15 @@ async function run_camxes_loop(mode, engine) {
     rl.prompt();
 
     rl.on('line', (line) => {
+        if (mode_reset) {
+            mode = line.substr(0, line.indexOf(' '));
+            line = line.substr(line.indexOf(' ') + 1);
+        }
         ret = run_camxes(line, mode, engine);
         process.stdout.write(run_camxes(line, mode, engine)+ '\n');
         rl.prompt();
     }).on('close', () => {
-        process.stdout.write("co'o\n");
+        process.stdout.write("\nco'o\n");
         process.exit();
     });
 }
@@ -129,11 +137,13 @@ function run_camxes(input, mode, engine) {
     }
 }
 
-// Copied from camxes_postproc
 
-function among(v, s) {
+function among_count(v, s) {
     var i = 0;
-    while (i < s.length) if (s[i++] == v) return true;
-    return false;
+    var ret = 0;
+    while (i < s.length) {
+        if (s[i++] == v) ret = ret + 1;
+    }
+    return ret;
 }
 
