@@ -95,13 +95,13 @@ async function run_camxes_loop(mode, engine) {
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: ''
+        prompt: '> '
     });
     rl.prompt();
 
     rl.on('line', (line) => {
         ret = run_camxes(line, mode, engine);
-        process.stdout.write(run_camxes(line, mode, engine)+ "\n");
+        process.stdout.write(run_camxes(line, mode, engine)+ '\n');
         rl.prompt();
     }).on('close', () => {
         process.stdout.write("co'o\n");
