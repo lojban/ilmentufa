@@ -37,6 +37,8 @@ nodejs pegjs_conv camxes.peg
 nodejs build-camxes camxes.pegjs
 ```
 
+(In some installations, the keyword ``nodejs`` doesn't work and should be replaced with ``node`` instead in the above commands.)
+
 The first command (with `pegjs_conv`) converts the pure PEG grammar file (`*.peg`) to PEGJS format, creating or updating the file `camxes.pegjs` in this example.
 The second command (with `build-camxes`) creates or updates the corresponding parser engine, `camxes.js` in this case.
 
