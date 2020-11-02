@@ -184,7 +184,7 @@ faho_clause = expr:((FAhO_clause dot_star)?) {return _node("faho_clause", expr);
 // Please note that the "text_1" item in the text_1 production does
 // *not* match the BNF. This is due to a bug in the BNF.  The change
 // here was made to match grammar.300
-text_1 = expr:((((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs) {return _node("text_1", expr);}
+text_1 = expr:((((jek / joik)? (stag? BO_clause)? I_clause) / (I_clause (jek / joik)? (stag? BO_clause)?)) free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs) {return _node("text_1", expr);}
 
 paragraphs = expr:(paragraph? (NIhO_clause+ free* su_clause* paragraphs)?) {return _node("paragraphs", expr);}
 
@@ -194,7 +194,7 @@ statement = expr:(statement_1 / prenex statement) {return _node("statement", exp
 
 statement_1 = expr:(statement_2 (((joik_jek I_clause) / (I_clause joik_jek)) statement_2?)*) {return _node("statement_1", expr);}
 
-statement_2 = expr:(statement_3 ((((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free* statement_2)? / statement_3 ((((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free*)?) {return _node("statement_2", expr);}
+statement_2 = expr:(statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free* statement_2)? / statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free*)?) {return _node("statement_2", expr);}
 
 statement_3 = expr:(sentence / tag? TUhE_clause free* text_1 TUhU_elidible free*) {return _node("statement_3", expr);}
 
@@ -881,14 +881,14 @@ GUhA_post = expr:(post_clause) {return _node("GUhA_post", expr);}
 
 //         sentence link
 I_clause = expr:(sentence_sa* I_pre I_post) {return _node("I_clause", expr);}
-I_pre = expr:(pre_clause I (stag? BO_clause)? spaces?) {return _node("I_pre", expr);}
+I_pre = expr:(pre_clause I spaces?) {return _node("I_pre", expr);}
 I_post = expr:(post_clause) {return _node("I_post", expr);}
 // I_no_SA_handling = pre_clause I post_clause
 
 
 //         jeks; logical connectives within tanru
 JA_clause = expr:(JA_pre JA_post) {return _node("JA_clause", expr);}
-JA_pre = expr:(pre_clause JA (stag? BO_clause)? spaces?) {return _node("JA_pre", expr);}
+JA_pre = expr:(pre_clause JA spaces?) {return _node("JA_pre", expr);}
 JA_post = expr:(post_clause) {return _node("JA_post", expr);}
 // JA_no_SA_handling = pre_clause JA post_clause
 
@@ -906,7 +906,7 @@ JOhI_post = expr:(post_clause) {return _node("JOhI_post", expr);}
 
 //         non_logical connectives
 JOI_clause = expr:(JOI_pre JOI_post) {return _node("JOI_clause", expr);}
-JOI_pre = expr:(pre_clause JOI (stag? BO_clause)? spaces?) {return _node("JOI_pre", expr);}
+JOI_pre = expr:(pre_clause JOI spaces?) {return _node("JOI_pre", expr);}
 JOI_post = expr:(post_clause) {return _node("JOI_post", expr);}
 // JOI_no_SA_handling = pre_clause JOI post_clause
 

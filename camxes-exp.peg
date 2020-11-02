@@ -55,7 +55,7 @@ faho_clause <- (FAhO_clause dot_star)?
 # Please note that the "text_1" item in the text_1 production does
 # *not* match the BNF. This is due to a bug in the BNF.  The change
 # here was made to match grammar.300
-text_1 <- (((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs
+text_1 <- (((jek / joik)? (stag? BO_clause)? I_clause) / (I_clause (jek / joik)? (stag? BO_clause)?)) free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs
 
 paragraphs <- paragraph? (NIhO_clause+ free* su_clause* paragraphs)?
 
@@ -65,7 +65,7 @@ statement <- statement_1 / prenex statement
 
 statement_1 <- statement_2 (((joik_jek I_clause) / (I_clause joik_jek)) statement_2?)*
 
-statement_2 <- statement_3 ((((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free* statement_2)? / statement_3 ((((jek / joik)? I_clause) / (I_clause (jek / joik)?)) free*)?
+statement_2 <- statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free* statement_2)? / statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free*)?
 
 statement_3 <- sentence / tag? TUhE_clause free* text_1 TUhU_elidible free*
 
@@ -752,14 +752,14 @@ GUhA_post <- post_clause
 
 #         sentence link
 I_clause <- sentence_sa* I_pre I_post
-I_pre <- pre_clause I (stag? BO_clause)? spaces?
+I_pre <- pre_clause I spaces?
 I_post <- post_clause
 # I_no_SA_handling = pre_clause I post_clause
 
 
 #         jeks; logical connectives within tanru
 JA_clause <- JA_pre JA_post
-JA_pre <- pre_clause JA (stag? BO_clause)? spaces?
+JA_pre <- pre_clause JA spaces?
 JA_post <- post_clause
 # JA_no_SA_handling = pre_clause JA post_clause
 
@@ -777,7 +777,7 @@ JOhI_post <- post_clause
 
 #         non_logical connectives
 JOI_clause <- JOI_pre JOI_post
-JOI_pre <- pre_clause JOI (stag? BO_clause)? spaces?
+JOI_pre <- pre_clause JOI spaces?
 JOI_post <- post_clause
 # JOI_no_SA_handling = pre_clause JOI post_clause
 
