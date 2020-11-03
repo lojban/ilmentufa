@@ -6655,7 +6655,7 @@ var camxes = (function() {
     }
 
     function peg$parsesumti_6() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8;
+      var s0, s1, s2, s3, s4, s5, s6, s7;
 
       var key    = peg$currPos * 805 + 50,
           cached = peg$cache[key];
@@ -6980,37 +6980,28 @@ var camxes = (function() {
                     }
                     if (s1 === peg$FAILED) {
                       s1 = peg$currPos;
-                      s2 = peg$parsetag();
-                      if (s2 === peg$FAILED) {
-                        s2 = peg$c2;
-                      }
+                      s2 = peg$parseLE_clause();
                       if (s2 !== peg$FAILED) {
-                        s3 = peg$parseLE_clause();
+                        s3 = [];
+                        s4 = peg$parsefree();
+                        while (s4 !== peg$FAILED) {
+                          s3.push(s4);
+                          s4 = peg$parsefree();
+                        }
                         if (s3 !== peg$FAILED) {
-                          s4 = [];
-                          s5 = peg$parsefree();
-                          while (s5 !== peg$FAILED) {
-                            s4.push(s5);
-                            s5 = peg$parsefree();
-                          }
+                          s4 = peg$parsesumti_tail();
                           if (s4 !== peg$FAILED) {
-                            s5 = peg$parsesumti_tail();
+                            s5 = peg$parseKU_elidible();
                             if (s5 !== peg$FAILED) {
-                              s6 = peg$parseKU_elidible();
+                              s6 = [];
+                              s7 = peg$parsefree();
+                              while (s7 !== peg$FAILED) {
+                                s6.push(s7);
+                                s7 = peg$parsefree();
+                              }
                               if (s6 !== peg$FAILED) {
-                                s7 = [];
-                                s8 = peg$parsefree();
-                                while (s8 !== peg$FAILED) {
-                                  s7.push(s8);
-                                  s8 = peg$parsefree();
-                                }
-                                if (s7 !== peg$FAILED) {
-                                  s2 = [s2, s3, s4, s5, s6, s7];
-                                  s1 = s2;
-                                } else {
-                                  peg$currPos = s1;
-                                  s1 = peg$c0;
-                                }
+                                s2 = [s2, s3, s4, s5, s6];
+                                s1 = s2;
                               } else {
                                 peg$currPos = s1;
                                 s1 = peg$c0;
