@@ -417,5 +417,10 @@ if (typeof module !== 'undefined') {
     module.exports.postprocess = camxes_postprocessing;  // Alias
     module.exports.process_parse_tree = process_parse_tree;
     module.exports.prettify_brackets = prettify_brackets;
+    if (typeof process !== 'undefined' && require !== 'undefined' && require.main === module) {
+      var fs = require('fs');
+      var input = process.argv.length > 2 ? process.argv[2] : fs.readFileSync(0, 'utf-8');
+      console.log(camxes_postprocessing(input, 'T'));
+    }
 }
 

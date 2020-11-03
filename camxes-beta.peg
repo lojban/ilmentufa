@@ -142,7 +142,9 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 term <- term_sa* term_1
 
 # BEGIN BETA: TERM JA TERM
-term_1 <- term_2 (joik_ek term_2)*
+term_1 <- term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*
+
+tag_bo_ke_bridi_tail <- stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)
 
 term_2 <- term_3 (joik_ek? stag? BO_clause term_3)*
 
@@ -152,7 +154,7 @@ tag_term <- !gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidible fre
 
 nonabs_term <- term_sa* nonabs_term_1
 
-nonabs_term_1 <- nonabs_term_2 (joik_ek term_2)*
+nonabs_term_1 <- nonabs_term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*
 
 nonabs_term_2 <- nonabs_term_3 (joik_ek? stag? BO_clause term_3)*
 

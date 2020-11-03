@@ -223,17 +223,17 @@ sentence_start = expr:(I_pre / NIhO_pre) {return _node("sentence_start", expr);}
 subsentence = expr:(sentence / prenex subsentence) {return _node("subsentence", expr);}
 
 //// EXP-MODIF: GI TAG BO + JACU
-bridi_tail = expr:(bridi_tail_1 (((gihek / JA_clause) stag? / GI_clause stag) KE_clause free* bridi_tail KEhE_elidible free* tail_terms)?) {return _node("bridi_tail", expr);}
+bridi_tail = expr:(bridi_tail_1 ((gihek stag? / GI_clause stag) KE_clause free* bridi_tail KEhE_elidible free* tail_terms)?) {return _node("bridi_tail", expr);}
 
 bridi_tail_sa = expr:(bridi_tail_start (term / !bridi_tail_start (sa_word / SA_clause !bridi_tail_start ) )* SA_clause &bridi_tail) {return _node("bridi_tail_sa", expr);}
 
 bridi_tail_start = expr:(ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail) {return _node("bridi_tail_start", expr);}
 
 //// EXP-MODIF: JACU
-bridi_tail_1 = expr:(bridi_tail_2 ((gihek / JA_clause) !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*) {return _node("bridi_tail_1", expr);}
+bridi_tail_1 = expr:(bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*) {return _node("bridi_tail_1", expr);}
 
 //// EXP-MODIF: GI TAG BO + JACU
-bridi_tail_2 = expr:(CU_elidible free* bridi_tail_3 (((gihek / JA_clause) stag? / GI_clause stag) BO_clause free* bridi_tail_2 tail_terms)?) {return _node("bridi_tail_2", expr);}
+bridi_tail_2 = expr:(CU_elidible free* bridi_tail_3 ((gihek stag? / GI_clause stag) BO_clause free* bridi_tail_2 tail_terms)?) {return _node("bridi_tail_2", expr);}
 
 bridi_tail_3 = expr:((terms CU_elidible)* selbri tail_terms / gek_sentence) {return _node("bridi_tail_3", expr);}
 
@@ -262,18 +262,29 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 // /*** EXP-MODIF: Handling of term absorbtion as selbri tcita + allowing TAG SUMTI JA TAG SUMTI + SOI clause ***/
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-term_1 = expr:(sumti / tag_term / termset) {return _node("term_1", expr);}
+term_1 = expr:(term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*) {return _node("term_1", expr);}
+
+tag_bo_ke_bridi_tail = expr:(stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)) {return _node("tag_bo_ke_bridi_tail", expr);}
+
+// To be consistent with the lack of ke-termsets, unlike in camxes-beta, joik_ek is not optional
+term_2 = expr:(term_3 (joik_ek stag? BO_clause term_3)*) {return _node("term_2", expr);}
+
+term_3 = expr:(sumti / tag_term / termset) {return _node("term_3", expr);}
 
 //// EXP-MODIF: NA without KU as a term; free* within NAKU
 // FIXME: The first "!gek" below results in "ge mi ba gi do pu" being ungrammatical.
-tag_term = expr:((!gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !gek !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) (joik_jek tag_term)*) {return _node("tag_term", expr);}
+tag_term = expr:(!gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !gek !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("tag_term", expr);}
 
 abs_term = expr:(term_sa* abs_term_1) {return _node("abs_term", expr);}
 
-abs_term_1 = expr:(sumti / abs_tag_term / termset) {return _node("abs_term_1", expr);}
+abs_term_1 = expr:(abs_term_2 (joik_ek !tag_bo_ke_bridi_tail abs_term_2)*) {return _node("abs_term_1", expr);}
+
+abs_term_2 = expr:(abs_term_3 (joik_ek stag BO_clause abs_term_3)*) {return _node("abs_term_2", expr);}
+
+abs_term_3 = expr:(sumti / abs_tag_term / termset) {return _node("abs_term_3", expr);}
 
 //// EXP-MODIF: NA without KU as a term; free* within NAKU
-abs_tag_term = expr:((!gek tag free* !selbri !gek_sentence (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !selbri !gek_sentence !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) (joik_jek abs_tag_term)*) {return _node("abs_tag_term", expr);}
+abs_tag_term = expr:(!gek tag free* !selbri !gek_sentence (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !selbri !gek_sentence !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) {return _node("abs_tag_term", expr);}
 // /*** END EXP-MODIF ***/
 
 term_sa = expr:(term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1) {return _node("term_sa", expr);}
