@@ -184,7 +184,7 @@ faho_clause = expr:((FAhO_clause dot_star)?) {return _node("faho_clause", expr);
 // Please note that the "text_1" item in the text_1 production does
 // *not* match the BNF. This is due to a bug in the BNF.  The change
 // here was made to match grammar.300
-text_1 = expr:((((jek / joik)? (stag? BO_clause)? I_clause) / (I_clause (jek / joik)? (stag? BO_clause)?)) free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs) {return _node("text_1", expr);}
+text_1 = expr:(I_clause (jek / joik)? (stag? BO_clause)? free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs) {return _node("text_1", expr);}
 
 paragraphs = expr:(paragraph? (NIhO_clause+ free* su_clause* paragraphs)?) {return _node("paragraphs", expr);}
 
@@ -192,9 +192,9 @@ paragraph = expr:((statement / fragment) (I_clause !jek !joik !joik_jek free* (s
 
 statement = expr:(statement_1 / prenex statement) {return _node("statement", expr);}
 
-statement_1 = expr:(statement_2 (((joik_jek I_clause) / (I_clause joik_jek)) statement_2?)*) {return _node("statement_1", expr);}
+statement_1 = expr:(statement_2 (I_clause joik_jek statement_2?)*) {return _node("statement_1", expr);}
 
-statement_2 = expr:(statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free* statement_2)? / statement_3 ((((jek / joik)? stag? BO_clause I_clause) / (I_clause (jek / joik)? stag? BO_clause)) free*)?) {return _node("statement_2", expr);}
+statement_2 = expr:(statement_3 (I_clause (jek / joik)? stag? BO_clause free* statement_2?)?) {return _node("statement_2", expr);}
 
 statement_3 = expr:(sentence / tag? TUhE_clause free* text_1 TUhU_elidible free*) {return _node("statement_3", expr);}
 
@@ -207,7 +207,7 @@ prenex = expr:(terms? ZOhU_clause free*) {return _node("prenex", expr);}
 //; sentence = (terms CU_clause? free*)? bridi_tail / bridi_tail
 
 // EXP-MODIF: JACU
-sentence = expr:(terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)*) {return _node("sentence", expr);}
+sentence = expr:(terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)* (joik_jek I_clause free* subsentence)*) {return _node("sentence", expr);}
 // sentence = expr:(((terms bridi_tail_sa*)? CU_elidible free*)? bridi_tail_sa* bridi_tail) {return _node("sentence", expr);}
 
 // JACU
