@@ -94,17 +94,17 @@ sentence_start <- I_pre / NIhO_pre
 subsentence <- sentence / prenex subsentence
 
 #// EXP-MODIF: GI TAG BO + JACU
-bridi_tail <- bridi_tail_1 (((gihek / JA_clause) stag? / GI_clause stag) KE_clause free* bridi_tail KEhE_elidible free* tail_terms)?
+bridi_tail <- bridi_tail_1 ((gihek stag? / GI_clause stag) KE_clause free* bridi_tail KEhE_elidible free* tail_terms)?
 
 bridi_tail_sa <- bridi_tail_start (term / !bridi_tail_start (sa_word / SA_clause !bridi_tail_start ) )* SA_clause &bridi_tail
 
 bridi_tail_start <- ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail
 
 #// EXP-MODIF: JACU
-bridi_tail_1 <- bridi_tail_2 ((gihek / JA_clause) !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*
+bridi_tail_1 <- bridi_tail_2 (gihek !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*
 
 #// EXP-MODIF: GI TAG BO + JACU
-bridi_tail_2 <- CU_elidible free* bridi_tail_3 (((gihek / JA_clause) stag? / GI_clause stag) BO_clause free* bridi_tail_2 tail_terms)?
+bridi_tail_2 <- CU_elidible free* bridi_tail_3 ((gihek stag? / GI_clause stag) BO_clause free* bridi_tail_2 tail_terms)?
 
 bridi_tail_3 <- (terms CU_elidible)* selbri tail_terms / gek_sentence
 
@@ -133,18 +133,29 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 # /*** EXP-MODIF: Handling of term absorbtion as selbri tcita + allowing TAG SUMTI JA TAG SUMTI + SOI clause ***/
 term <- term_sa* term_1
 
-term_1 <- sumti / tag_term / termset
+term_1 <- term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*
+
+tag_bo_ke_bridi_tail <- stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)
+
+# To be consistent with the lack of ke-termsets, unlike in camxes-beta, joik_ek is not optional
+term_2 <- term_3 (joik_ek stag? BO_clause term_3)*
+
+term_3 <- sumti / tag_term / termset
 
 #// EXP-MODIF: NA without KU as a term; free* within NAKU
 # FIXME: The first "!gek" below results in "ge mi ba gi do pu" being ungrammatical.
-tag_term <- (!gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !gek !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) (joik_jek tag_term)*
+tag_term <- !gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !gek !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*
 
 abs_term <- term_sa* abs_term_1
 
-abs_term_1 <- sumti / abs_tag_term / termset
+abs_term_1 <- abs_term_2 (joik_ek !tag_bo_ke_bridi_tail abs_term_2)*
+
+abs_term_2 <- abs_term_3 (joik_ek stag BO_clause abs_term_3)*
+
+abs_term_3 <- sumti / abs_tag_term / termset
 
 #// EXP-MODIF: NA without KU as a term; free* within NAKU
-abs_tag_term <- (!gek tag free* !selbri !gek_sentence (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !selbri !gek_sentence !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*) (joik_jek abs_tag_term)*
+abs_tag_term <- !gek tag free* !selbri !gek_sentence (sumti / KU_elidible free*) / NA_clause free* KU_clause free* / !selbri !gek_sentence !ek !joik_jek !gihek NA_clause free* KU_elidible free* / SOI_clause free* subsentence SEhU_elidible free*
 # /*** END EXP-MODIF ***/
 
 term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clause &term_1
