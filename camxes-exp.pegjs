@@ -1923,7 +1923,7 @@ NIhO = expr:(&cmavo ( n i h o / n o h i ) &post_word) {return _node("NIhO", expr
 NOI = expr:(&cmavo ( v o i / n o i / p o i ) &post_word) {return _node("NOI", expr);}
 
 //// EXP-ADD: poi'i, kai'u
-NU = expr:(&cmavo (p o i h i / k a i h u / n i / d u h u / s i h o / n u / l i h i / k a / j e i / s u h u / z u h o / m u h e / p u h u / z a h i ) &post_word) {return _node("NU", expr);}
+NU = expr:(&cmavo ( x e h e i / p o i h i / k a i h u / n i / d u h u / s i h o / n u / l i h i / k a / j e i / s u h u / z u h o / m u h e / p u h u / z a h i ) &post_word) {return _node("NU", expr);}
 
 NUhA = expr:(&cmavo ( n u h a ) &post_word) {return _node("NUhA", expr);}
 
