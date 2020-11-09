@@ -78,7 +78,7 @@ prenex <- terms? ZOhU_clause free*
 #; sentence = (terms CU_clause? free*)? bridi_tail / bridi_tail
 
 # EXP-MODIF: JACU
-sentence <- terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)* (joik_jek I_clause free* subsentence)*
+sentence <- terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)* (joik_jek (stag? BO_clause)? I_clause free* subsentence)*
 # sentence = expr:(((terms bridi_tail_sa*)? CU_elidible free*)? bridi_tail_sa* bridi_tail) {return _node("sentence", expr);}
 
 # JACU
@@ -133,9 +133,11 @@ cehe_sa <- CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* SA_cla
 # /*** EXP-MODIF: Handling of term absorbtion as selbri tcita + allowing TAG SUMTI JA TAG SUMTI + SOI clause ***/
 term <- term_sa* term_1
 
-term_1 <- term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*
+term_1 <- term_2 (joik_ek !tag_bo_ke_bridi_tail !tag_bo_subsentence term_2)*
 
 tag_bo_ke_bridi_tail <- stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)
+
+tag_bo_subsentence <- stag BO_clause I_clause
 
 # To be consistent with the lack of ke-termsets, unlike in camxes-beta, joik_ek is not optional
 term_2 <- term_3 (joik_ek stag? BO_clause term_3)*
@@ -148,7 +150,7 @@ tag_term <- !gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU_clau
 
 abs_term <- term_sa* abs_term_1
 
-abs_term_1 <- abs_term_2 (joik_ek !tag_bo_ke_bridi_tail abs_term_2)*
+abs_term_1 <- abs_term_2 (joik_ek !tag_bo_ke_bridi_tail !tag_bo_subsentence abs_term_2)*
 
 abs_term_2 <- abs_term_3 (joik_ek stag BO_clause abs_term_3)*
 

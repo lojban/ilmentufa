@@ -207,7 +207,7 @@ prenex = expr:(terms? ZOhU_clause free*) {return _node("prenex", expr);}
 //; sentence = (terms CU_clause? free*)? bridi_tail / bridi_tail
 
 // EXP-MODIF: JACU
-sentence = expr:(terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)* (joik_jek I_clause free* subsentence)*) {return _node("sentence", expr);}
+sentence = expr:(terms? bridi_tail_t1 (joik_jek bridi_tail / joik_jek stag? KE_clause free* bridi_tail KEhE_elidible free*)* (joik_jek (stag? BO_clause)? I_clause free* subsentence)*) {return _node("sentence", expr);}
 // sentence = expr:(((terms bridi_tail_sa*)? CU_elidible free*)? bridi_tail_sa* bridi_tail) {return _node("sentence", expr);}
 
 // JACU
@@ -262,9 +262,11 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 // /*** EXP-MODIF: Handling of term absorbtion as selbri tcita + allowing TAG SUMTI JA TAG SUMTI + SOI clause ***/
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
-term_1 = expr:(term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*) {return _node("term_1", expr);}
+term_1 = expr:(term_2 (joik_ek !tag_bo_ke_bridi_tail !tag_bo_subsentence term_2)*) {return _node("term_1", expr);}
 
 tag_bo_ke_bridi_tail = expr:(stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)) {return _node("tag_bo_ke_bridi_tail", expr);}
+
+tag_bo_subsentence = expr:(stag BO_clause I_clause) {return _node("tag_bo_subsentence", expr);}
 
 // To be consistent with the lack of ke-termsets, unlike in camxes-beta, joik_ek is not optional
 term_2 = expr:(term_3 (joik_ek stag? BO_clause term_3)*) {return _node("term_2", expr);}
@@ -277,7 +279,7 @@ tag_term = expr:(!gek tag free* (sumti / KU_elidible free*) / NA_clause free* KU
 
 abs_term = expr:(term_sa* abs_term_1) {return _node("abs_term", expr);}
 
-abs_term_1 = expr:(abs_term_2 (joik_ek !tag_bo_ke_bridi_tail abs_term_2)*) {return _node("abs_term_1", expr);}
+abs_term_1 = expr:(abs_term_2 (joik_ek !tag_bo_ke_bridi_tail !tag_bo_subsentence abs_term_2)*) {return _node("abs_term_1", expr);}
 
 abs_term_2 = expr:(abs_term_3 (joik_ek stag BO_clause abs_term_3)*) {return _node("abs_term_2", expr);}
 
