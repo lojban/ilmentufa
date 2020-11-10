@@ -1869,7 +1869,7 @@ XI <- &cmavo ( x i ) &post_word
 Y <- &cmavo ( y+ ) &post_word
 
 #// EXP-ADD: xa'o
-ZAhO <- &cmavo ( c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word
+ZAhO <- &cmavo ( c o h u h a / c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word
 
 ZEhA <- &cmavo ( z e h u / z e h a / z e h i / z e h e ) &post_word
 
