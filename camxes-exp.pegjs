@@ -1998,7 +1998,7 @@ XI = expr:(&cmavo ( x i ) &post_word) {return _node("XI", expr);}
 Y = expr:(&cmavo ( y+ ) &post_word) {return _node("Y", expr);}
 
 //// EXP-ADD: xa'o
-ZAhO = expr:(&cmavo ( c o h u h a / c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word) {return _node("ZAhO", expr);}
+ZAhO = expr:(&cmavo ( x o h u / c o h u h a / c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word) {return _node("ZAhO", expr);}
 
 ZEhA = expr:(&cmavo ( z e h u / z e h a / z e h i / z e h e ) &post_word) {return _node("ZEhA", expr);}
 
