@@ -154,8 +154,7 @@ function among(v, s) {
 }
 
 function peg_to_pegjs(peg) {
-	peg = peg.replace(/^\s*(?!#\s*)([^#]+)\s#:\s*(.*)/gm, '$1\x1B$2');
-	console.log(peg.split("\x1B").length - 1);
+	peg = peg.replace(/^(\s*)(?!#\s*)([^#]+)\s#:\s*(.*)/gm, '$1$2\x1B$3');
 	var speg = split_peg_code_and_comments(peg, true);
 	var i = 1;
 	while (i < speg.length) {
@@ -315,8 +314,9 @@ function split_peg_code_and_comments(peg, is_peg_to_pegjs) {
 
 function rule_replace(peg, name, flag, replacement) {
 	name = name.replace("~", "[a-zA-Z0-9_-]+");
-	var s = "(?:^|[[\r\n][ \t]*)(" + name + ")[ \t]*=[ \t]*([^=\r\n{}]+([\r\n]+[^=\r\n{}]+)*)(?<=[^ ])" + flag
-			+ "[ \t]*(?=[\r\n \t]*($|[\r\n][a-zA-Z0-9_-]+[ \t]*=))";
+	var s = "(?:^|[[\r\n][ \t]*)(" + name + ")[ \t]*=[ \t]*"
+	      + "([^=\r\n{}]+([\r\n]+[^=\r\n{}]+)*)(?<=[^ ])" + flag
+			  + "[ \t]*(?=[\r\n \t]*($|[\r\n][a-zA-Z0-9_-]+[ \t]*=))";
 	var re = new RegExp(s, "g");
 	return peg.replace(re, "\n" + replacement);
 }
@@ -325,12 +325,18 @@ function rule_replace(peg, name, flag, replacement) {
 function peg_add_js_parser_actions(peg) {
 	peg = peg.split("((non_space+))").join("(non_space+)");
 	/* Parser actions for faking left recursion */
-	peg = rule_replace(peg, "~_leaf", "", '$1 = expr:($2) {return ["$1", _join(expr)];}');
-	peg = rule_replace(peg, "~", "\x1BLEAF", '$1 = expr:($2) {return ["$1", _join(expr)];}');
-	peg = rule_replace(peg, "~", "\x1BLEAF: ?([0-9a-zA-Z_-]+)", '$1 = expr:($2) {return ["$1", _join("$3")];}');
-	peg = rule_replace(peg, "~", "\x1BNLEAF", '$1 = expr:($2) {return ["$1", "$1"];}');
-	peg = rule_replace(peg, "~", "\x1BLR", '$1 = expr:($2) {return _node_lg("$1", expr);}');
-	peg = rule_replace(peg, "~", "\x1BLR2", '$1 = expr:($2) {return _node_lg2("$1", expr);}');
+	peg = rule_replace(peg, "~_leaf", "",
+	                   '$1 = expr:($2) {return ["$1", _join(expr)];}');
+	peg = rule_replace(peg, "~", "\x1BLEAF",
+	                   '$1 = expr:($2) {return ["$1", _join(expr)];}');
+	peg = rule_replace(peg, "~", "\x1BLEAF: ?([0-9a-zA-Z_-]+)", '$1 = expr:($2)'
+					                     + ' {return ["$1", _join("$3")];}');
+	peg = rule_replace(peg, "~", "\x1BNLEAF",
+	                   '$1 = expr:($2) {return ["$1", "$1"];}');
+	peg = rule_replace(peg, "~", "\x1BLR",
+	                   '$1 = expr:($2) {return _node_lg("$1", expr);}');
+	peg = rule_replace(peg, "~", "\x1BLR2",
+	                   '$1 = expr:($2) {return _node_lg2("$1", expr);}');
 	/* ZOI handling parser actions */
 	peg = rule_replace(peg, "zoi[-_]open", "",
 										 '$1 = expr:($2) { _assign_zoi_delim(expr);'
@@ -342,9 +348,9 @@ function peg_add_js_parser_actions(peg) {
 										 '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
 										 + '{ return _node("$1", expr); }');
 	/* Parser action for elidible terminators */
-	rep = ('$1_elidible = expr:($2) {return (expr == "" || !expr)'
-				 + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
-	peg = rule_replace(peg, "~_elidible", "", rep);
+	rep = ('$2_elidible = expr:($3) {return (expr == "" || !expr)'
+				 + ' ? ["$2"] : _node_empty("$2_elidible", expr);}');
+	peg = rule_replace(peg, "(~)_elidible", "", rep);
 	peg = rule_replace(peg, "~", "\x1BE(L|LIDIBLE)?", rep);
 	/* Others */
 	peg = rule_replace(peg, "initial[-_]spaces|dot[-_]star", "",
@@ -353,8 +359,11 @@ function peg_add_js_parser_actions(peg) {
 										 '$1 = expr:($2) {return _join(expr);}');
 	peg = rule_replace(peg, "comma", "", '$1 = expr:($2) {return ",";}');
 	/* Default parser action */
+	peg = peg.replace(/\x1B[^\r\n]*/g, "");
 	peg = rule_replace(peg, "~", "(\x1B[^\r\n]*)?",
 										 '$1 = expr:($2) {return _node("$1", expr);}');
+	/* ↑ TODO: "(\x1B[^\r\n]*)?" doesn't seem to work, so I add to remove manually
+	   the \x1B tags with the peg.replace() line above. Investigate why. */
 	return peg;
 }
 
