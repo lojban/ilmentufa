@@ -322,19 +322,9 @@ function rule_replace(peg, name, flag, replacement) {
 }
 
 
-// 		var s = "(?:^|[[\r\n][ \t]*)(" + name + ")[ \t]*=[ \t]*([^=\r\n]+)" + flag
-//        + "(?=[\r\n \t]*($|[a-zA-Z0-9_-]+[ \t]*=))";
-// (^|\n[ \t]*)([a-zA-Z0-9_-]+)[ \t]*=[ \t]*([^=\n]+)(?=$|(^|([\r\n \t]+(^|[a-zA-Z0-9_-]+[ \t]*=))))
-// (^|\n[ \t]*)([a-zA-Z0-9_-]+)[ \t]*=[ \t]*([^=]+)(?=$|(^|[\r\n]+)[ \t]*([a-zA-Z0-9_-]+)[ \t]*=)
-
-
 function peg_add_js_parser_actions(peg) {
 	peg = peg.split("((non_space+))").join("(non_space+)");
 	/* Parser actions for faking left recursion */
-	//peg = peg.replace(/{return _node\("([0-9a-zA-Z_-]+)", expr\);}( +\/\/ +!LR)(?=[ \r\n])/gm,
-	//                  '{return _node_lg("$1", expr);}$2');
-	//peg = peg.replace(/{return _node\("([0-9a-zA-Z_-]+)", expr\);}( +\/\/ +!LR2)(?=[ \r\n])/gm,
-	//                  '{return _node_lg2("$1", expr);}$2');
 	peg = rule_replace(peg, "~_leaf", "", '$1 = expr:($2) {return ["$1", _join(expr)];}');
 	peg = rule_replace(peg, "~", "\x1BLEAF", '$1 = expr:($2) {return ["$1", _join(expr)];}');
 	peg = rule_replace(peg, "~", "\x1BLEAF: ?([0-9a-zA-Z_-]+)", '$1 = expr:($2) {return ["$1", _join("$3")];}');
@@ -342,15 +332,6 @@ function peg_add_js_parser_actions(peg) {
 	peg = rule_replace(peg, "~", "\x1BLR", '$1 = expr:($2) {return _node_lg("$1", expr);}');
 	peg = rule_replace(peg, "~", "\x1BLR2", '$1 = expr:($2) {return _node_lg2("$1", expr);}');
 	/* ZOI handling parser actions */
-	//peg = peg.replace(/^(zoi[-_]open) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) { _assign_zoi_delim(expr);'
-	//                  + ' return _node("$1", expr); }');
-	//peg = peg.replace(/^(zoi[-_]word) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) !{ return _is_zoi_delim(expr); } '
-	//                  + '{ return ["$1", join_expr(expr)]; }');
-	//peg = peg.replace(/^(zoi[-_]close) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
-	//                  + '{ return _node("$1", expr); }');
 	peg = rule_replace(peg, "zoi[-_]open", "",
 										 '$1 = expr:($2) { _assign_zoi_delim(expr);'
 										 + ' return _node("$1", expr); }');
@@ -361,28 +342,17 @@ function peg_add_js_parser_actions(peg) {
 										 '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
 										 + '{ return _node("$1", expr); }');
 	/* Parser action for elidible terminators */
-	//peg = peg.replace(/([0-9a-zA-Z_-]+)_elidible *= *([^\r\n]+)/gm,
-	//                  '$1_elidible = expr:($2) {return (expr == "" || !expr)'
-	//                  + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
 	rep = ('$1_elidible = expr:($2) {return (expr == "" || !expr)'
 				 + ' ? ["$1"] : _node_empty("$1_elidible", expr);}');
 	peg = rule_replace(peg, "~_elidible", "", rep);
 	peg = rule_replace(peg, "~", "\x1BE(L|LIDIBLE)?", rep);
 	/* Others */
-	//peg = peg.replace(/^(initial[-_]spaces|dot[-_]star) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) {return ["$1", _join(expr)];}');
-	//peg = peg.replace(/^(space[-_]char) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) {return _join(expr);}');
-	//peg = peg.replace(/^(comma) *= *([^\r\n]+)/gm,
-	//                  '$1 = expr:($2) {return ",";}');
 	peg = rule_replace(peg, "initial[-_]spaces|dot[-_]star", "",
 										 '$1 = expr:($2) {return ["$1", _join(expr)];}');
 	peg = rule_replace(peg, "space[-_]char", "",
 										 '$1 = expr:($2) {return _join(expr);}');
 	peg = rule_replace(peg, "comma", "", '$1 = expr:($2) {return ",";}');
 	/* Default parser action */
-	//peg = peg.replace(/([0-9a-zA-Z_-]+) *= *(([^: \r\n]+ )*[^: \r\n]+)( *)(?=\r|\n|$)/gm,
-	//                '$1 = expr:($2) {return _node("$1", expr);}$4');
 	peg = rule_replace(peg, "~", "(\x1B[^\r\n]*)?",
 										 '$1 = expr:($2) {return _node("$1", expr);}');
 	return peg;
