@@ -111,7 +111,7 @@ bridi_tail_sa <- bridi_tail_start (term / !bridi_tail_start (sa_word / SA_clause
 bridi_tail_start <- ME_clause / NUhA_clause / NU_clause / NA_clause !KU_clause / NAhE_clause !BO_clause / selbri / tag bridi_tail_start / KE_clause bridi_tail_start / bridi_tail
 
 # BETA: JACU
-bridi_tail_1 <- bridi_tail_2 ((gihek / joik_jek) !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)* #: LR2
+bridi_tail_1 <- bridi_tail_2 ((gihek / joik_jek) !(stag? BO_clause) !(stag? KE_clause) free* bridi_tail_2 tail_terms)*  #: LR2
 
 # BETA: JACU
 bridi_tail_2 <- CU_elidible free* bridi_tail_3 ((gihek / joik_jek) stag? BO_clause free* bridi_tail_2 tail_terms)?
@@ -180,7 +180,7 @@ sumti <- sumti_1 (VUhO_clause free* (relative_clauses (joik_ek sumti)?)?)?
 
 sumti_1 <- sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?
 
-sumti_2 <- sumti_3 (joik_ek sumti_3)* #: LR2
+sumti_2 <- sumti_3 (joik_ek sumti_3)*  #: LR2
 
 sumti_3 <- sumti_4 (joik_ek stag? BO_clause free* sumti_3)?
 
@@ -216,9 +216,9 @@ selbri_1 <- selbri_2 / NA_clause free* selbri
 
 selbri_2 <- selbri_3 (CO_clause free* selbri_2)?
 
-selbri_3 <- selbri_4+ #: LR
+selbri_3 <- selbri_4+  #: LR
 
-selbri_4 <- selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)* #: LR2
+selbri_4 <- selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KEhE_elidible free*)*  #: LR2
 
 selbri_5 <- selbri_6 ((jek / joik) stag? BO_clause free* selbri_5)?
 
@@ -383,11 +383,11 @@ indicator <- ((UI_clause / CAI_clause) NAI_clause? / NAI_clause / DAhO_clause / 
 # ****************
 
 zei_clause <- pre_clause zei_clause_no_pre
-zei_clause_no_pre <- pre_zei_bu (zei_tail? BU_clause+)* zei_tail post_clause #: LR
+zei_clause_no_pre <- pre_zei_bu (zei_tail? BU_clause+)* zei_tail post_clause  #: LR
 # zei_clause_no_SA = pre_zei_bu_no_SA (zei_tail? bu_tail)* zei_tail
 
 bu_clause <- pre_clause bu_clause_no_pre
-bu_clause_no_pre <- pre_zei_bu (BU_clause* zei_tail)* BU_clause+ post_clause #: LR
+bu_clause_no_pre <- pre_zei_bu (BU_clause* zei_tail)* BU_clause+ post_clause  #: LR
 # bu_clause_no_SA = pre_zei_bu_no_SA (bu_tail? zei_tail)* bu_tail
 
 zei_tail <- (ZEI_clause any_word)+
@@ -397,7 +397,7 @@ pre_zei_bu <- !ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_clause
 # LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
 # pre_zei_bu_no_SA = LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word si_clause?
 
-dot_star <- .*
+dot_star <- .*  #: LEAF
 
 # __ General Morphology Issues
 #
@@ -408,7 +408,7 @@ dot_star <- .*
 # Handling of what can go after a cmavo
 post_clause <- spaces? si_clause? !ZEI_clause !BU_clause indicators*
 
-pre_clause <- BAhE_clause* #: LR
+pre_clause <- BAhE_clause*  #: LR
 
 #any_word_SA_handling = BRIVLA_pre / known_cmavo_SA / !known_cmavo_pre CMAVO_pre / CMEVLA_pre
 any_word_SA_handling <- BRIVLA_pre / known_cmavo_SA / CMAVO_pre / CMEVLA_pre
@@ -1363,13 +1363,15 @@ any_word <- lojban_word spaces?
 # external to the pure PEG grammar to be implemented properly; those mechanisms
 # are implementation-specific.
 
-zoi_open <- lojban_word
+zoi_open <- lojban_word  #: PUSH
 # Non-PEG: Remember the value matched by this zoi_open.
 
-zoi_word <- non_space+
+zoi_word_2 <- non_space+  #: LEAF
+
+zoi_word <- zoi_word_2 #: PEEK-DIFF
 # Non-PEG: Match successfully only if different from the most recent zoi_open.
 
-zoi_close <- any_word
+zoi_close <- any_word  #: POP-EQ
 # Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 # BETA: ZOhOI, MEhOI
@@ -1602,10 +1604,10 @@ comma <- [,]
 # This is an orphan rule.
 non_lojban_word <- !lojban_word non_space+
 
-non_space <- !space_char .
+non_space <- !space_char .  #: JOIN
 
 #Unicode_style and escaped chars not compatible with cl_peg
-space_char <- [.\t\n\r?!\u0020]
+space_char <- [.\t\n\r?!\u0020]  #: JOIN
 
 # space_char = [.?! ] / space_char1 / space_char2
 # space_char1 = '    '
@@ -1615,7 +1617,7 @@ space_char <- [.\t\n\r?!\u0020]
 
 spaces <- !Y initial_spaces
 
-initial_spaces <- (comma* space_char / !ybu Y)+ EOF? / EOF
+initial_spaces <- (comma* space_char / !ybu Y)+ EOF? / EOF  #: LEAF
 
 ybu <- Y space_char* BU
 

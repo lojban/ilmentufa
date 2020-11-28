@@ -24,25 +24,32 @@
    alltogether. */
 //var EXTERN_PREDICATE_SYMBOL = "__EXTERN_PREDICATE_SYMBOL__";
 
-main(process.argv, require("fs"));
+main(process.argv);
 process.exit();
 
+var PEGJS_HEADER = "";
+
 function main(argv, fs) {
+	fs = require("fs");
+	pathmod = require("path");
 	if (argv.length < 3) {
 		console.log("Not enough parameters.");
 		return;
 	}
-	var srcpath = argv[2];
-	var is_pegjs = 0 <= srcpath.search(/\.(pegjs|js\.peg)$/);
+	var this_path = pathmod.dirname(argv[1]);
+	var src_path = argv[2];
+	PEGJS_HEADER = fs.readFileSync(
+	  this_path + pathmod.sep + "pegjs_header.js").toString();
+	var is_pegjs = 0 <= src_path.search(/\.(pegjs|js\.peg)$/);
 	// ^ TODO: Maybe detect type based on content, mainly by searching for `=` and `<-` outside of comments.
-	var dstpath = make_dstpath(srcpath, is_pegjs);
+	var dst_path = make_dstpath(src_path, is_pegjs);
 	var peg;
 	var df;
 	try {
-		console.log("Opening " + srcpath);
-		peg = fs.readFileSync(srcpath).toString();
-		console.log("Opening " + dstpath);
-		df = fs.openSync(dstpath, 'w+');
+		console.log("Opening " + src_path);
+		peg = fs.readFileSync(src_path).toString();
+		console.log("Opening " + dst_path);
+		df = fs.openSync(dst_path, 'w+');
 	} catch(e) {
 		console.log("Error: " + e);
 	}
@@ -154,7 +161,7 @@ function among(v, s) {
 }
 
 function peg_to_pegjs(peg) {
-	peg = peg.replace(/^(\s*)(?!#\s*)([^#]+)\s#:\s*(.*)/gm, '$1$2\x1B$3');
+	peg = peg.replace(/^(\s*)(?!#\s*)([^#]*[^#\s])\s+#:\s*(.*)/gm, '$1$2\x1B$3');
 	var speg = split_peg_code_and_comments(peg, true);
 	var i = 1;
 	while (i < speg.length) {
@@ -162,16 +169,16 @@ function peg_to_pegjs(peg) {
 		i += 2;
 	}
 	i = 0;
-	var has_js_initializer_been_added = false;
+	var has_pegjs_header_been_added = false;
 	while (i < speg.length) {
 		if (speg[i].length > 0) {
 			speg[i] = process_peg_code(speg[i]);
-			if (!has_js_initializer_been_added) {
+			if (!has_pegjs_header_been_added) {
 				if (speg[i].search(/[^\s]/gm) >= 0) {
 					var j = speg[i].search(/[^\r\n]/gm);
-					speg[i] = speg[i].substring(0, j) + js_initializer()
+					speg[i] = speg[i].substring(0, j) + PEGJS_HEADER
 									+ speg[i].substring(j);
-					has_js_initializer_been_added = true;
+					has_pegjs_header_been_added = true;
 				}
 			}
 		}
@@ -235,7 +242,9 @@ function process_peg_code(peg) {
 //  var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
 //  peg = peg.replace(re, "");
 	peg = peg.replace(/<-/g, "=");
-	peg = peg.replace(/-/g, "_");
+	// peg = peg.replace(/-/g, "_");
+	peg = peg.replace(/([^a-z\x1B](?!\x1B)[a-z]+)-(?=[a-z])/gm, "$1_");
+	// ↑ Replacing `-` with `_` except within action tags.
 	peg = peg.replace(/ {2,}/g, " ");
 	peg = peg_add_js_parser_actions(peg);
 	peg = peg.replace(/\x1B/gm, ' //: ');
@@ -337,27 +346,25 @@ function peg_add_js_parser_actions(peg) {
 	                   '$1 = expr:($2) {return _node_lg("$1", expr);}');
 	peg = rule_replace(peg, "~", "\x1BLR2",
 	                   '$1 = expr:($2) {return _node_lg2("$1", expr);}');
-	/* ZOI handling parser actions */
-	peg = rule_replace(peg, "zoi[-_]open", "",
-										 '$1 = expr:($2) { _assign_zoi_delim(expr);'
+	/* STACK handling parser actions */
+	peg = rule_replace(peg, "~", "\x1BPUSH",
+										 '$1 = expr:($2) { _push(expr);'
 										 + ' return _node("$1", expr); }');
-	peg = rule_replace(peg, "zoi[-_]word", "",
-										 '$1 = expr:($2) !{ return _is_zoi_delim(expr); } '
-										 + '{ return ["$1", join_expr(expr)]; }');
-	peg = rule_replace(peg, "zoi[-_]close", "",
-										 '$1 = expr:($2) &{ return _is_zoi_delim(expr); } '
+	peg = rule_replace(peg, "~", "\x1BPEEK-DIFF",
+										 '$1 = expr:($2) !{ return _peek_eq(expr); } '
 										 + '{ return _node("$1", expr); }');
+									// + '{ return ["$1", join_expr(expr)]; }');
+	peg = rule_replace(peg, "~", "\x1BPOP-EQ",
+										 '$1 = expr:($2) &{ return _peek_eq(expr); } '
+										 + '{ if (_g_last_pred_val) _pop(); return _node("$1", expr); }');
 	/* Parser action for elidible terminators */
-	rep = ('$2_elidible = expr:($3) {return (expr == "" || !expr)'
+	rep = ('$2_elidible = expr:($3) {return (expr === "" || !expr)'
 				 + ' ? ["$2"] : _node_empty("$2_elidible", expr);}');
 	peg = rule_replace(peg, "(~)_elidible", "", rep);
 	peg = rule_replace(peg, "~", "\x1BE(L|LIDIBLE)?", rep);
 	/* Others */
-	peg = rule_replace(peg, "initial[-_]spaces|dot[-_]star", "",
-										 '$1 = expr:($2) {return ["$1", _join(expr)];}');
-	peg = rule_replace(peg, "space[-_]char", "",
+	peg = rule_replace(peg, "~", "\x1BJOIN",
 										 '$1 = expr:($2) {return _join(expr);}');
-	peg = rule_replace(peg, "comma", "", '$1 = expr:($2) {return ",";}');
 	/* Default parser action */
 	peg = peg.replace(/\x1B[^\r\n]*/g, "");
 	peg = rule_replace(peg, "~", "(\x1B[^\r\n]*)?",
@@ -365,138 +372,5 @@ function peg_add_js_parser_actions(peg) {
 	/* ↑ TODO: "(\x1B[^\r\n]*)?" doesn't seem to work, so I add to remove manually
 	   the \x1B tags with the peg.replace() line above. Investigate why. */
 	return peg;
-}
-
-function js_initializer() {
-    return `{
-  var _g_zoi_delim;
-  
-  function _join(arg) {
-    if (typeof(arg) == "string")
-      return arg;
-    else if (arg) {
-      var ret = "";
-      for (var v in arg) { if (arg[v]) ret += _join(arg[v]); }
-      return ret;
-    }
-  }
-
-  function _node_empty(label, arg) {
-    var ret = [];
-    if (label) ret.push(label);
-    if (arg && typeof arg == "object" && typeof arg[0] == "string" && arg[0]) {
-      ret.push( arg );
-      return ret;
-    }
-    if (!arg)
-    {
-      return ret;
-    }
-    return _node_int(label, arg);
-  }
-
-  function _node_int(label, arg) {
-    if (typeof arg == "string")
-      return arg;
-    if (!arg) arg = [];
-    var ret = [];
-    if (label) ret.push(label);
-    for (var v in arg) {
-      if (arg[v] && arg[v].length != 0)
-        ret.push( _node_int( null, arg[v] ) );
-    }
-    return ret;
-  }
-
-  function _node2(label, arg1, arg2) {
-    return [label].concat(_node_empty(arg1)).concat(_node_empty(arg2));
-  }
-
-  function _node(label, arg) {
-    var _n = _node_empty(label, arg);
-    return (_n.length == 1 && label) ? [] : _n;
-  }
-  var _node_nonempty = _node;
-  
-  // === Functions for faking left recursion === //
-  
-  function _flatten_node(a) {
-    // Flatten nameless nodes
-    // e.g. [Name1, [[Name2, X], [Name3, Y]]] --> [Name1, [Name2, X], [Name3, Y]]
-    if (is_array(a)) {
-      var i = 0;
-      while (i < a.length) {
-        if (!is_array(a[i])) i++;
-        else if (a[i].length === 0) // Removing []s
-          a = a.slice(0, i).concat(a.slice(i + 1));
-        else if (is_array(a[i][0]))
-          a = a.slice(0, i).concat(a[i], a.slice(i + 1));
-        else i++;
-      }
-    }
-    return a;
-  }
-  
-  function _group_leftwise(arr) {
-    if (!is_array(arr)) return [];
-    else if (arr.length <= 2) return arr;
-    else return [_group_leftwise(arr.slice(0, -1)), arr[arr.length - 1]];
-  }
-  
-  // "_lg" for "Leftwise Grouping".
-  function _node_lg(label, arg) {
-    return _node(label, _group_leftwise(_flatten_node(arg)));
-  }
-  
-  function _node_lg2(label, arg) {
-    if (is_array(arg) && arg.length == 2)
-      arg = arg[0].concat(arg[1]);
-    return _node(label, _group_leftwise(arg));
-  }
-
-  // === ZOI functions === //
-
-  function _assign_zoi_delim(w) {
-    if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
-    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
-    _g_zoi_delim = w;
-    return;
-  }
-
-  function _is_zoi_delim(w) {
-    if (is_array(w)) w = join_expr(w);
-    else if (!is_string(w)) throw "ERROR: ZOI word is of type " + typeof w;
-    /* Keeping spaces in the parse tree seems to result in the absorbtion of
-       spaces into the closing delimiter candidate, so we'll remove any space
-       character from our input. */
-    w = w.replace(/[.\\t\\n\\r?!\\u0020]/g, "");
-    w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
-    return w === _g_zoi_delim;
-  }
-
-  function join_expr(n) {
-    if (!is_array(n) || n.length < 1) return "";
-    var s = "";
-    var i = is_array(n[0]) ? 0 : 1;
-    while (i < n.length) {
-      s += is_string(n[i]) ? n[i] : join_expr(n[i]);
-      i++;
-    }
-    return s;
-  }
-
-  function is_string(v) {
-    // return $.type(v) === "string";
-    return Object.prototype.toString.call(v) === '[object String]';
-  }
-
-  function is_array(v) {
-    // return $.type(v) === "array";
-    return Object.prototype.toString.call(v) === '[object Array]';
-  }
-}
-
-`;
 }
 

@@ -48,6 +48,12 @@
 
 
 
+// ================================================================== //
+
+/*
+ *  PEGJS INITIALIZATION CODE
+ */
+
 {
   var _g_zoi_delim;
 
@@ -154,6 +160,63 @@
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     return w === _g_zoi_delim;
   }
+	
+	// === Stack functions === //
+
+  _g_stack = []
+
+  function _push(x) {
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    _g_stack.push(x);
+    return;
+  }
+
+  function _pop() {
+    return _g_stack.pop();
+  }
+	
+	  function _peek() {
+	  if (_g_stack.length <= 0) return null;
+    else return _g_stack[_g_stack.length - 1];
+  }
+	
+	_g_last_pred_val = null;
+	
+	function _pop_eq(x) {
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    /* Keeping spaces in the parse tree seems to result in the absorbtion of
+       spaces into the closing delimiter candidate, so we'll remove any space
+       character from our input. */
+    x = x.replace(/[.\t\n\r?!\u0020]/g, "");
+		l = _g_stack.length;
+		y = _peek();
+		console.log("[" + x + "] :: [" + y + "] @" + l);
+		r = x === y;
+		_g_last_pred_val = r;
+		if (r) _pop();
+    return r;
+  }
+	
+	function _peek_eq(x) {
+    if (is_array(x)) {
+			console.log(JSON.stringify(x));
+			x = join_expr(x);
+    } else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    /* Keeping spaces in the parse tree seems to result in the absorbtion of
+       spaces into the closing delimiter candidate, so we'll remove any space
+       character from our input. */
+    x = x.replace(/[.\t\n\r?!\u0020]/g, "");
+		l = _g_stack.length;
+		y = _peek();
+		console.log("[" + x + "] :: [" + y + "] @" + l);
+		r = x === y;
+		_g_last_pred_val = r;
+    return r;
+  }
+	// zoi gy mo gy
+	// === MISC === //
 
   function join_expr(n) {
     if (!is_array(n) || n.length < 1) return "";
@@ -167,15 +230,15 @@
   }
 
   function is_string(v) {
-    // return $.type(v) === "string";
     return Object.prototype.toString.call(v) === '[object String]';
   }
 
   function is_array(v) {
-    // return $.type(v) === "array";
     return Object.prototype.toString.call(v) === '[object Array]';
   }
 }
+
+// ================================================================== //
 
 text = expr:(intro_null NAI_clause* text_part_2 (!gek joik_jek)? text_1? faho_clause EOF?) {return _node("text", expr);}
 
@@ -533,30 +596,30 @@ su_word = expr:(!ZOI_start !NIhO_clause !LU_clause !TUhE_clause !TO_clause !SU_c
 
 // ___ ELIDIBLE TERMINATORS ___
 
-BEhO_elidible = expr:(BEhO_clause?) {return (expr == "" || !expr) ? ["BEhO"] : _node_empty("BEhO_elidible", expr);}
-BOI_elidible = expr:(BOI_clause?) {return (expr == "" || !expr) ? ["BOI"] : _node_empty("BOI_elidible", expr);}
-CU_elidible = expr:(CU_clause?) {return (expr == "" || !expr) ? ["CU"] : _node_empty("CU_elidible", expr);}
-DOhU_elidible = expr:(DOhU_clause?) {return (expr == "" || !expr) ? ["DOhU"] : _node_empty("DOhU_elidible", expr);}
-FEhU_elidible = expr:(FEhU_clause?) {return (expr == "" || !expr) ? ["FEhU"] : _node_empty("FEhU_elidible", expr);}
+BEhO_elidible = expr:(BEhO_clause?) {return (expr === "" || !expr) ? ["BEhO"] : _node_empty("BEhO_elidible", expr);}
+BOI_elidible = expr:(BOI_clause?) {return (expr === "" || !expr) ? ["BOI"] : _node_empty("BOI_elidible", expr);}
+CU_elidible = expr:(CU_clause?) {return (expr === "" || !expr) ? ["CU"] : _node_empty("CU_elidible", expr);}
+DOhU_elidible = expr:(DOhU_clause?) {return (expr === "" || !expr) ? ["DOhU"] : _node_empty("DOhU_elidible", expr);}
+FEhU_elidible = expr:(FEhU_clause?) {return (expr === "" || !expr) ? ["FEhU"] : _node_empty("FEhU_elidible", expr);}
 // FOI and FUhO are never elidible
-GEhU_elidible = expr:(GEhU_clause?) {return (expr == "" || !expr) ? ["GEhU"] : _node_empty("GEhU_elidible", expr);}
-KEI_elidible = expr:(KEI_clause?) {return (expr == "" || !expr) ? ["KEI"] : _node_empty("KEI_elidible", expr);}
-KEhE_elidible = expr:(KEhE_clause?) {return (expr == "" || !expr) ? ["KEhE"] : _node_empty("KEhE_elidible", expr);}
-KU_elidible = expr:(KU_clause?) {return (expr == "" || !expr) ? ["KU"] : _node_empty("KU_elidible", expr);}
-KUhE_elidible = expr:(KUhE_clause?) {return (expr == "" || !expr) ? ["KUhE"] : _node_empty("KUhE_elidible", expr);}
-KUhO_elidible = expr:(KUhO_clause?) {return (expr == "" || !expr) ? ["KUhO"] : _node_empty("KUhO_elidible", expr);}
+GEhU_elidible = expr:(GEhU_clause?) {return (expr === "" || !expr) ? ["GEhU"] : _node_empty("GEhU_elidible", expr);}
+KEI_elidible = expr:(KEI_clause?) {return (expr === "" || !expr) ? ["KEI"] : _node_empty("KEI_elidible", expr);}
+KEhE_elidible = expr:(KEhE_clause?) {return (expr === "" || !expr) ? ["KEhE"] : _node_empty("KEhE_elidible", expr);}
+KU_elidible = expr:(KU_clause?) {return (expr === "" || !expr) ? ["KU"] : _node_empty("KU_elidible", expr);}
+KUhE_elidible = expr:(KUhE_clause?) {return (expr === "" || !expr) ? ["KUhE"] : _node_empty("KUhE_elidible", expr);}
+KUhO_elidible = expr:(KUhO_clause?) {return (expr === "" || !expr) ? ["KUhO"] : _node_empty("KUhO_elidible", expr);}
 // LEhU is never elidible
-LIhU_elidible = expr:(LIhU_clause?) {return (expr == "" || !expr) ? ["LIhU"] : _node_empty("LIhU_elidible", expr);}
-LOhO_elidible = expr:(LOhO_clause?) {return (expr == "" || !expr) ? ["LOhO"] : _node_empty("LOhO_elidible", expr);}
-LUhU_elidible = expr:(LUhU_clause?) {return (expr == "" || !expr) ? ["LUhU"] : _node_empty("LUhU_elidible", expr);}
-MEhU_elidible = expr:(MEhU_clause?) {return (expr == "" || !expr) ? ["MEhU"] : _node_empty("MEhU_elidible", expr);}
-NUhU_elidible = expr:(NUhU_clause?) {return (expr == "" || !expr) ? ["NUhU"] : _node_empty("NUhU_elidible", expr);}
-SEhU_elidible = expr:(SEhU_clause?) {return (expr == "" || !expr) ? ["SEhU"] : _node_empty("SEhU_elidible", expr);}
-TEhU_elidible = expr:(TEhU_clause?) {return (expr == "" || !expr) ? ["TEhU"] : _node_empty("TEhU_elidible", expr);}
-TOI_elidible = expr:(TOI_clause?) {return (expr == "" || !expr) ? ["TOI"] : _node_empty("TOI_elidible", expr);}
-TUhU_elidible = expr:(TUhU_clause?) {return (expr == "" || !expr) ? ["TUhU"] : _node_empty("TUhU_elidible", expr);}
-VAU_elidible = expr:(VAU_clause?) {return (expr == "" || !expr) ? ["VAU"] : _node_empty("VAU_elidible", expr);}
-VEhO_elidible = expr:(VEhO_clause?) {return (expr == "" || !expr) ? ["VEhO"] : _node_empty("VEhO_elidible", expr);}
+LIhU_elidible = expr:(LIhU_clause?) {return (expr === "" || !expr) ? ["LIhU"] : _node_empty("LIhU_elidible", expr);}
+LOhO_elidible = expr:(LOhO_clause?) {return (expr === "" || !expr) ? ["LOhO"] : _node_empty("LOhO_elidible", expr);}
+LUhU_elidible = expr:(LUhU_clause?) {return (expr === "" || !expr) ? ["LUhU"] : _node_empty("LUhU_elidible", expr);}
+MEhU_elidible = expr:(MEhU_clause?) {return (expr === "" || !expr) ? ["MEhU"] : _node_empty("MEhU_elidible", expr);}
+NUhU_elidible = expr:(NUhU_clause?) {return (expr === "" || !expr) ? ["NUhU"] : _node_empty("NUhU_elidible", expr);}
+SEhU_elidible = expr:(SEhU_clause?) {return (expr === "" || !expr) ? ["SEhU"] : _node_empty("SEhU_elidible", expr);}
+TEhU_elidible = expr:(TEhU_clause?) {return (expr === "" || !expr) ? ["TEhU"] : _node_empty("TEhU_elidible", expr);}
+TOI_elidible = expr:(TOI_clause?) {return (expr === "" || !expr) ? ["TOI"] : _node_empty("TOI_elidible", expr);}
+TUhU_elidible = expr:(TUhU_clause?) {return (expr === "" || !expr) ? ["TUhU"] : _node_empty("TUhU_elidible", expr);}
+VAU_elidible = expr:(VAU_clause?) {return (expr === "" || !expr) ? ["VAU"] : _node_empty("VAU_elidible", expr);}
+VEhO_elidible = expr:(VEhO_clause?) {return (expr === "" || !expr) ? ["VEhO"] : _node_empty("VEhO_elidible", expr);}
 
 
 // ___ SELMAHO ___
@@ -1406,13 +1469,15 @@ any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 // external to the pure PEG grammar to be implemented properly; those mechanisms
 // are implementation-specific.
 
-zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
+zoi_open = expr:(lojban_word) { _push(expr); return _node("zoi_open", expr); }
 // Non-PEG: Remember the value matched by this zoi_open.
 
-zoi_word = expr:(non_space+) !{ return _is_zoi_delim(expr); } { return ["zoi_word", join_expr(expr)]; }
+zoi_word_2 = expr:(non_space+) {return ["zoi_word_2", _join(expr)];}
+
+zoi_word = expr:(zoi_word_2) !{ return _peek_eq(expr); } { return _node("zoi_word", expr); }
 // Non-PEG: Match successfully only if different from the most recent zoi_open.
 
-zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
+zoi_close = expr:(any_word) &{ return _peek_eq(expr); } { if (_g_last_pred_val) _pop(); return _node("zoi_close", expr); }
 // Non-PEG: Match successfully only if identical to the most recent zoi_open.
 
 //___________________________________________________________________
@@ -1637,12 +1702,12 @@ pause = expr:(comma* space_char+ / EOF) {return _node("pause", expr);}
 
 EOF = expr:(comma* !.) {return _node("EOF", expr);}
 
-comma = expr:([,]) {return ",";}
+comma = expr:([,]) {return _join(expr);}
 
 // This is an orphan rule.
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
 
-non_space = expr:(!space_char .) {return _node("non_space", expr);}
+non_space = expr:(!space_char .) {return _join(expr);}
 
 //Unicode_style and escaped chars not compatible with cl_peg
 space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
