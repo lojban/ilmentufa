@@ -192,7 +192,6 @@
     x = x.replace(/[.\t\n\r?!\u0020]/g, "");
 		l = _g_stack.length;
 		y = _peek();
-		console.log("[" + x + "] :: [" + y + "] @" + l);
 		r = x === y;
 		_g_last_pred_val = r;
 		if (r) _pop();
@@ -200,22 +199,19 @@
   }
 	
 	function _peek_eq(x) {
-    if (is_array(x)) {
-			console.log(JSON.stringify(x));
-			x = join_expr(x);
-    } else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
     /* Keeping spaces in the parse tree seems to result in the absorbtion of
        spaces into the closing delimiter candidate, so we'll remove any space
        character from our input. */
     x = x.replace(/[.\t\n\r?!\u0020]/g, "");
 		l = _g_stack.length;
 		y = _peek();
-		console.log("[" + x + "] :: [" + y + "] @" + l);
 		r = x === y;
 		_g_last_pred_val = r;
     return r;
   }
-	// zoi gy mo gy
+
 	// === MISC === //
 
   function join_expr(n) {

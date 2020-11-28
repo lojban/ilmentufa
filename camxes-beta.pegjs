@@ -192,7 +192,6 @@
     x = x.replace(/[.\t\n\r?!\u0020]/g, "");
 		l = _g_stack.length;
 		y = _peek();
-		console.log("[" + x + "] :: [" + y + "] @" + l);
 		r = x === y;
 		_g_last_pred_val = r;
 		if (r) _pop();
@@ -200,22 +199,19 @@
   }
 	
 	function _peek_eq(x) {
-    if (is_array(x)) {
-			console.log(JSON.stringify(x));
-			x = join_expr(x);
-    } else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
     /* Keeping spaces in the parse tree seems to result in the absorbtion of
        spaces into the closing delimiter candidate, so we'll remove any space
        character from our input. */
     x = x.replace(/[.\t\n\r?!\u0020]/g, "");
 		l = _g_stack.length;
 		y = _peek();
-		console.log("[" + x + "] :: [" + y + "] @" + l);
 		r = x === y;
 		_g_last_pred_val = r;
     return r;
   }
-	// zoi gy mo gy
+
 	// === MISC === //
 
   function join_expr(n) {
@@ -334,7 +330,9 @@ cehe_sa = expr:(CEhE_clause (!CEhE_clause (sa_word / SA_clause !CEhE_clause))* S
 term = expr:(term_sa* term_1) {return _node("term", expr);}
 
 // BEGIN BETA: TERM JA TERM
-term_1 = expr:(term_2 (joik_ek term_2)*) {return _node("term_1", expr);}
+term_1 = expr:(term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*) {return _node("term_1", expr);}
+
+tag_bo_ke_bridi_tail = expr:(stag (BO_clause / KE_clause) CU_elidible free* (selbri / gek_sentence)) {return _node("tag_bo_ke_bridi_tail", expr);}
 
 term_2 = expr:(term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("term_2", expr);}
 
@@ -344,7 +342,7 @@ tag_term = expr:(!gek (tag !(!tag selbri) / FA_clause free*) (sumti / KU_elidibl
 
 nonabs_term = expr:(term_sa* nonabs_term_1) {return _node("nonabs_term", expr);}
 
-nonabs_term_1 = expr:(nonabs_term_2 (joik_ek term_2)*) {return _node("nonabs_term_1", expr);}
+nonabs_term_1 = expr:(nonabs_term_2 (joik_ek !tag_bo_ke_bridi_tail term_2)*) {return _node("nonabs_term_1", expr);}
 
 nonabs_term_2 = expr:(nonabs_term_3 (joik_ek? stag? BO_clause term_3)*) {return _node("nonabs_term_2", expr);}
 
