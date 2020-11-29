@@ -1,7 +1,15 @@
 var start_t = process.hrtime();
-var fs = require("fs")
-var pegjs = require("pegjs")
+var fs = require("fs");
+var pathmod = require("path");
+var pegjs = require("pegjs");
 var src = (process.argv.length >= 3) ? process.argv[2] : "camxes.pegjs";
+if (pathmod.extname(src) === ".peg") {
+	  var pegjs_conv = require("./pegjs_conv.js");
+		var peg_src = src;
+		// src = pathmod.dirname(peg_src) + pathmod.sep + pathmod.basename(peg_src) + ".pegjs";
+		src = pegjs_conv.conv_file(peg_src);
+		console.log("-> " + src);
+}
 var dst = src.replace(/.js.peg$/g, ".pegjs").replace(/^(.*?)(\.[^\\\/]+)?$/g, "$1.js");
 console.log("-> " + dst);
 var peg = fs.readFileSync(src).toString();
