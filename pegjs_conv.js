@@ -24,20 +24,15 @@
    alltogether. */
 //var EXTERN_PREDICATE_SYMBOL = "__EXTERN_PREDICATE_SYMBOL__";
 
-main(process.argv);
-process.exit();
-
 var PEGJS_HEADER = "";
 
-function main(argv, fs) {
-	fs = require("fs");
-	pathmod = require("path");
-	if (argv.length < 3) {
-		console.log("Not enough parameters.");
-		return;
-	}
-	var this_path = pathmod.dirname(argv[1]);
-	var src_path = argv[2];
+
+// === FUNCTIONS === //
+
+function conv_file(src_path) {
+	var fs = require("fs");
+	var pathmod = require("path");
+	var this_path = __dirname; // pathmod.dirname(argv[1]);
 	PEGJS_HEADER = fs.readFileSync(
 	  this_path + pathmod.sep + "pegjs_header.js").toString();
 	var is_pegjs = 0 <= src_path.search(/\.(pegjs|js\.peg)$/);
@@ -46,21 +41,18 @@ function main(argv, fs) {
 	var peg;
 	var df;
 	try {
-		console.log("Opening " + src_path);
+		//console.log("Opening " + src_path);
 		peg = fs.readFileSync(src_path).toString();
-		console.log("Opening " + dst_path);
+		//console.log("Opening " + dst_path);
 		df = fs.openSync(dst_path, 'w+');
 	} catch(e) {
 		console.log("Error: " + e);
 	}
 	if (peg.length > 0) {
-		// TODO: Here we should maybe replace every "\r\n" and "\r" with "\n".
-		if (peg[peg.length - 1] != '\n') peg += '\n';
 		peg = is_pegjs ? pegjs_to_peg(peg) : peg_to_pegjs(peg);
-		peg = peg.replace(/ +$/gm, "");
 	}
 	fs.writeSync(df, peg, 0, peg.length);
-	return;
+	return dst_path;
 }
 
 function make_dstpath(srcpath, src_is_pegjs) {
@@ -137,6 +129,8 @@ function closing_bracket_offset(s, i, b) {
 }
 
 function pegjs_to_peg(peg) {
+  // TODO: Here we should maybe replace every "\r\n" and "\r" with "\n".
+  if (peg[peg.length - 1] != '\n') peg += '\n';
 	peg = remove_pegjs_javascript(peg);
 	var speg = split_peg_code_and_comments(peg, false);
 	speg = move_comments_in_the_middle_of_a_rule(speg);
@@ -150,8 +144,10 @@ function pegjs_to_peg(peg) {
 		speg[i] = process_pegjs_code(speg[i]);
 		i += 2;
 	}
-	return speg.join("");
+	peg = speg.join("");
 	//return speg.join("") + "\n" + EXTERN_PREDICATE_SYMBOL + " = (.*)\n";
+	peg = peg.replace(/ +$/gm, "");
+	return peg;
 }
 
 function among(v, s) {
@@ -161,6 +157,8 @@ function among(v, s) {
 }
 
 function peg_to_pegjs(peg) {
+  // TODO: Here we should maybe replace every "\r\n" and "\r" with "\n".
+  if (peg[peg.length - 1] != '\n') peg += '\n';
 	peg = peg.replace(/^(\s*)(?!#\s*)([^#]*[^#\s])\s+#:\s*(.*)/gm, '$1$2\x1B$3');
 	var speg = split_peg_code_and_comments(peg, true);
 	var i = 1;
@@ -192,7 +190,9 @@ function peg_to_pegjs(peg) {
 		}
 		i += 2;
 	}
-	return speg.join("");
+	peg = speg.join("");
+	peg = peg.replace(/ +$/gm, "");
+	return peg;
 }
 
 function move_comments_in_the_middle_of_a_rule(speg) {
@@ -242,12 +242,13 @@ function process_peg_code(peg) {
 //  var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
 //  peg = peg.replace(re, "");
 	peg = peg.replace(/<-/g, "=");
-	// peg = peg.replace(/-/g, "_");
-	peg = peg.replace(/([^a-z\x1B](?!\x1B)[a-z]+)-(?=[a-z])/gm, "$1_");
+	// peg = peg.replace(/((?<![a-zA-Z0-9_\-\x1B])(?!\x1B)[a-zA-Z0-9_]+)-(?=[a-zA-Z0-9_])/gm, "$1_");
 	// ↑ Replacing `-` with `_` except within action tags.
+	// ↑ For some reason that regexp doesn't work when there are more than one dash in a single label.
 	peg = peg.replace(/ {2,}/g, " ");
 	peg = peg_add_js_parser_actions(peg);
 	peg = peg.replace(/\x1B/gm, ' //: ');
+	peg = peg.replace(/-/g, "_");
 	return peg;
 }
 
@@ -372,5 +373,23 @@ function peg_add_js_parser_actions(peg) {
 	/* ↑ TODO: "(\x1B[^\r\n]*)?" doesn't seem to work, so I add to remove manually
 	   the \x1B tags with the peg.replace() line above. Investigate why. */
 	return peg;
+}
+
+
+// === EXECUTABLE CODE === //
+
+if (typeof module !== 'undefined') {
+    module.exports.conv_file = conv_file;
+		module.exports.peg_to_pegjs = peg_to_pegjs;
+		module.exports.pegjs_to_peg = pegjs_to_peg;
+    if (typeof process !== 'undefined' && require !== 'undefined'
+		    && require.main === module) {
+			if (process.argv.length < 3) {
+				console.log("pegjs_conv.js: Not enough parameters.");
+				return;
+			}
+      conv_file(process.argv[2]);
+			process.exit();
+    }
 }
 
