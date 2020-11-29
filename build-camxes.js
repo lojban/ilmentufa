@@ -7,7 +7,7 @@ if (pathmod.extname(src) === ".peg") {
 	  var pegjs_conv = require("./pegjs_conv.js");
 		var peg_src = src;
 		// src = pathmod.dirname(peg_src) + pathmod.sep + pathmod.basename(peg_src) + ".pegjs";
-		src = pegjs_conv.conv_file(peg_src);
+		src = pegjs_conv.convert_file(peg_src);
 		console.log("-> " + src);
 }
 var dst = src.replace(/.js.peg$/g, ".pegjs").replace(/^(.*?)(\.[^\\\/]+)?$/g, "$1.js");

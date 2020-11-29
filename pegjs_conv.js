@@ -29,7 +29,7 @@ var PEGJS_HEADER = "";
 
 // === FUNCTIONS === //
 
-function conv_file(src_path) {
+function convert_file(src_path) {
 	var fs = require("fs");
 	var pathmod = require("path");
 	var this_path = __dirname; // pathmod.dirname(argv[1]);
@@ -379,7 +379,7 @@ function peg_add_js_parser_actions(peg) {
 // === EXECUTABLE CODE === //
 
 if (typeof module !== 'undefined') {
-    module.exports.conv_file = conv_file;
+    module.exports.convert_file = convert_file;
 		module.exports.peg_to_pegjs = peg_to_pegjs;
 		module.exports.pegjs_to_peg = pegjs_to_peg;
     if (typeof process !== 'undefined' && require !== 'undefined'
@@ -388,7 +388,7 @@ if (typeof module !== 'undefined') {
 				console.log("pegjs_conv.js: Not enough parameters.");
 				return;
 			}
-      conv_file(process.argv[2]);
+      convert_file(process.argv[2]);
 			process.exit();
     }
 }
