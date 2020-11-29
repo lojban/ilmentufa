@@ -37,12 +37,12 @@ fs.writeSync(fd, buffer, 0, buffer.length);
 buffer = new Buffer.from(`
 
 if (typeof module !== 'undefined') {
-    module.exports = camxes;
-    if (typeof process !== 'undefined' && require !== 'undefined' && require.main === module) {
-      var input = process.argv[2];
-      if (Object.prototype.toString.call(input) === '[object String]')
-        console.log(JSON.stringify(camxes.parse(input)));
-    }
+	module.exports = camxes;
+	if (typeof process !== 'undefined' && require !== 'undefined' && require.main === module) {
+		var input = process.argv[2];
+		if (Object.prototype.toString.call(input) === '[object String]')
+			console.log(JSON.stringify(camxes.parse(input)));
+	}
 }
 
 `);
