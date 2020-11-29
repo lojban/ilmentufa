@@ -242,12 +242,13 @@ function process_peg_code(peg) {
 //  var re = new RegExp(" *[\\&\\!]" + EXTERN_PREDICATE_SYMBOL, "g");
 //  peg = peg.replace(re, "");
 	peg = peg.replace(/<-/g, "=");
-	// peg = peg.replace(/-/g, "_");
-	peg = peg.replace(/([^a-z\x1B](?!\x1B)[a-z]+)-(?=[a-z])/gm, "$1_");
+	// peg = peg.replace(/((?<![a-zA-Z0-9_\-\x1B])(?!\x1B)[a-zA-Z0-9_]+)-(?=[a-zA-Z0-9_])/gm, "$1_");
 	// ↑ Replacing `-` with `_` except within action tags.
+	// ↑ For some reason that regexp doesn't work when there are more than one dash in a single label.
 	peg = peg.replace(/ {2,}/g, " ");
 	peg = peg_add_js_parser_actions(peg);
 	peg = peg.replace(/\x1B/gm, ' //: ');
+	peg = peg.replace(/-/g, "_");
 	return peg;
 }
 
