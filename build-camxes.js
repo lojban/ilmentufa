@@ -21,9 +21,9 @@ try {
 		allowedStartRules: ["text"],
 	}
     if (typeof pegjs.generate === 'function')
-        var camxes = pegjs.generate(peg, param);
+        var parser_code = pegjs.generate(peg, param);
     else if (typeof pegjs.buildParser === 'function')
-        var camxes = pegjs.buildParser(peg, param);
+        var parser_code = pegjs.buildParser(peg, param);
     else throw "ERROR: No parser generator method found in the PEGJS module.";
 } catch (e) {
 	console.log(JSON.stringify(e));
@@ -32,7 +32,7 @@ try {
 var fd = fs.openSync(dst, 'w+');
 var buffer = new Buffer.from('var camxes = ');
 fs.writeSync(fd, buffer, 0, buffer.length);
-buffer = new Buffer.from(camxes);
+buffer = new Buffer.from(parser_code);
 fs.writeSync(fd, buffer, 0, buffer.length);
 buffer = new Buffer.from(`
 
