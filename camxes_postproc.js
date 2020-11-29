@@ -79,7 +79,7 @@ function camxes_postprocessing(input, mode) {
         var with_json_format    = among('J', mode);
         var with_indented_json  = among('I', mode);        
         var without_leaf_prefix = among('!', mode);
-        var with_glossing       = among('G', mode);
+        var with_glossing       = among('G', mode) && glosser !== null;
     } else throw "camxes_postprocessing(): Invalid mode argument type!";
     /* Calling the postprocessor */
     var output = newer_postprocessor(input, with_morphology, with_spaces,
