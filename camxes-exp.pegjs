@@ -41,6 +41,12 @@
 
 
 
+// ================================================================== //
+
+/*
+ *  PEGJS INITIALIZATION CODE
+ */
+
 {
   var _g_zoi_delim;
 
@@ -147,6 +153,59 @@
     w = w.toLowerCase().replace(/,/gm,"").replace(/h/g, "'");
     return w === _g_zoi_delim;
   }
+	
+	// === Stack functions === //
+
+  _g_stack = []
+
+  function _push(x) {
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    _g_stack.push(x);
+    return;
+  }
+
+  function _pop() {
+    return _g_stack.pop();
+  }
+	
+	  function _peek() {
+	  if (_g_stack.length <= 0) return null;
+    else return _g_stack[_g_stack.length - 1];
+  }
+	
+	_g_last_pred_val = null;
+	
+	function _pop_eq(x) {
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    /* Keeping spaces in the parse tree seems to result in the absorbtion of
+       spaces into the closing delimiter candidate, so we'll remove any space
+       character from our input. */
+    x = x.replace(/[.\t\n\r?!\u0020]/g, "");
+		l = _g_stack.length;
+		y = _peek();
+		r = x === y;
+		_g_last_pred_val = r;
+		if (r) _pop();
+    return r;
+  }
+	
+	function _peek_eq(x) {
+    if (is_array(x)) x = join_expr(x);
+    else if (!is_string(x)) throw "Invalid argument type: " + typeof x;
+    /* Keeping spaces in the parse tree seems to result in the absorbtion of
+       spaces into the closing delimiter candidate, so we'll remove any space
+       character from our input. */
+    x = x.replace(/[.\t\n\r?!\u0020]/g, "");
+		l = _g_stack.length;
+		y = _peek();
+		r = x === y;
+		_g_last_pred_val = r;
+    return r;
+  }
+
+	// === MISC === //
 
   function join_expr(n) {
     if (!is_array(n) || n.length < 1) return "";
@@ -160,15 +219,15 @@
   }
 
   function is_string(v) {
-    // return $.type(v) === "string";
     return Object.prototype.toString.call(v) === '[object String]';
   }
 
   function is_array(v) {
-    // return $.type(v) === "array";
     return Object.prototype.toString.call(v) === '[object Array]';
   }
 }
+
+// ================================================================== //
 
 text = expr:(intro_null NAI_clause* text_part_2 (!text_1 joik_jek)? text_1? faho_clause EOF?) {return _node("text", expr);}
 
@@ -539,7 +598,7 @@ pre_zei_bu = expr:(!ZOI_start !BU_clause !ZEI_clause !SI_clause !SA_clause !SU_c
 // LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word_SA_handling si_clause?
 // pre_zei_bu_no_SA = LOhU_pre / ZO_pre / ZOI_pre / !ZEI_clause !BU_clause !FAhO_clause !SI_clause !SA_clause !SU_clause any_word si_clause?
 
-dot_star = expr:(.*) {return ["dot_star", _join(expr)];}
+dot_star = expr:(.*) {return _node("dot_star", expr);}
 
 // __ General Morphology Issues
 //
@@ -581,33 +640,33 @@ su_word = expr:(!ZOI_start !NIhO_clause !LU_clause !TUhE_clause !TO_clause !SU_c
 
 // ___ ELIDIBLE TERMINATORS ___  (EXPERIMENTAL)
 
-BEhO_elidible = expr:(BEhO_clause?) {return (expr == "" || !expr) ? ["BEhO"] : _node_empty("BEhO_elidible", expr);}
-BOI_elidible = expr:(BOI_clause?) {return (expr == "" || !expr) ? ["BOI"] : _node_empty("BOI_elidible", expr);}
-CU_elidible = expr:(CU_clause?) {return (expr == "" || !expr) ? ["CU"] : _node_empty("CU_elidible", expr);}
-DOhU_elidible = expr:(DOhU_clause?) {return (expr == "" || !expr) ? ["DOhU"] : _node_empty("DOhU_elidible", expr);}
-FEhU_elidible = expr:(FEhU_clause?) {return (expr == "" || !expr) ? ["FEhU"] : _node_empty("FEhU_elidible", expr);}
+BEhO_elidible = expr:(BEhO_clause?) {return (expr === "" || !expr) ? ["BEhO"] : _node_empty("BEhO_elidible", expr);}
+BOI_elidible = expr:(BOI_clause?) {return (expr === "" || !expr) ? ["BOI"] : _node_empty("BOI_elidible", expr);}
+CU_elidible = expr:(CU_clause?) {return (expr === "" || !expr) ? ["CU"] : _node_empty("CU_elidible", expr);}
+DOhU_elidible = expr:(DOhU_clause?) {return (expr === "" || !expr) ? ["DOhU"] : _node_empty("DOhU_elidible", expr);}
+FEhU_elidible = expr:(FEhU_clause?) {return (expr === "" || !expr) ? ["FEhU"] : _node_empty("FEhU_elidible", expr);}
 // FOI and FUhO are never elidible
-GEhU_elidible = expr:(GEhU_clause?) {return (expr == "" || !expr) ? ["GEhU"] : _node_empty("GEhU_elidible", expr);}
-KEI_elidible = expr:(KEI_clause?) {return (expr == "" || !expr) ? ["KEI"] : _node_empty("KEI_elidible", expr);}
-KEhE_elidible = expr:(KEhE_clause?) {return (expr == "" || !expr) ? ["KEhE"] : _node_empty("KEhE_elidible", expr);}
-KU_elidible = expr:(KU_clause?) {return (expr == "" || !expr) ? ["KU"] : _node_empty("KU_elidible", expr);}
-KUhE_elidible = expr:(KUhE_clause?) {return (expr == "" || !expr) ? ["KUhE"] : _node_empty("KUhE_elidible", expr);}
-KUhO_elidible = expr:(KUhO_clause?) {return (expr == "" || !expr) ? ["KUhO"] : _node_empty("KUhO_elidible", expr);}
+GEhU_elidible = expr:(GEhU_clause?) {return (expr === "" || !expr) ? ["GEhU"] : _node_empty("GEhU_elidible", expr);}
+KEI_elidible = expr:(KEI_clause?) {return (expr === "" || !expr) ? ["KEI"] : _node_empty("KEI_elidible", expr);}
+KEhE_elidible = expr:(KEhE_clause?) {return (expr === "" || !expr) ? ["KEhE"] : _node_empty("KEhE_elidible", expr);}
+KU_elidible = expr:(KU_clause?) {return (expr === "" || !expr) ? ["KU"] : _node_empty("KU_elidible", expr);}
+KUhE_elidible = expr:(KUhE_clause?) {return (expr === "" || !expr) ? ["KUhE"] : _node_empty("KUhE_elidible", expr);}
+KUhO_elidible = expr:(KUhO_clause?) {return (expr === "" || !expr) ? ["KUhO"] : _node_empty("KUhO_elidible", expr);}
 // LEhU is never elidible
-LIhU_elidible = expr:(LIhU_clause?) {return (expr == "" || !expr) ? ["LIhU"] : _node_empty("LIhU_elidible", expr);}
-LOhO_elidible = expr:(LOhO_clause?) {return (expr == "" || !expr) ? ["LOhO"] : _node_empty("LOhO_elidible", expr);}
-LUhU_elidible = expr:(LUhU_clause?) {return (expr == "" || !expr) ? ["LUhU"] : _node_empty("LUhU_elidible", expr);}
-MEhU_elidible = expr:(MEhU_clause?) {return (expr == "" || !expr) ? ["MEhU"] : _node_empty("MEhU_elidible", expr);}
-NUhU_elidible = expr:(NUhU_clause?) {return (expr == "" || !expr) ? ["NUhU"] : _node_empty("NUhU_elidible", expr);}
-SEhU_elidible = expr:(SEhU_clause?) {return (expr == "" || !expr) ? ["SEhU"] : _node_empty("SEhU_elidible", expr);}
-TEhU_elidible = expr:(TEhU_clause?) {return (expr == "" || !expr) ? ["TEhU"] : _node_empty("TEhU_elidible", expr);}
-TOI_elidible = expr:(TOI_clause?) {return (expr == "" || !expr) ? ["TOI"] : _node_empty("TOI_elidible", expr);}
-TUhU_elidible = expr:(TUhU_clause?) {return (expr == "" || !expr) ? ["TUhU"] : _node_empty("TUhU_elidible", expr);}
-VAU_elidible = expr:(VAU_clause?) {return (expr == "" || !expr) ? ["VAU"] : _node_empty("VAU_elidible", expr);}
-VEhO_elidible = expr:(VEhO_clause?) {return (expr == "" || !expr) ? ["VEhO"] : _node_empty("VEhO_elidible", expr);}
+LIhU_elidible = expr:(LIhU_clause?) {return (expr === "" || !expr) ? ["LIhU"] : _node_empty("LIhU_elidible", expr);}
+LOhO_elidible = expr:(LOhO_clause?) {return (expr === "" || !expr) ? ["LOhO"] : _node_empty("LOhO_elidible", expr);}
+LUhU_elidible = expr:(LUhU_clause?) {return (expr === "" || !expr) ? ["LUhU"] : _node_empty("LUhU_elidible", expr);}
+MEhU_elidible = expr:(MEhU_clause?) {return (expr === "" || !expr) ? ["MEhU"] : _node_empty("MEhU_elidible", expr);}
+NUhU_elidible = expr:(NUhU_clause?) {return (expr === "" || !expr) ? ["NUhU"] : _node_empty("NUhU_elidible", expr);}
+SEhU_elidible = expr:(SEhU_clause?) {return (expr === "" || !expr) ? ["SEhU"] : _node_empty("SEhU_elidible", expr);}
+TEhU_elidible = expr:(TEhU_clause?) {return (expr === "" || !expr) ? ["TEhU"] : _node_empty("TEhU_elidible", expr);}
+TOI_elidible = expr:(TOI_clause?) {return (expr === "" || !expr) ? ["TOI"] : _node_empty("TOI_elidible", expr);}
+TUhU_elidible = expr:(TUhU_clause?) {return (expr === "" || !expr) ? ["TUhU"] : _node_empty("TUhU_elidible", expr);}
+VAU_elidible = expr:(VAU_clause?) {return (expr === "" || !expr) ? ["VAU"] : _node_empty("VAU_elidible", expr);}
+VEhO_elidible = expr:(VEhO_clause?) {return (expr === "" || !expr) ? ["VEhO"] : _node_empty("VEhO_elidible", expr);}
 
-KUhOI_elidible = expr:(KUhOI_clause?) {return (expr == "" || !expr) ? ["KUhOI"] : _node_empty("KUhOI_elidible", expr);}
-KUhAU_elidible = expr:(KUhAU_clause?) {return (expr == "" || !expr) ? ["KUhAU"] : _node_empty("KUhAU_elidible", expr);}
+KUhOI_elidible = expr:(KUhOI_clause?) {return (expr === "" || !expr) ? ["KUhOI"] : _node_empty("KUhOI_elidible", expr);}
+KUhAU_elidible = expr:(KUhAU_clause?) {return (expr === "" || !expr) ? ["KUhAU"] : _node_empty("KUhAU_elidible", expr);}
 
 
 // ___ SELMAHO ___
@@ -1497,9 +1556,9 @@ lojban_word = expr:(CMEVLA / CMAVO / BRIVLA) {return _node("lojban_word", expr);
 any_word = expr:(lojban_word spaces?) {return _node("any_word", expr);}
 
 //// EXP-MODIF: ZOI-fix
-zoi_open = expr:(lojban_word) { _assign_zoi_delim(expr); return _node("zoi_open", expr); }
-zoi_word = expr:((non_space+) spaces) !{ return _is_zoi_delim(expr); } { return ["zoi_word", join_expr(expr)]; }
-zoi_close = expr:(any_word) &{ return _is_zoi_delim(expr); } { return _node("zoi_close", expr); }
+zoi_open = expr:(lojban_word) {return _node("zoi_open", expr);}
+zoi_word = expr:((non_space+) spaces) {return _node("zoi_word", expr);}
+zoi_close = expr:(any_word) {return _node("zoi_close", expr);}
 
 //// EXP-MODIF: ZOhOI/MEhOI implementation
 zohoi_word = expr:(non_space+) {return _node("zohoi_word", expr);}
@@ -1723,14 +1782,14 @@ pause = expr:(comma* space_char+ / EOF) {return _node("pause", expr);}
 
 EOF = expr:(comma* !.) {return _node("EOF", expr);}
 
-comma = expr:([,]) {return ",";}
+comma = expr:([,]) {return _node("comma", expr);}
 
 non_lojban_word = expr:(!lojban_word non_space+) {return _node("non_lojban_word", expr);}
 
 non_space = expr:(!space_char .) {return _node("non_space", expr);}
 
 //Unicode_style and escaped chars not compatible with cl_peg
-space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
+space_char = expr:([.\t\n\r?!\u0020]) {return _node("space_char", expr);}
 
 // space_char = [.?! ] / space_char1 / space_char2
 // space_char1 = '    '
@@ -1740,7 +1799,7 @@ space_char = expr:([.\t\n\r?!\u0020]) {return _join(expr);}
 
 spaces = expr:(!Y initial_spaces) {return _node("spaces", expr);}
 
-initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return ["initial_spaces", _join(expr)];}
+initial_spaces = expr:((comma* space_char / !ybu Y)+ EOF? / EOF) {return _node("initial_spaces", expr);}
 
 ybu = expr:(Y space_char* BU) {return _node("ybu", expr);}
 
@@ -1750,7 +1809,7 @@ lujvo = expr:(!gismu !fuhivla brivla) {return _node("lujvo", expr);}
 
 A = expr:(&cmavo ( a / e / j i / o / u ) &post_word) {return _node("A", expr);}
 
-BAI = expr:(&cmavo ( b e h e i / k o h a u / k a h a i / d u h o / s i h u / z a u / k i h i / d u h i / c u h u / t u h i / t i h u / d i h o / j i h u / r i h a / n i h i / m u h i / k i h u / v a h u / k o i / c a h i / t a h i / p u h e / j a h i / k a i / b a i / f i h e / d e h i / c i h o / m a u / m u h u / r i h i / r a h i / k a h a / p a h u / p a h a / l e h a / k u h u / t a i / b a u / m a h i / c i h e / f a u / p o h i / c a u / m a h e / c i h u / r a h a / p u h a / l i h e / l a h u / b a h i / k a h i / s a u / f a h e / b e h i / t i h i / j a h e / g a h a / v a h o / j i h o / m e h a / d o h e / j i h e / p i h o / g a u / z u h e / m e h e / r a i ) &post_word) {return _node("BAI", expr);}
+BAI = expr:(&cmavo ( k i h o i / b e h e i / k o h a u / k a h a i / d u h o / s i h u / z a u / k i h i / d u h i / c u h u / t u h i / t i h u / d i h o / j i h u / r i h a / n i h i / m u h i / k i h u / v a h u / k o i / c a h i / t a h i / p u h e / j a h i / k a i / b a i / f i h e / d e h i / c i h o / m a u / m u h u / r i h i / r a h i / k a h a / p a h u / p a h a / l e h a / k u h u / t a i / b a u / m a h i / c i h e / f a u / p o h i / c a u / m a h e / c i h u / r a h a / p u h a / l i h e / l a h u / b a h i / k a h i / s a u / f a h e / b e h i / t i h i / j a h e / g a h a / v a h o / j i h o / m e h a / d o h e / j i h e / p i h o / g a u / z u h e / m e h e / r a i ) &post_word) {return _node("BAI", expr);}
 
 BAhE = expr:(&cmavo ( b a h e / z a h e ) &post_word) {return _node("BAhE", expr);}
 
