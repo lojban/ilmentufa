@@ -31515,7 +31515,7 @@ var camxes = (function() {
     }
 
     function peg$parseZOI_pre() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
       var key    = peg$currPos * 812 + 537,
           cached = peg$cache[key];
@@ -31544,10 +31544,38 @@ var camxes = (function() {
               }
               if (s6 !== peg$FAILED) {
                 s7 = [];
-                s8 = peg$parsezoi_word();
+                s8 = peg$currPos;
+                s9 = peg$parsezoi_word();
+                if (s9 !== peg$FAILED) {
+                  s10 = peg$parsespaces();
+                  if (s10 !== peg$FAILED) {
+                    s9 = [s9, s10];
+                    s8 = s9;
+                  } else {
+                    peg$currPos = s8;
+                    s8 = peg$c0;
+                  }
+                } else {
+                  peg$currPos = s8;
+                  s8 = peg$c0;
+                }
                 while (s8 !== peg$FAILED) {
                   s7.push(s8);
-                  s8 = peg$parsezoi_word();
+                  s8 = peg$currPos;
+                  s9 = peg$parsezoi_word();
+                  if (s9 !== peg$FAILED) {
+                    s10 = peg$parsespaces();
+                    if (s10 !== peg$FAILED) {
+                      s9 = [s9, s10];
+                      s8 = s9;
+                    } else {
+                      peg$currPos = s8;
+                      s8 = peg$c0;
+                    }
+                  } else {
+                    peg$currPos = s8;
+                    s8 = peg$c0;
+                  }
                 }
                 if (s7 !== peg$FAILED) {
                   s8 = peg$parsezoi_close();

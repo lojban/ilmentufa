@@ -1262,8 +1262,7 @@ ZO_post <- post_clause
 
 #         delimited quote marker
 ZOI_clause <- ZOI_pre ZOI_post
-#// EXP-EDIT: ZOI fix
-ZOI_pre <- pre_clause ZOI spaces? zoi_open spaces? zoi_word* zoi_close spaces?
+ZOI_pre <- pre_clause ZOI spaces? zoi_open spaces? (zoi_word spaces)* zoi_close spaces?
 ZOI_post <- post_clause
 ZOI_start <- !ZOI_pre ZOI
 # ZOI_no_SA_handling = pre_clause ZOI spaces? zoi_open zoi_word* zoi_close spaces?

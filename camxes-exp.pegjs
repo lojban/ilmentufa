@@ -1450,8 +1450,7 @@ ZO_post = expr:(post_clause) {return _node("ZO_post", expr);}
 
 //         delimited quote marker
 ZOI_clause = expr:(ZOI_pre ZOI_post) {return _node("ZOI_clause", expr);}
-//// EXP-EDIT: ZOI fix
-ZOI_pre = expr:(pre_clause ZOI spaces? zoi_open spaces? zoi_word* zoi_close spaces?) {return _node("ZOI_pre", expr);}
+ZOI_pre = expr:(pre_clause ZOI spaces? zoi_open spaces? (zoi_word spaces)* zoi_close spaces?) {return _node("ZOI_pre", expr);}
 ZOI_post = expr:(post_clause) {return _node("ZOI_post", expr);}
 ZOI_start = expr:(!ZOI_pre ZOI) {return _node("ZOI_start", expr);}
 // ZOI_no_SA_handling = pre_clause ZOI spaces? zoi_open zoi_word* zoi_close spaces?
