@@ -382,7 +382,7 @@ if (typeof module !== 'undefined') {
     module.exports.convert_file = convert_file;
 		module.exports.peg_to_pegjs = peg_to_pegjs;
 		module.exports.pegjs_to_peg = pegjs_to_peg;
-    if (typeof process !== 'undefined' && require !== 'undefined'
+    if (typeof process !== 'undefined' && typeof require !== 'undefined'
 		    && require.main === module) {
 			if (process.argv.length < 3) {
 				console.log("pegjs_conv.js: Not enough parameters.");
