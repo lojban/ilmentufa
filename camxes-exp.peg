@@ -1788,7 +1788,7 @@ MOhE <- &cmavo ( m o h e ) &post_word
 
 MOhI <- &cmavo ( m o h i ) &post_word
 
-MOI <- &cmavo ( m e i / m o i / s i h e / c u h o / v a h e ) &post_word
+MOI <- &cmavo ( c e i h a / m e i / m o i / s i h e / c u h o / v a h e ) &post_word
 
 NA <- &cmavo ( j a h a / n a ) &post_word
 

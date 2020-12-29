@@ -1976,7 +1976,7 @@ MOhE = expr:(&cmavo ( m o h e ) &post_word) {return _node("MOhE", expr);}
 
 MOhI = expr:(&cmavo ( m o h i ) &post_word) {return _node("MOhI", expr);}
 
-MOI = expr:(&cmavo ( m e i / m o i / s i h e / c u h o / v a h e ) &post_word) {return _node("MOI", expr);}
+MOI = expr:(&cmavo ( c e i h a / m e i / m o i / s i h e / c u h o / v a h e ) &post_word) {return _node("MOI", expr);}
 
 NA = expr:(&cmavo ( j a h a / n a ) &post_word) {return _node("NA", expr);}
 
