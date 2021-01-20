@@ -1563,7 +1563,7 @@ unvoiced <- c / f / k / p / s / t / x
 
 l <- comma* [lL] !h !glide !l
 
-m <- comma* [mM] !h !glide !m !z
+m <- comma* [mM] !h !glide !m
 
 n <- comma* [nN] !h !glide !n !affricate
 

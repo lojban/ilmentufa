@@ -38539,7 +38539,7 @@ var camxes = (function() {
     }
 
     function peg$parsem() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8;
+      var s0, s1, s2, s3, s4, s5, s6, s7;
 
       var key    = peg$currPos * 812 + 654,
           cached = peg$cache[key];
@@ -38599,23 +38599,8 @@ var camxes = (function() {
                 s6 = peg$c0;
               }
               if (s6 !== peg$FAILED) {
-                s7 = peg$currPos;
-                peg$silentFails++;
-                s8 = peg$parsez();
-                peg$silentFails--;
-                if (s8 === peg$FAILED) {
-                  s7 = peg$c3;
-                } else {
-                  peg$currPos = s7;
-                  s7 = peg$c0;
-                }
-                if (s7 !== peg$FAILED) {
-                  s2 = [s2, s3, s4, s5, s6, s7];
-                  s1 = s2;
-                } else {
-                  peg$currPos = s1;
-                  s1 = peg$c0;
-                }
+                s2 = [s2, s3, s4, s5, s6];
+                s1 = s2;
               } else {
                 peg$currPos = s1;
                 s1 = peg$c0;
