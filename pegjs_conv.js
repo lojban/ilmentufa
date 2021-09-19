@@ -248,7 +248,14 @@ function process_peg_code(peg) {
 	peg = peg.replace(/ {2,}/g, " ");
 	peg = peg_add_js_parser_actions(peg);
 	peg = peg.replace(/\x1B/gm, ' //: ');
-	peg = peg.replace(/-/g, "_");
+	peg = peg.replace(/(?<![\[])\-(?![\w\s\-]*[\]])/g, "_");
+  /* ↑ Replacing dashes with underscores in identifiers, but not within regular
+       expressions such as `[a-z]`. */
+  /* ↑ TODO: Handle the unlikely cases of escaped bracket expressions, such as
+       `\[a-z\]`. */
+  /* ↑ WARNING: If the PEG grammar has two identifiers differing only on `-` VS `_`,
+       the above replacement operation may break the grammar by merging the two 
+       identifiers into a single one. */
 	return peg;
 }
 
