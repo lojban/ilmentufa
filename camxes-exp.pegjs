@@ -1751,7 +1751,7 @@ unvoiced = expr:(c / f / k / p / s / t / x) {return _node("unvoiced", expr);}
 
 l = expr:(comma* [lL] !h !glide !l) {return _node("l", expr);}
 
-m = expr:(comma* [mM] !h !glide !m !z) {return _node("m", expr);}
+m = expr:(comma* [mM] !h !glide !m) {return _node("m", expr);}
 
 n = expr:(comma* [nN] !h !glide !n !affricate) {return _node("n", expr);}
 
@@ -1924,7 +1924,7 @@ KEI = expr:(&cmavo ( k e i ) &post_word) {return _node("KEI", expr);}
 KI = expr:(&cmavo ( k i ) &post_word) {return _node("KI", expr);}
 
 //// EXP-ADD: xai
-KOhA = expr:(&cmavo ( z u h a i / n a u h o / d a h u / d a h e / d i h u / d i h e / d e h u / d e h e / d e i / d o h i / m i h o / m i h a i / m a h a / m i h a / d o h o / k o h a / f o h u / k o h e / k o h i / k o h o / k o h u / f o h a / f o h e / f o h i / f o h o / v o h a / v o h e / v o h i / v o h o / v o h u / r u / r i / r a / t a / t u / t i / z i h o / k e h a / m a / z u h i / z o h e / c e h u / d a / d e / d i / k o / m i / d o / x a i) &post_word) {return _node("KOhA", expr);}
+KOhA = expr:(&cmavo ( x e i h e / z u h a i / n a u h o / d a h u / d a h e / d i h u / d i h e / d e h u / d e h e / d e i / d o h i / m i h o / m i h a i / m a h a / m i h a / d o h o / k o h a / f o h u / k o h e / k o h i / k o h o / k o h u / f o h a / f o h e / f o h i / f o h o / v o h a / v o h e / v o h i / v o h o / v o h u / r u / r i / r a / t a / t u / t i / z i h o / k e h a / m a / z u h i / z o h e / c e h u / d a / d e / d i / k o / m i / d o / x a i) &post_word) {return _node("KOhA", expr);}
 
 KU = expr:(&cmavo ( k u ) &post_word) {return _node("KU", expr);}
 
@@ -1976,7 +1976,7 @@ MOhE = expr:(&cmavo ( m o h e ) &post_word) {return _node("MOhE", expr);}
 
 MOhI = expr:(&cmavo ( m o h i ) &post_word) {return _node("MOhI", expr);}
 
-MOI = expr:(&cmavo ( m e i / m o i / s i h e / c u h o / v a h e ) &post_word) {return _node("MOI", expr);}
+MOI = expr:(&cmavo ( c e i h a / m e i / m o i / s i h e / c u h o / v a h e ) &post_word) {return _node("MOI", expr);}
 
 NA = expr:(&cmavo ( j a h a / n a ) &post_word) {return _node("NA", expr);}
 
@@ -2047,7 +2047,7 @@ TUhE = expr:(&cmavo ( t u h e ) &post_word) {return _node("TUhE", expr);}
 TUhU = expr:(&cmavo ( t u h u ) &post_word) {return _node("TUhU", expr);}
 
 //// EXP-ADD: ko'oi, si'au, o'ai, xe'e, xo'o
-UI = expr:(&cmavo ( u e h i / k o h o i / s i h a u / o h a i / x e h e / x o h o / i h a / i e / a h e / u h i / i h o / i h e / a h a / i a / o h i / o h e / e h e / o i / u o / e h i / u h o / a u / u a / a h i / i h u / i i / u h a / u i / a h o / a i / a h u / i u / e i / o h o / e h a / u u / o h a / o h u / u h u / e h o / i o / e h u / u e / i h i / u h e / b a h a / j a h o / c a h e / s u h a / t i h e / k a h u / s e h o / z a h a / p e h i / r u h a / j u h a / t a h o / r a h u / l i h a / b a h u / m u h a / d o h a / t o h u / v a h i / p a h e / z u h u / s a h e / l a h a / k e h u / s a h u / d a h i / j e h u / s a h a / k a u / t a h u / n a h i / j o h a / b i h u / l i h o / p a u / m i h u / k u h i / j i h a / s i h a / p o h o / p e h a / r o h i / r o h e / r o h o / r o h u / r o h a / r e h e / l e h o / j u h o / f u h i / d a i / g a h i / z o h o / b e h u / r i h e / s e h i / s e h a / v u h e / k i h a / x u / g e h e / b u h o ) &post_word) {return _node("UI", expr);}
+UI = expr:(&cmavo ( j u h o i / a i h i / o i h a / u e h i / k o h o i / s i h a u / o h a i / x e h e / x o h o / i h a / i e / a h e / u h i / i h o / i h e / a h a / i a / o h i / o h e / e h e / o i / u o / e h i / u h o / a u / u a / a h i / i h u / i i / u h a / u i / a h o / a i / a h u / i u / e i / o h o / e h a / u u / o h a / o h u / u h u / e h o / i o / e h u / u e / i h i / u h e / b a h a / j a h o / c a h e / s u h a / t i h e / k a h u / s e h o / z a h a / p e h i / r u h a / j u h a / t a h o / r a h u / l i h a / b a h u / m u h a / d o h a / t o h u / v a h i / p a h e / z u h u / s a h e / l a h a / k e h u / s a h u / d a h i / j e h u / s a h a / k a u / t a h u / n a h i / j o h a / b i h u / l i h o / p a u / m i h u / k u h i / j i h a / s i h a / p o h o / p e h a / r o h i / r o h e / r o h o / r o h u / r o h a / r e h e / l e h o / j u h o / f u h i / d a i / g a h i / z o h o / b e h u / r i h e / s e h i / s e h a / v u h e / k i h a / x u / g e h e / b u h o ) &post_word) {return _node("UI", expr);}
 
 VA = expr:(&cmavo ( v i / v a / v u ) &post_word) {return _node("VA", expr);}
 
@@ -2070,7 +2070,7 @@ XI = expr:(&cmavo ( x i ) &post_word) {return _node("XI", expr);}
 Y = expr:(&cmavo ( y+ ) &post_word) {return _node("Y", expr);}
 
 //// EXP-ADD: xa'o
-ZAhO = expr:(&cmavo ( c o h a u h a / x o h u / c o h u h a / c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word) {return _node("ZAhO", expr);}
+ZAhO = expr:(&cmavo ( s a u h a / c o h a h a / c o h a u h a / x o h u / c o h u h a / c o h i / p u h o / c o h u / m o h u / c a h o / c o h a / d e h a / b a h o / d i h a / z a h o / x a h o ) &post_word) {return _node("ZAhO", expr);}
 
 ZEhA = expr:(&cmavo ( z e h u / z e h a / z e h i / z e h e ) &post_word) {return _node("ZEhA", expr);}
 
