@@ -2,6 +2,10 @@ body, textarea {
     font-family: sans-serif !important;
 }
 
+body {
+    height: 100vh;
+}
+
 span.translation {
     color: #aaaaaa;
     font-style: italic;
