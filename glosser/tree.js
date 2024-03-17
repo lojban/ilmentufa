@@ -309,7 +309,7 @@ function numberSumtiInSentence(parse) {
             sumtiCounter = placeTagToPlace(child);
         }
         
-        if (child.type === "BAI" || child.type === "FIhO" || child.type === "PU") {
+        if (["BAI","FAhA", "PU","CAhA","CUhE","KI","ZI","ZEhA","VA","VEhA","VIhA","ROI","TAhE","ZAhO"].includes(child.type)) {
             nextIsModal = true;
         }
         
