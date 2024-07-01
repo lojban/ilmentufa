@@ -27,301 +27,185 @@
 /**
  * Simplifies the given parse tree. Returns an array.
  */
-function simplifyTree(parse) {
-  // if it is a terminal, just return that
-  if (parse.length == 2 && isString(parse[0]) && isString(parse[1])) {
-    return [
-      {
-        type: parse[0],
-        word: parse[1],
-      },
-    ];
+function simplifyTree(parseTree) {
+  if (
+    parseTree.length === 2 &&
+    isString(parseTree[0]) &&
+    isString(parseTree[1])
+  ) {
+    return [{ type: parseTree[0], word: parseTree[1] }];
   }
 
-  var f = simplifyFunctions[parse[0]];
+  const simplifyFunc = simplifyFunctions[parseTree[0]];
 
-  // if there is a simplification function, apply it
-  if (f) {
-    return [f(parse)];
+  if (simplifyFunc) {
+    return [simplifyFunc(parseTree)];
   }
 
-  // else, we recursively search the children for things we do have a simplification function for
-  var result;
-  if (isString(parse[0])) {
-    result = simplifyArrayOfTrees(parse.slice(1));
-  } else {
-    result = simplifyArrayOfTrees(parse);
-  }
-
-  return result;
+  return simplifyArrayOfTrees(
+    isString(parseTree[0]) ? parseTree.slice(1) : parseTree
+  );
 }
 
 /**
  * Simplifies an array of trees.
  */
-function simplifyArrayOfTrees(parse) {
-  var result = [];
-
-  for (var i in parse) {
-    result = result.concat(simplifyTree(parse[i]));
-  }
-
-  return result;
+function simplifyArrayOfTrees(trees) {
+  return trees.flatMap(simplifyTree);
 }
 
 // The simplification functions
 
-var simplifyFunctions = {};
-
-simplifyFunctions["text"] = function (parse) {
-  return {
+const simplifyFunctions = {
+  text: (tree) => ({
     type: "text",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["free"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  free: (tree) => ({
     type: "free modifier",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["sentence"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  sentence: (tree) => ({
     type: "sentence",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["prenex"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  prenex: (tree) => ({
     type: "prenex",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["bridi_tail"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  bridi_tail: (tree) => ({
     type: "bridi tail",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["selbri"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  selbri: (tree) => ({
     type: "selbri",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["sumti"] = function (parse) {
-  return {
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  sumti: (tree) => ({
     type: "sumti",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
+  sumti_6: (tree) => {
+    const [firstChild] = tree[1];
+    const type = (() => {
+      switch (firstChild) {
+        case "ZO_clause":
+          return "one-word quote";
+        case "ZOI_clause":
+          return "non-Lojban quote";
+        case "LOhU_clause":
+          return "ungrammatical quote";
+        case "lerfu_string":
+          return "letterals";
+        case "LU_clause":
+          return "grammatical quote";
+        case "KOhA_clause":
+          return "sumka'i";
+        case "LA_clause":
+          return "name or name description";
+        case "LE_clause":
+          return "description";
+        case "li_clause":
+          return "number";
+        default:
+          if (Array.isArray(firstChild)) {
+            if (firstChild[0] === "LAhE_clause") return "reference sumti";
+            if (firstChild[0] === "NAhE_clause") return "negated sumti";
+          }
+          return "unknown type sumti (bug?)";
+      }
+    })();
 
-simplifyFunctions["sumti_6"] = function (parse) {
-  // sumti-6 <- ZO-clause free* /
-  //            ZOI-clause free* /
-  //            LOhU-clause free* /
-  //            lerfu-string !MOI-clause BOI-clause? free* /
-  //            LU-clause text LIhU-clause? free* /
-  //            (LAhE-clause free* / NAhE-clause BO-clause free*) relative-clauses? sumti LUhU-clause? free* /
-  //            KOhA-clause free* /
-  //            LA-clause free* relative-clauses? CMENE-clause+ free* /
-  //            (LA-clause / LE-clause) free* sumti-tail KU-clause? free* /
-  //            li-clause
-
-  if (parse[1][0] === "ZO_clause") {
     return {
-      type: "one-word quote",
-      children: simplifyArrayOfTrees(parse.slice(1)),
+      type,
+      children: simplifyArrayOfTrees(tree.slice(1)),
     };
-  }
-
-  if (parse[1][0] === "ZOI_clause") {
-    return {
-      type: "non-Lojban quote",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "LOhU_clause") {
-    return {
-      type: "ungrammatical quote",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "lerfu_string") {
-    return {
-      type: "letterals",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "LU_clause") {
-    return {
-      type: "grammatical quote",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] instanceof Array) {
-    if (parse[1][0][0] === "LAhE_clause") {
-      return {
-        type: "reference sumti",
-        children: simplifyArrayOfTrees(parse.slice(1)),
-      };
-    }
-
-    if (parse[1][0][0] === "NAhE_clause") {
-      return {
-        type: "negated sumti",
-        children: simplifyArrayOfTrees(parse.slice(1)),
-      };
-    }
-  }
-
-  if (parse[1][0] === "KOhA_clause") {
-    return {
-      type: "sumka'i",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "LA_clause") {
-    return {
-      type: "name or name description", // TODO how to disambiguate between those two?
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "LE_clause") {
-    return {
-      type: "description",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  if (parse[1][0] === "li_clause") {
-    return {
-      type: "number",
-      children: simplifyArrayOfTrees(parse.slice(1)),
-    };
-  }
-
-  return {
-    type: "unknown type sumti (bug?)",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
-};
-
-simplifyFunctions["relative_clause"] = function (parse) {
-  return {
+  },
+  relative_clause: (tree) => ({
     type: "relative clause",
-    children: simplifyArrayOfTrees(parse.slice(1)),
-  };
+    children: simplifyArrayOfTrees(tree.slice(1)),
+  }),
 };
-
-// Additional functions to improve the resulting tree
 
 /**
- * Numbers the placed sumti in the parse tree. That is, replaces the type "sumti" by either
- * "sumti x" if it is a normally placed sumti, or "modal sumti" if it is a modal sumti.
- * If it is a sumti in a vocative or something like that, which is not placed at all, it will
- * just leave "sumti".
- *
- * For placed sumti, also an attribute sumtiPlace is added with the place number.
+ * Numbers the placed sumti in the parse tree.
  */
-function numberSumti(parse) {
-  // if it is a terminal, do nothing
-  if (parse.length == 2 && isString(parse[0]) && isString(parse[1])) {
-    return parse;
+function numberSumti(tree) {
+  if (tree.type === "sentence") {
+    numberSumtiInSentence(tree);
   }
 
-  // if it is a sentence, start searching through it
-  if (parse.type === "sentence") {
-    numberSumtiInSentence(parse);
+  if (typeof tree === "object") {
+    Object.values(tree).forEach((value) => {
+      if (typeof value === "object") {
+        numberSumti(value);
+      }
+    });
   }
 
-  // and recursively search the children for things we can number as well
-  for (var i in parse) {
-    if (!isString(parse[i])) {
-      numberSumti(parse[i]);
-    }
-  }
-
-  return parse;
+  return tree;
 }
 
-function numberSumtiInSentence(parse) {
-  // first, for convenience, merge the bridi head and tail together in one array
-  var sentenceElements = [];
+function numberSumtiInSentence(sentence) {
+  const sentenceElements = sentence.children.flatMap((child) =>
+    child.type === "bridi tail"
+      ? [{ type: "bridi tail start" }, ...child.children]
+      : [child]
+  );
 
-  for (var i = 0; i < parse.children.length; i++) {
-    var child = parse.children[i];
+  let currentSumtiNumber = 1;
+  let bridiTailStartSumtiNumber = 1;
+  let isNextElementModal = false;
+  const sumtiSections = {
+    head: [],
+    gihek: [[]],
+    selbri: [],
+    vau: [],
+  };
+  let headSumtiCount = 0;
+  let vauSumtiCount = 0;
+  let isHeadBareSumtiEnded = false;
+  let isVauBareSumtiEnded = false;
+  let lastGihekSumtiNumber = null;
+  let lastFAPlaceNumber = null;
+  let currentSection = "head";
 
-    if (child.type === "bridi tail") {
-      sentenceElements.push({ type: "bridi tail start" });
-      for (var j = 0; j < child.children.length; j++) {
-        var subchild = child.children[j];
-        sentenceElements.push(subchild);
-      }
-    } else {
-      sentenceElements.push(child);
-    }
-  }
-
-  // now walk through this array
-  var sumtiCounter = 1;
-  var bridiTailStartSumtiCounter = 1;
-  var nextIsModal = false;
-  var sumtiInParts = { head: [], gihek: [[]], selbri: [], vau: [] };
-  var bareInHeadCount = 0;
-  var bareInHeadEnded = false;
-  var bareInGihekLastIndex = null;
-  var FALastIndexInCurrentPart = null;
-  var cursor = "head";
-
-  for (var i = 0; i < sentenceElements.length; i++) {
-    var child = sentenceElements[i];
-
-    if (child.type === "bridi tail start") {
-      bridiTailStartSumtiCounter = sumtiCounter;
+  sentenceElements.forEach((element) => {
+    if (element.type === "bridi tail start") {
+      bridiTailStartSumtiNumber = currentSumtiNumber;
     }
 
-    if (child.type === "selbri") {
-      bareInGihekLastIndex = null;
-      sumtiInParts.selbri.push(
-        child.children.map(({ word }) => word).join(" ")
+    if (element.type === "selbri") {
+      lastGihekSumtiNumber = null;
+      sumtiSections.selbri.push(
+        element.children.map(({ word }) => word).join(" ")
       );
-      cursor = "gihek";
+      currentSection = "gihek";
     }
 
-    if (child.type === "GIhA") {
-      FALastIndexInCurrentPart = null;
-      sumtiInParts.gihek.push([]);
-      sumtiCounter = bridiTailStartSumtiCounter;
+    if (element.type === "GIhA") {
+      lastFAPlaceNumber = null;
+      sumtiSections.gihek.push([]);
+      currentSumtiNumber = bridiTailStartSumtiNumber;
     }
 
-    if (child.type === "FA") {
-      FALastIndexInCurrentPart = null;
-      bareInHeadEnded = true;
-      sumtiCounter = placeTagToPlace(child);
-      if (cursor === "gihek") {
-        sumtiInParts.gihek[sumtiInParts.gihek.length - 1].push(
-          placeTagToPlace(child)
+    if (element.type === "FA") {
+      lastFAPlaceNumber = null;
+      if (currentSection === "head") isHeadBareSumtiEnded = true;
+      if (currentSection === "vau") isVauBareSumtiEnded = true;
+      currentSumtiNumber = placeTagToPlace(element);
+      if (currentSection === "gihek") {
+        sumtiSections.gihek[sumtiSections.gihek.length - 1].push(
+          placeTagToPlace(element)
         );
       } else {
-        sumtiInParts[cursor].push(placeTagToPlace(child));
+        sumtiSections[currentSection].push(placeTagToPlace(element));
       }
     }
 
-    if (child.type === "VAU") {
-      cursor = "vau";
+    if (element.type === "VAU") {
+      lastFAPlaceNumber = null;
+      currentSection = "vau";
     }
 
     if (
@@ -340,89 +224,91 @@ function numberSumtiInSentence(parse) {
         "ROI",
         "TAhE",
         "ZAhO",
-      ].includes(child.type)
+      ].includes(element.type)
     ) {
-      nextIsModal = true;
+      isNextElementModal = true;
     }
 
-    if (child.type === "sumti") {
-      if (nextIsModal) {
-        child.type = "modal sumti";
-        nextIsModal = false;
+    if (element.type === "sumti") {
+      if (isNextElementModal) {
+        element.type = "modal sumti";
+        isNextElementModal = false;
       } else {
-        if (!bareInHeadEnded && cursor === "head") {
-          bareInHeadCount++;
-        }
-
-        child.type = "sumti x";
-        if (cursor === "gihek") {
-          const lastSumtiInPart = lastElement(lastElement(sumtiInParts.gihek));
-          if (lastSumtiInPart !== undefined) {
-            if (FALastIndexInCurrentPart === null) {
-              FALastIndexInCurrentPart = lastSumtiInPart;
-              child.sumtiPlace = lastSumtiInPart;
+        element.type = "sumti x";
+        if (currentSection === "gihek") {
+          const lastSumtiInSection =
+            sumtiSections.gihek[sumtiSections.gihek.length - 1].at(-1);
+          if (lastSumtiInSection !== undefined) {
+            if (lastFAPlaceNumber === null) {
+              lastFAPlaceNumber = lastSumtiInSection;
+              element.sumtiPlace = lastSumtiInSection;
             } else {
-              FALastIndexInCurrentPart++;
-              child.sumtiPlace = FALastIndexInCurrentPart;
+              lastFAPlaceNumber++;
+              element.sumtiPlace = lastFAPlaceNumber;
             }
           } else {
-            if (bareInGihekLastIndex === null) {
-              bareInGihekLastIndex = bareInHeadCount + 1;
-              child.sumtiPlace = bareInGihekLastIndex;
+            if (lastGihekSumtiNumber === null) {
+              lastGihekSumtiNumber = headSumtiCount + 1;
+              element.sumtiPlace = lastGihekSumtiNumber;
             } else {
-              bareInGihekLastIndex++;
-              child.sumtiPlace = bareInGihekLastIndex;
+              lastGihekSumtiNumber++;
+              element.sumtiPlace = lastGihekSumtiNumber;
+            }
+          }
+        } else if (currentSection == "vau") {
+          if (!isVauBareSumtiEnded) {
+            vauSumtiCount++;
+            element.sumtiPlace = vauSumtiCount;
+          } else {
+            const lastSumtiInSection = sumtiSections[currentSection].at(-1);
+            element.sumtiPlace = lastSumtiInSection;
+            if (lastFAPlaceNumber === null) {
+              lastFAPlaceNumber = lastSumtiInSection;
+              element.sumtiPlace = lastSumtiInSection;
+            } else {
+              lastFAPlaceNumber++;
+              element.sumtiPlace = lastFAPlaceNumber;
             }
           }
         } else {
-          if (!bareInHeadEnded) {
-            child.sumtiPlace = bareInHeadCount;
+          //head
+          const lastSumtiInSection = sumtiSections[currentSection].at(-1);
+          if (!isHeadBareSumtiEnded) {
+            headSumtiCount++;
+            vauSumtiCount = headSumtiCount;
+            element.sumtiPlace = headSumtiCount;
           } else {
-            child.sumtiPlace = lastElement(sumtiInParts[cursor]);
+            if (lastFAPlaceNumber === null) {
+              lastFAPlaceNumber = lastSumtiInSection;
+              element.sumtiPlace = lastSumtiInSection;
+            } else {
+              lastFAPlaceNumber++;
+              element.sumtiPlace = lastFAPlaceNumber;
+            }
           }
         }
 
-        sumtiCounter++;
+        currentSumtiNumber++;
       }
     }
 
-    if (child.type === "selbri" && sumtiCounter === 1) {
-      sumtiCounter++;
+    if (element.type === "selbri" && currentSumtiNumber === 1) {
+      currentSumtiNumber++;
     }
-  }
-  console.log(sumtiInParts);
+  });
 }
 
-function lastElement(arr) {
-  return arr.length > 0 ? arr[arr.length - 1] : undefined;
-}
-
-function incrementUntilUnique(baz, arr) {
-  while (arr.includes(baz)) {
-    baz++;
-  }
-  return baz;
-}
-
-const FaNumberMap = {
+const faNumberMap = {
   fa: 1,
   fe: 2,
   fi: 3,
   fo: 4,
   fu: 5,
 };
-function reverseDict(dict) {
-  const reversed = {};
-  for (const [key, value] of Object.entries(dict)) {
-    reversed[value] = key;
-  }
-  return reversed;
-}
-const NumberFaMap = reverseDict(FaNumberMap);
 
 function placeTagToPlace(tag) {
-  let candidate = FaNumberMap[tag.word];
-  if (candidate) return candidate;
+  const placeNumber = faNumberMap[tag.word];
+  if (placeNumber) return placeNumber;
   if (tag.word === "fai") {
     return "fai";
     /* Ilmen: Yeah that's an ugly lazy handling of "fai", but a cleaner
