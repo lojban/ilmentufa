@@ -119,7 +119,8 @@ bridi_tail_2 <- CU_elidible free* bridi_tail_3 ((gihek / joik_jek) stag? BO_clau
 # BETA: JACU
 bridi_tail_3 <- (terms CU_elidible)* selbri tail_terms / gek_sentence
 
-gek_sentence <- gek subsentence gik subsentence tail_terms / tag* KE_clause free* gek_sentence KEhE_elidible free* / NA_clause free* gek_sentence
+# BETA: JACU gi++
+gek_sentence <- gek subsentence (gik subsentence)+ GIhI_elidible tail_terms / tag* KE_clause free* gek_sentence KEhE_elidible free* / NA_clause free* gek_sentence
 
 tail_terms <- terms? VAU_elidible free*
 
@@ -170,8 +171,8 @@ term_sa <- term_start (!term_start (sa_word / SA_clause !term_start ) )* SA_clau
 
 term_start <- term_1 / LA_clause / LE_clause / LI_clause / LU_clause / LAhE_clause / quantifier term_start / gek sumti gik / FA_clause / tag term_start
 
-# BETA: KE-termset
-termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* gik terms NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free* / KE_clause terms KEhE_elidible
+# BETA: KE-termset, JACU gi++
+termset <- gek_termset / NUhI_clause free* gek terms NUhU_elidible free* (gik terms)+ GIhI_elidible NUhU_elidible free* / NUhI_clause free* terms NUhU_elidible free* / KE_clause terms KEhE_elidible
 
 gek_termset <- gek terms_gik_terms
 
@@ -180,13 +181,12 @@ terms_gik_terms <- nonabs_term (gik / terms_gik_terms) nonabs_term
 # BETA: Enhanced VUhO
 sumti <- sumti_1 (VUhO_clause free* (relative_clauses (joik_ek sumti)?)?)?
 
-sumti_1 <- sumti_2 (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?
-
+# BETA: JACU gi++
+# sumti_4 -> sumti_1a so unterminated gi greedily consumes ko'a je ko'e
+sumti_1 <- sumti_1a (joik_ek stag? KE_clause free* sumti KEhE_elidible free*)?
+sumti_1a <- sumti_2 / gek sumti (gik sumti_1a)+ GIhI_elidible
 sumti_2 <- sumti_3 (joik_ek sumti_3)*  #: LR2
-
-sumti_3 <- sumti_4 (joik_ek stag? BO_clause free* sumti_3)?
-
-sumti_4 <- sumti_5 / gek sumti gik sumti_4
+sumti_3 <- sumti_5 (joik_ek stag? BO_clause free* sumti_3)?
 
 sumti_5 <- quantifier? sumti_6 relative_clauses? / quantifier selbri KU_elidible free* relative_clauses?
 
@@ -199,8 +199,8 @@ sumti_tail <- (sumti_6 relative_clauses?)? sumti_tail_1 / relative_clauses sumti
 
 sumti_tail_1 <- selbri relative_clauses? / quantifier selbri relative_clauses? / quantifier sumti
 
-# BETA: JAPOI
-relative_clauses <- relative_clause ((ZIhE_clause / joik_jek) free* relative_clause)* / gek relative_clauses gik relative_clauses
+# BETA: JAPOI, JACU gi++
+relative_clauses <- relative_clause ((ZIhE_clause / joik_jek) free* relative_clause)* / gek relative_clauses (gik relative_clauses)+ GIhI_elidible
 
 #; relative_clause = GOI_clause free* term GEhU_clause? free* / NOI_clause free* subsentence KUhO_clause? free*
 
@@ -224,7 +224,8 @@ selbri_4 <- selbri_5 (joik_jek selbri_5 / joik stag? KE_clause free* selbri_3 KE
 
 selbri_5 <- selbri_6 ((jek / joik) stag? BO_clause free* selbri_5)?
 
-selbri_6 <- tanru_unit (BO_clause free* selbri_6)? / NAhE_clause? free* guhek selbri gik selbri_6
+# BETA: JACU gi++
+selbri_6 <- tanru_unit (BO_clause free* selbri_6)? / NAhE_clause? free* guhek selbri (gik selbri_6)+ GIhI_elidible
 
 tanru_unit <- tanru_unit_1 (CEI_clause free* tanru_unit_1)*
 
@@ -264,7 +265,8 @@ mex <- mex_1 (operator mex_1)*
 
 mex_1 <- mex_2 (operator stag? BO_clause free* mex_1)?
 
-mex_2 <- number BOI_elidible free* / lerfu_string BOI_elidible free* / VEI_clause free* mex VEhO_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause sumti TEhU_elidible free* / gek mex gik mex_2 / (LAhE_clause free* / NAhE_clause free* BO_clause? free*) mex LUhU_elidible free* / PEhO_clause free* operator mex+ KUhE_elidible free* / FUhA_clause rp_expression
+# BETA: JACU gi++
+mex_2 <- number BOI_elidible free* / lerfu_string BOI_elidible free* / VEI_clause free* mex VEhO_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause sumti TEhU_elidible free* / gek mex (gik mex_2)+ GIhI_elidible / (LAhE_clause free* / NAhE_clause free* BO_clause? free*) mex LUhU_elidible free* / PEhO_clause free* operator mex+ KUhE_elidible free* / FUhA_clause rp_expression
 
 rp_expression <- mex_1 (rp_expression operator)*
 
@@ -280,8 +282,8 @@ operator_sa <- operator_start (!operator_start (sa_word / SA_clause !operator_st
 
 operator_start <- guhek / KE_clause / SE_clause? NAhE_clause / SE_clause? MAhO_clause / SE_clause? VUhU_clause
 
-# BETA: MEX simplification
-operator_1 <- guhek operator_1 gik operator_2 / operator_2 (jek / joik) stag? BO_clause free* operator_1 / operator_2
+# BETA: MEX simplification, JACU gi++
+operator_1 <- guhek operator_1 (gik operator_2)+ GIhI_elidible / operator_2 (jek / joik) stag? BO_clause free* operator_1 / operator_2
 
 operator_2 <- mex_operator / KE_clause free* operator KEhE_elidible free*
 
@@ -302,8 +304,8 @@ operand_1 <- operand_2 (joik_ek operand_2)*
 
 operand_2 <- operand_3 (joik_ek stag? BO_clause free* operand_2)?
 
-# BETA: NAhE+SUMTI
-operand_3 <- quantifier / lerfu_string !MOI_clause BOI_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause free* sumti TEhU_elidible free* / JOhI_clause free* mex_2+ TEhU_elidible free* / gek operand gik operand_3 / (LAhE_clause free* / NAhE_clause BO_clause? free*) operand LUhU_elidible free*
+# BETA: NAhE+SUMTI, JACU gi++
+operand_3 <- quantifier / lerfu_string !MOI_clause BOI_elidible free* / NIhE_clause free* selbri TEhU_elidible free* / MOhE_clause free* sumti TEhU_elidible free* / JOhI_clause free* mex_2+ TEhU_elidible free* / gek operand (gik operand_3)+ GIhI_elidible / (LAhE_clause free* / NAhE_clause BO_clause? free*) operand LUhU_elidible free*
 
 # BETA: MEX simplification
 # FIXME: forethought mex not possible anymore without pe'o. BIhE_clause isn't referenced anymore.
@@ -447,6 +449,8 @@ DOhU_elidible <- DOhU_clause?
 FEhU_elidible <- FEhU_clause?
 # FOI and FUhO are never elidible
 GEhU_elidible <- GEhU_clause?
+# BETA: GIhI
+GIhI_elidible <- (GIhI_clause?)
 IAU_elidible <- IAU_clause?
 KEI_elidible <- KEI_clause?
 KEhE_elidible <- KEhE_clause?
@@ -728,6 +732,11 @@ GIhA_clause <- GIhA_pre GIhA_post
 GIhA_pre <- pre_clause GIhA spaces?
 GIhA_post <- post_clause
 # GIhA_no_SA_handling = pre_clause GIhA post_clause
+
+# BETA: GIhI
+GIhI_clause <- GIhI_pre GIhI_post
+GIhI_pre <- pre_clause GIhI spaces?
+GIhI_post <- post_clause
 
 #         attaches a sumti modifier to a sumti
 GOI_clause <- GOI_pre GOI_post
@@ -1307,8 +1316,8 @@ ZOhOI_post <- post_clause
 CMEVLA <- cmevla
 BRIVLA <- gismu / lujvo / fuhivla
 
-# BETA: GOhOI / KUhAU / LEhAI / LOhAI / LOhOI / NOIhA / ZOhOI / MEhOI / IAU
-CMAVO <- A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GOI / GOhA / GOhOI / GUhA / I / IAU / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhAU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhOI / LOhU / LU / LUhU / MAhO / MAI / ME / MEhOI / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NOIhA / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhOI / ZOhU / cmavo
+# BETA: GIhI / GOhOI / KUhAU / LEhAI / LOhAI / LOhOI / NOIhA / ZOhOI / MEhOI / IAU
+CMAVO <- A / BAI / BAhE / BE / BEI / BEhO / BIhE / BIhI / BO / BOI / BU / BY / CAhA / CAI / CEI / CEhE / CO / COI / CU / CUhE / DAhO / DOI / DOhU / FA / FAhA / FAhO / FEhE / FEhU / FIhO / FOI / FUhA / FUhE / FUhO / GA / GAhO / GEhU / GI / GIhA / GIhI / GOI / GOhA / GOhOI / GUhA / I / IAU / JA / JAI / JOhI / JOI / KE / KEhE / KEI / KI / KOhA / KU / KUhAU / KUhE / KUhO / LA / LAU / LAhE / LE / LEhAI / LEhU / LI / LIhU / LOhAI / LOhO / LOhOI / LOhU / LU / LUhU / MAhO / MAI / ME / MEhOI / MEhU / MOhE / MOhI / MOI / NA / NAI / NAhE / NAhU / NIhE / NIhO / NOI / NOIhA / NU / NUhA / NUhI / NUhU / PA / PEhE / PEhO / PU / RAhO / ROI / SA / SE / SEI / SEhU / SI / SOI / SU / TAhE / TEhU / TEI / TO / TOI / TUhE / TUhU / UI / VA / VAU / VEI / VEhO / VUhU / VEhA / VIhA / VUhO / XI / ZAhO / ZEhA / ZEI / ZI / ZIhE / ZO / ZOI / ZOhOI / ZOhU / cmavo
 
 # This is a Parsing Expression Grammar for the morphology of Lojban.
 # See http://www.pdos.lcs.mit.edu/~baford/packrat/
@@ -1705,6 +1714,9 @@ GEhU <- &cmavo ( g e h u ) &post_word
 GI <- &cmavo ( g i ) &post_word
 
 GIhA <- &cmavo ( g i h e / g i h i / g i h o / g i h a / g i h u ) &post_word
+
+# BETA: JACU gi++
+GIhI <- &cmavo ( g i h i ) &post_word
 
 GOI <- &cmavo ( n o h u / n e / g o i / p o h u / p e / p o h e / p o ) &post_word
 
