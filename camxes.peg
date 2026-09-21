@@ -61,17 +61,29 @@ faho_clause <- (FAhO_clause dot_star)?
 # Please note that the "text_1" item in the text_1 production does
 # *not* match the BNF. This is due to a bug in the BNF.  The change
 # here was made to match grammar.300
-text_1 <- I_clause (jek / joik)? (stag? BO_clause)? free* text_1? / NIhO_clause+ free* su_clause* paragraphs? / paragraphs
+text_1 <- I_top_statement / NIhO_clause+ free* su_clause* paragraphs? / paragraphs
+
+# any .i statement before another statement or fragment, including [.i joi bo broda], etc
+I_top_statement <- I_clause (jek / joik !GI_clause)? (stag? BO_clause)? free* text_1?
 
 paragraphs <- paragraph? (NIhO_clause+ free* su_clause* paragraphs)?
 
-paragraph <- (statement / fragment) (I_clause !jek !joik !joik_jek free* (statement / fragment)?)*
+paragraph <- (statement / fragment) I_consecutive_statement*
+
+# broda [.i broda]
+I_consecutive_statement <- I_clause (&joigik / !jek !joik !joik_jek) free* (statement / fragment)?
 
 statement <- statement_1 / prenex statement
 
-statement_1 <- statement_2 (I_clause joik_jek statement_2?)*
+statement_1 <- statement_2 I_joik_jek_statement*
 
-statement_2 <- statement_3 (I_clause (jek / joik)? stag? BO_clause free* statement_2?)?
+# broda [.i joi broda]
+I_joik_jek_statement <- I_clause !gek joik_jek statement_2?
+
+statement_2 <- statement_3 I_bo_statement?
+
+# broda [.i je bo broda]
+I_bo_statement <- I_clause (jek / joik !GI_clause)? stag? BO_clause free* statement_2?
 
 statement_3 <- sentence / tag? TUhE_clause free* text_1 TUhU_elidible free*
 
@@ -305,7 +317,9 @@ joik_ek_sa <- joik_ek_1 (!joik_ek_1 (sa_word / SA_clause !joik_ek_1 ) )* SA_clau
 
 joik_jek <- joik free* / jek free*
 
-gek <- SE_clause? GA_clause NAI_clause? free* / joik GI_clause free* / stag gik
+gek <- SE_clause? GA_clause NAI_clause? free* / joigik / stag gik
+
+joigik <- joik GI_clause free*
 
 guhek <- SE_clause? GUhA_clause NAI_clause? free*
 
