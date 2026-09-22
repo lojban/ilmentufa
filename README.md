@@ -162,3 +162,23 @@ json_string = output.decode("utf-8")
 # Converting the JSON output back to nested lists:
 parse_tree = json.loads(json_string)
 ```
+
+### Running the regression tests ###
+
+To run the parser against a test corpus:
+
+```
+nodejs run_tests.js -o camxes.tests.new.json
+```
+
+If you want to establish the new output as the baseline:
+
+```
+mv camxes.tests.new.json camxes.tests.json
+```
+
+To see more options:
+
+```
+nodejs run_tests.js -h
+```
